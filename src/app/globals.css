@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-google-sans);
+  --font-display: var(--font-newsreader);
+}
+
+/* The same tokens as the website (shortlet-frontend/src/app/globals.css). */
+@theme {
+  --color-brand-950: #0e2a31;
+  --color-brand-900: #14363f;
+  --color-brand-800: #1e4852;
+  --color-brand-700: #2a5b66;
+  --color-gold-300: #ffc2b8;
+  --color-gold-400: #ff6e59;
+  --color-gold-500: #f45a43;
+  --color-gold-600: #3d6a74;
+  --color-cream: #f6f5f3;
+  --color-mist: #fcfcfb;
+  --color-ink: #12292f;
+  --color-muted: #56666a;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"] {
+    cursor: pointer;
+  }
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+.font-display {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
