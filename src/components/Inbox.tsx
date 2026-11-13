@@ -1,18 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, CheckCircle2, Loader2, RotateCcw, Search, Send, UserRound } from "lucide-react";
-import { supportApi, when, type InboxItem, type Thread } from "@/lib/api";
+import { adminApi, supportApi, when, type InboxItem, type Thread } from "@/lib/api";
 
 /** Chats from the help bot: a list on the left, the selected conversation on the right. Both refresh on their own. */
 export default function Inbox() {
   const [status, setStatus] = useState<"open" | "closed" | "">("open");
   const [search, setSearch] = useState("");
+  const [assigned, setAssigned] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const list = useQuery({
-    queryKey: ["inbox", status, search],
-    queryFn: () => supportApi.inbox({ status, search }),
+    queryKey: ["inbox", status, search, assigned],
+    queryFn: () => supportApi.inbox({ status, search, assigned }),
     refetchInterval: 10_000,
   });
 
@@ -40,6 +42,16 @@ export default function Inbox() {
               </button>
             ))}
           </div>
+          <select
+            value={assigned}
+            onChange={(e) => setAssigned(e.target.value)}
+            aria-label="Assigned to"
+            className="h-10 w-full rounded-xl border border-brand-900/15 bg-white px-3 text-sm outline-none focus:border-gold-500"
+          >
+            <option value="">Everyone&apos;s chats</option>
+            <option value="me">Assigned to me</option>
+            <option value="none">Unassigned</option>
+          </select>
           <label className="flex items-center gap-2 rounded-xl border border-brand-900/15 px-3">
             <Search className="size-4 text-muted" />
             <input
@@ -108,6 +120,12 @@ function Conversation({ reference, onBack }: { reference: string; onBack: () => 
     },
   });
   const close = useMutation({ mutationFn: () => supportApi.close(reference), onSuccess: update });
+  const assign = useMutation({ mutationFn: (user: number | null) => supportApi.assign(reference, user), onSuccess: update });
+  const team = useQuery({
+    queryKey: ["users", { role: "admin", is_active: "true", page_size: 100 }],
+    queryFn: () => adminApi.users({ role: "admin", is_active: "true", page_size: 100 }),
+    staleTime: 60_000,
+  });
   const reopen = useMutation({ mutationFn: () => supportApi.reopen(reference), onSuccess: update });
   const count = thread.data?.messages.length ?? 0;
   useEffect(() => {
@@ -129,9 +147,30 @@ function Conversation({ reference, onBack }: { reference: string; onBack: () => 
             {t.name} <span className="font-normal text-muted">· {t.reference}</span>
           </p>
           <p className="truncate text-xs text-muted">
-            {t.email || "No email"} {t.has_account ? "· has an account" : "· no account"} {t.assigned_to_name && `· with ${t.assigned_to_name}`}
+            {t.email || "No email"} ·{" "}
+            {t.user ? (
+              <Link href={`/users/${t.user}`} className="font-medium text-brand-900 hover:underline">
+                see their account
+              </Link>
+            ) : (
+              "no account"
+            )}
           </p>
         </div>
+        <select
+          value={t.assigned_to ?? ""}
+          onChange={(e) => assign.mutate(e.target.value ? Number(e.target.value) : null)}
+          disabled={assign.isPending}
+          aria-label="Assigned to"
+          className="h-9 max-w-44 rounded-full border border-brand-900/15 bg-white px-3 text-sm outline-none focus:border-gold-500"
+        >
+          <option value="">Unassigned</option>
+          {team.data?.results.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.name}
+            </option>
+          ))}
+        </select>
         {t.status === "open" ? (
           <button onClick={() => close.mutate()} disabled={close.isPending} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-brand-900 ring-1 ring-brand-900/15 hover:ring-brand-900/40">
             <CheckCircle2 className="size-4" /> Mark solved
@@ -189,7 +228,7 @@ function Conversation({ reference, onBack }: { reference: string; onBack: () => 
         <p className="mt-1.5 text-xs text-muted">
           {t.email ? `They'll see it in the chat and get it by email at ${t.email}.` : "They'll see it in the chat."}
         </p>
-        {reply.error && <p className="mt-1 text-sm text-red-700">{reply.error.message}</p>}
+        {(reply.error ?? assign.error) && <p className="mt-1 text-sm text-red-700">{(reply.error ?? assign.error)?.message}</p>}
       </form>
     </>
   );

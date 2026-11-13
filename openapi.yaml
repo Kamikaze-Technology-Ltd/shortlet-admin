@@ -4,6 +4,663 @@ info:
   version: 1.0.0
   description: Shortlet Stay backend API
 paths:
+  /api/admin/hotels/:
+    get:
+      operationId: admin_hotels_list
+      description: Every hotel with its owner and numbers. Create and edit hotels
+        and rooms through /dashboard/properties/.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, booking_count, rating (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: An owner's user id, or "none" for hotels Shortlet Stay manages.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Hotel name, area, city or the owner's name or email.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedHotelList'
+          description: ''
+  /api/admin/hotels/{slug}/:
+    get:
+      operationId: admin_hotels_retrieve
+      description: Every hotel with its owner and numbers. Create and edit hotels
+        and rooms through /dashboard/properties/.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, booking_count, rating (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: An owner's user id, or "none" for hotels Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Hotel name, area, city or the owner's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+          description: ''
+  /api/admin/hotels/{slug}/assign-owner/:
+    post:
+      operationId: admin_hotels_assign_owner_create
+      description: Give the hotel to a hotel owner account, or (null) take it back
+        for Shortlet Stay to manage.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, booking_count, rating (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: An owner's user id, or "none" for hotels Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Hotel name, area, city or the owner's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignOwnerRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignOwnerRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignOwnerRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hotel'
+          description: ''
+  /api/admin/overview/:
+    get:
+      operationId: admin_overview_retrieve
+      description: The whole platform's numbers for the admin home page.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffOverview'
+          description: ''
+  /api/admin/payments/{id}/mark-refunded/:
+    post:
+      operationId: admin_payments_mark_refunded_create
+      description: Record that a booking payment flagged for refund has been paid
+        back (outside Shortlet Stay, e.g. by bank).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+          description: ''
+  /api/admin/ticket-orders/:
+    get:
+      operationId: admin_ticket_orders_list
+      description: Ticket orders across every event, newest first. Confirm and decline
+        them through /dashboard/events/.
+      parameters:
+      - in: query
+        name: event
+        schema:
+          type: string
+        description: The event's slug.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Order reference, buyer name, email or phone.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - confirmed
+          - pending
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStaffTicketOrderList'
+          description: ''
+  /api/admin/ticket-payments/:
+    get:
+      operationId: admin_ticket_payments_list
+      description: Payments for event tickets, newest first.
+      parameters:
+      - in: query
+        name: needs_refund
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Payment or order reference, buyer name or email.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - failed
+          - initiated
+          - successful
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStaffTicketPaymentList'
+          description: ''
+  /api/admin/ticket-payments/{id}/mark-refunded/:
+    post:
+      operationId: admin_ticket_payments_mark_refunded_create
+      description: Record that a ticket payment flagged for refund has been paid back.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this ticket payment.
+        required: true
+      - in: query
+        name: needs_refund
+        schema:
+          type: boolean
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Payment or order reference, buyer name or email.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - failed
+          - initiated
+          - successful
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffTicketPayment'
+          description: ''
+  /api/admin/users/:
+    get:
+      operationId: admin_users_list
+      description: |-
+        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+
+        Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: date_joined, last_login, email, first_name (prefix - to reverse).
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - guest
+          - organiser
+          - owner
+        description: 'admin: Shortlet Stay staff.'
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, email or phone.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStaffUserList'
+          description: ''
+    post:
+      operationId: admin_users_create
+      description: |-
+        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+
+        Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: date_joined, last_login, email, first_name (prefix - to reverse).
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - guest
+          - organiser
+          - owner
+        description: 'admin: Shortlet Stay staff.'
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, email or phone.
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffUserCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffUserCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffUserCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffUserCreate'
+          description: ''
+  /api/admin/users/{id}/:
+    get:
+      operationId: admin_users_retrieve
+      description: |-
+        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+
+        Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: date_joined, last_login, email, first_name (prefix - to reverse).
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - guest
+          - organiser
+          - owner
+        description: 'admin: Shortlet Stay staff.'
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, email or phone.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffUserDetail'
+          description: ''
+    patch:
+      operationId: admin_users_partial_update
+      description: |-
+        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+
+        Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: date_joined, last_login, email, first_name (prefix - to reverse).
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - guest
+          - organiser
+          - owner
+        description: 'admin: Shortlet Stay staff.'
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, email or phone.
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffUserRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffUser'
+          description: ''
+  /api/admin/users/{id}/send-password-reset/:
+    post:
+      operationId: admin_users_send_password_reset_create
+      description: Email them a link to choose a new password (also how an invited
+        account sets its first one).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: date_joined, last_login, email, first_name (prefix - to reverse).
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - guest
+          - organiser
+          - owner
+        description: 'admin: Shortlet Stay staff.'
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, email or phone.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/admin/users/{id}/sign-out/:
+    post:
+      operationId: admin_users_sign_out_create
+      description: End every session the account has, on every device.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: date_joined, last_login, email, first_name (prefix - to reverse).
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - guest
+          - organiser
+          - owner
+        description: 'admin: Shortlet Stay staff.'
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, email or phone.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
   /api/amenities/:
     get:
       operationId: amenities_list
@@ -875,6 +1532,10 @@ paths:
         schema:
           type: string
           format: date
+      - in: query
+        name: guest
+        schema:
+          type: integer
       - name: ordering
         required: false
         in: query
@@ -900,6 +1561,16 @@ paths:
         schema:
           type: string
       - in: query
+        name: source
+        schema:
+          type: string
+          enum:
+          - staff
+          - website
+        description: |-
+          * `website` - Website
+          * `staff` - Staff (offline)
+      - in: query
         name: status
         schema:
           type: string
@@ -913,6 +1584,20 @@ paths:
           * `confirmed` - Confirmed
           * `cancelled` - Cancelled
           * `expired` - Expired
+      - in: query
+        name: stay_type
+        schema:
+          type: string
+          enum:
+          - hourly
+          - night
+        description: |-
+          * `night` - Nights
+          * `hourly` - Hours
+      - in: query
+        name: unit__property__slug
+        schema:
+          type: string
       - in: query
         name: unit__slug
         schema:
@@ -1090,6 +1775,11 @@ paths:
       description: Organisers' and admins' events, drafts included. Organisers only
         see their own.
       parameters:
+      - in: query
+        name: organiser
+        schema:
+          type: integer
+        description: Organiser's user id (platform admins).
       - name: page
         required: false
         in: query
@@ -1102,6 +1792,19 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Title, venue or city.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - draft
+          - published
       tags:
       - dashboard
       security:
@@ -1884,6 +2587,14 @@ paths:
         admins), newest first.
       parameters:
       - in: query
+        name: booking__guest
+        schema:
+          type: integer
+      - in: query
+        name: booking__unit__property__slug
+        schema:
+          type: string
+      - in: query
         name: created_at__date__gte
         schema:
           type: string
@@ -2602,6 +3313,11 @@ paths:
       operationId: support_admin_conversations_list
       description: The support inbox, for platform staff.
       parameters:
+      - in: query
+        name: assigned
+        schema:
+          type: string
+        description: '"me", "none", or a team member user id.'
       - name: page
         required: false
         in: query
@@ -2643,6 +3359,39 @@ paths:
         required: true
       tags:
       - support
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminConversationDetail'
+          description: ''
+  /api/support/admin/conversations/{reference}/assign/:
+    post:
+      operationId: support_admin_conversations_assign_create
+      description: 'Hand the chat to a team member (null: unassigned).'
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignRequest'
+        required: true
       security:
       - jwtAuth: []
       responses:
@@ -2922,8 +3671,14 @@ paths:
     get:
       operationId: support_conversations_retrieve
       description: The chat and its messages. Reading it marks the support team's
-        replies as seen.
+        replies as seen, unless peeking.
       parameters:
+      - in: query
+        name: peek
+        schema:
+          type: boolean
+        description: Check for replies without marking them seen (e.g. for an unread
+          badge).
       - in: path
         name: reference
         schema:
@@ -3519,9 +4274,17 @@ components:
           - $ref: '#/components/schemas/Message'
           nullable: true
           readOnly: true
+        assigned_to:
+          type: integer
+          readOnly: true
+          nullable: true
         assigned_to_name:
           type: string
           readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
         has_account:
           type: boolean
           readOnly: true
@@ -3534,6 +4297,7 @@ components:
           format: date-time
           readOnly: true
       required:
+      - assigned_to
       - assigned_to_name
       - created_at
       - email
@@ -3546,6 +4310,7 @@ components:
       - status
       - topic
       - unread
+      - user
     AdminConversationDetail:
       type: object
       description: A chat in the support inbox.
@@ -3582,9 +4347,17 @@ components:
           - $ref: '#/components/schemas/Message'
           nullable: true
           readOnly: true
+        assigned_to:
+          type: integer
+          readOnly: true
+          nullable: true
         assigned_to_name:
           type: string
           readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
         has_account:
           type: boolean
           readOnly: true
@@ -3602,6 +4375,7 @@ components:
             $ref: '#/components/schemas/Message'
           readOnly: true
       required:
+      - assigned_to
       - assigned_to_name
       - created_at
       - email
@@ -3615,6 +4389,7 @@ components:
       - status
       - topic
       - unread
+      - user
     AdminHelpTopic:
       type: object
       properties:
@@ -3703,6 +4478,25 @@ components:
           $ref: '#/components/schemas/IconEnum'
       required:
       - name
+    AssignOwnerRequest:
+      type: object
+      properties:
+        owner:
+          type: integer
+          nullable: true
+          description: A hotel owner's user id, or null for Shortlet Stay to manage
+            it.
+      required:
+      - owner
+    AssignRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+          nullable: true
+          description: A team member's user id, or null.
+      required:
+      - user
     Attendee:
       type: object
       description: One ticket with everything the organiser needs to register its
@@ -3905,6 +4699,12 @@ components:
         unit_name:
           type: string
           readOnly: true
+        property_name:
+          type: string
+          readOnly: true
+        property_slug:
+          type: string
+          readOnly: true
         status:
           $ref: '#/components/schemas/StatusEnum'
         source:
@@ -4007,6 +4807,8 @@ components:
       - is_paid
       - nights
       - notes
+      - property_name
+      - property_slug
       - reference
       - source
       - starts_at
@@ -4016,6 +4818,29 @@ components:
       - unit
       - unit_name
       - updated_at
+    BookingCounts:
+      type: object
+      properties:
+        total:
+          type: integer
+        new_30d:
+          type: integer
+        pending:
+          type: integer
+          description: Holding dates while waiting for payment or the host.
+        in_house:
+          type: integer
+        upcoming:
+          type: integer
+        cancelled_30d:
+          type: integer
+      required:
+      - cancelled_30d
+      - in_house
+      - new_30d
+      - pending
+      - total
+      - upcoming
     BookingRequest:
       type: object
       description: Limit related-object choices to the request user's own properties/units.
@@ -5050,6 +5875,20 @@ components:
       - venue_name
       - when_label
       - where_label
+    EventCounts:
+      type: object
+      properties:
+        upcoming:
+          type: integer
+          description: Published and not finished.
+        drafts:
+          type: integer
+        tickets_sold:
+          type: integer
+      required:
+      - drafts
+      - tickets_sold
+      - upcoming
     EventDetail:
       type: object
       description: An event on a listing.
@@ -5185,6 +6024,15 @@ components:
         when_label:
           type: string
           readOnly: true
+        organiser_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        organiser_email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
         created_at:
           type: string
           format: date-time
@@ -5197,6 +6045,8 @@ components:
       - created_at
       - description
       - ends_at
+      - organiser_email
+      - organiser_id
       - slug
       - starts_at
       - stats
@@ -5346,6 +6196,110 @@ components:
       - children
       - id
       - title
+    Hotel:
+      type: object
+      description: A hotel in the admin's list, with who owns it and how it's doing.
+        Edit it through /dashboard/properties/.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          readOnly: true
+        area:
+          type: string
+          readOnly: true
+          description: Neighbourhood shown to guests.
+        city:
+          type: string
+          readOnly: true
+        state:
+          type: string
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryEnum'
+          readOnly: true
+        country_name:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        owner_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        owner_name:
+          type: string
+          readOnly: true
+        owner_email:
+          type: string
+          readOnly: true
+        unit_count:
+          type: integer
+          readOnly: true
+        published_count:
+          type: integer
+          readOnly: true
+        booking_count:
+          type: integer
+          readOnly: true
+        review_count:
+          type: integer
+          readOnly: true
+        rating:
+          type: number
+          format: double
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - area
+      - booking_count
+      - city
+      - country
+      - country_name
+      - created_at
+      - id
+      - is_active
+      - name
+      - owner_email
+      - owner_id
+      - owner_name
+      - published_count
+      - rating
+      - review_count
+      - slug
+      - state
+      - unit_count
+    HotelCounts:
+      type: object
+      properties:
+        total:
+          type: integer
+        active:
+          type: integer
+        without_owner:
+          type: integer
+        rooms:
+          type: integer
+        rooms_published:
+          type: integer
+      required:
+      - active
+      - rooms
+      - rooms_published
+      - total
+      - without_owner
     IconEnum:
       enum:
       - zap
@@ -5438,6 +6392,9 @@ components:
         property_name:
           type: string
           readOnly: true
+        property_slug:
+          type: string
+          readOnly: true
         booking_reference:
           type: string
           readOnly: true
@@ -5453,6 +6410,7 @@ components:
       - id
       - is_visible
       - property_name
+      - property_slug
       - room_name
       - room_rating
       - stayed
@@ -5492,6 +6450,67 @@ components:
           maxLength: 4000
       required:
       - body
+    Money:
+      type: object
+      properties:
+        currency:
+          type: string
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,2})?$
+      required:
+      - amount
+      - currency
+    MoneyCounts:
+      type: object
+      properties:
+        bookings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Money'
+          description: Successful booking payments, all time.
+        bookings_30d:
+          type: array
+          items:
+            $ref: '#/components/schemas/Money'
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Money'
+          description: Successful ticket payments, all time.
+        tickets_30d:
+          type: array
+          items:
+            $ref: '#/components/schemas/Money'
+        needs_refund:
+          type: integer
+          description: Booking and ticket payments waiting for a refund.
+        failed_30d:
+          type: integer
+      required:
+      - bookings
+      - bookings_30d
+      - failed_30d
+      - needs_refund
+      - tickets
+      - tickets_30d
+    Month:
+      type: object
+      properties:
+        month:
+          type: string
+          format: date
+          description: First day of the month.
+        bookings:
+          type: integer
+          description: Bookings made that month (not cancelled or expired).
+        signups:
+          type: integer
+      required:
+      - bookings
+      - month
+      - signups
     MyReview:
       type: object
       description: The guest's own review of a stay.
@@ -6001,6 +7020,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EventManage'
+    PaginatedHotelList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hotel'
     PaginatedManagedReviewList:
       type: object
       required:
@@ -6176,6 +7220,81 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Reservation'
+    PaginatedStaffTicketOrderList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffTicketOrder'
+    PaginatedStaffTicketPaymentList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffTicketPayment'
+    PaginatedStaffUserList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffUser'
     PaginatedTransactionList:
       type: object
       required:
@@ -6490,6 +7609,36 @@ components:
           nullable: true
         is_active:
           type: boolean
+    PatchedStaffUserRequest:
+      type: object
+      description: An account as Shortlet Stay staff see it. Counts are annotated
+        by the view.
+      properties:
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          maxLength: 20
+        account_type:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
     PatchedTicketTypeManageRequest:
       type: object
       properties:
@@ -6733,6 +7882,7 @@ components:
       - confirmed
       - needs_refund
       - already_settled
+      - refunded
       type: string
       description: |-
         * `checkout_started` - Checkout started
@@ -6747,6 +7897,7 @@ components:
         * `confirmed` - Booking confirmed
         * `needs_refund` - Paid but couldn't confirm: needs refund
         * `already_settled` - Already settled, ignored
+        * `refunded` - Refunded by Shortlet Stay staff
     PaymentResultRequest:
       type: object
       properties:
@@ -7051,6 +8202,69 @@ components:
         * `maintenance` - Maintenance
         * `owner` - Owner use
         * `other` - Other
+    RecentBooking:
+      type: object
+      properties:
+        id:
+          type: integer
+        reference:
+          type: string
+        guest_name:
+          type: string
+        unit_name:
+          type: string
+        property_name:
+          type: string
+        stay:
+          type: string
+        status:
+          type: string
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - created_at
+      - guest_name
+      - id
+      - property_name
+      - reference
+      - status
+      - stay
+      - total_price
+      - unit_name
+    RecentUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        date_joined:
+          type: string
+          format: date-time
+      required:
+      - date_joined
+      - email
+      - id
+      - name
+      - role
+    RefundRequest:
+      type: object
+      properties:
+        note:
+          type: string
+          description: e.g. the bank reference.
+          maxLength: 250
     RegisterRequest:
       type: object
       properties:
@@ -7266,6 +8480,26 @@ components:
       - name
       - property_name
       - slug
+    ReviewCounts:
+      type: object
+      properties:
+        total:
+          type: integer
+        hidden:
+          type: integer
+        hotel_average:
+          type: number
+          format: double
+          nullable: true
+        room_average:
+          type: number
+          format: double
+          nullable: true
+      required:
+      - hidden
+      - hotel_average
+      - room_average
+      - total
     ReviewInputRequest:
       type: object
       properties:
@@ -7335,6 +8569,535 @@ components:
       description: |-
         * `website` - Website
         * `staff` - Staff (offline)
+    StaffOverview:
+      type: object
+      properties:
+        users:
+          $ref: '#/components/schemas/UserCounts'
+        hotels:
+          $ref: '#/components/schemas/HotelCounts'
+        bookings:
+          $ref: '#/components/schemas/BookingCounts'
+        money:
+          $ref: '#/components/schemas/MoneyCounts'
+        support:
+          $ref: '#/components/schemas/SupportCounts'
+        reviews:
+          $ref: '#/components/schemas/ReviewCounts'
+        events:
+          $ref: '#/components/schemas/EventCounts'
+        months:
+          type: array
+          items:
+            $ref: '#/components/schemas/Month'
+          description: The last six months, oldest first.
+        recent_bookings:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecentBooking'
+        recent_users:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecentUser'
+      required:
+      - bookings
+      - events
+      - hotels
+      - money
+      - months
+      - recent_bookings
+      - recent_users
+      - reviews
+      - support
+      - users
+    StaffTicketOrder:
+      type: object
+      properties:
+        reference:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderStatusEnum'
+          readOnly: true
+        payment_required:
+          type: boolean
+          readOnly: true
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        buyer_name:
+          type: string
+          readOnly: true
+        buyer_email:
+          type: string
+          format: email
+          readOnly: true
+        buyer_phone:
+          type: string
+          readOnly: true
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+          readOnly: true
+        needs_refund:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        event_slug:
+          type: string
+          readOnly: true
+        event_title:
+          type: string
+          readOnly: true
+      required:
+      - buyer_email
+      - buyer_name
+      - buyer_phone
+      - created_at
+      - currency
+      - event_slug
+      - event_title
+      - needs_refund
+      - payment_required
+      - reference
+      - status
+      - tickets
+      - total_price
+    StaffTicketPayment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tx_ref:
+          type: string
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          readOnly: true
+        payment_type:
+          type: string
+          readOnly: true
+        needs_refund:
+          type: boolean
+          readOnly: true
+          description: Paid, but the tickets can't stand (sold out or cancelled).
+        provider_transaction_id:
+          type: string
+          readOnly: true
+        paid_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        order_reference:
+          type: string
+          readOnly: true
+        event_title:
+          type: string
+          readOnly: true
+        buyer_name:
+          type: string
+          readOnly: true
+        buyer_email:
+          type: string
+          readOnly: true
+      required:
+      - amount
+      - buyer_email
+      - buyer_name
+      - created_at
+      - currency
+      - event_title
+      - id
+      - needs_refund
+      - order_reference
+      - paid_at
+      - payment_type
+      - provider_transaction_id
+      - status
+      - tx_ref
+    StaffUser:
+      type: object
+      description: An account as Shortlet Stay staff see it. Counts are annotated
+        by the view.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        name:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          maxLength: 20
+        account_type:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        has_password:
+          type: boolean
+          readOnly: true
+        google_linked:
+          type: boolean
+          readOnly: true
+        hotel_count:
+          type: integer
+          readOnly: true
+          default: 0
+        booking_count:
+          type: integer
+          readOnly: true
+          default: 0
+        event_count:
+          type: integer
+          readOnly: true
+          default: 0
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - account_type
+      - booking_count
+      - date_joined
+      - email
+      - event_count
+      - first_name
+      - google_linked
+      - has_password
+      - hotel_count
+      - id
+      - is_active
+      - is_staff
+      - is_superuser
+      - last_login
+      - last_name
+      - name
+      - phone
+      - role
+    StaffUserCreate:
+      type: object
+      description: |-
+        Add an account: a guest, hotel owner, organiser or staff member.
+
+        Without a password, they're emailed a link to choose one.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        name:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          maxLength: 20
+        account_type:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        has_password:
+          type: boolean
+          readOnly: true
+        google_linked:
+          type: boolean
+          readOnly: true
+        hotel_count:
+          type: integer
+          readOnly: true
+          default: 0
+        booking_count:
+          type: integer
+          readOnly: true
+          default: 0
+        event_count:
+          type: integer
+          readOnly: true
+          default: 0
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - account_type
+      - booking_count
+      - date_joined
+      - email
+      - event_count
+      - first_name
+      - google_linked
+      - has_password
+      - hotel_count
+      - id
+      - is_active
+      - is_staff
+      - is_superuser
+      - last_login
+      - last_name
+      - name
+      - phone
+      - role
+    StaffUserCreateRequest:
+      type: object
+      description: |-
+        Add an account: a guest, hotel owner, organiser or staff member.
+
+        Without a password, they're emailed a link to choose one.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        phone:
+          type: string
+          maxLength: 20
+        account_type:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - first_name
+      - last_name
+    StaffUserDetail:
+      type: object
+      description: One account with what it owns and has done on Shortlet Stay.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        name:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          maxLength: 20
+        account_type:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        has_password:
+          type: boolean
+          readOnly: true
+        google_linked:
+          type: boolean
+          readOnly: true
+        hotel_count:
+          type: integer
+          readOnly: true
+          default: 0
+        booking_count:
+          type: integer
+          readOnly: true
+          default: 0
+        event_count:
+          type: integer
+          readOnly: true
+          default: 0
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        hotels:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserProperty'
+          readOnly: true
+        recent_bookings:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserBooking'
+          readOnly: true
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserEvent'
+          readOnly: true
+        ticket_order_count:
+          type: integer
+          readOnly: true
+        review_count:
+          type: integer
+          readOnly: true
+        support_chat_count:
+          type: integer
+          readOnly: true
+        amount_paid:
+          type: array
+          items:
+            $ref: '#/components/schemas/Money'
+          readOnly: true
+          description: Successful booking payments, by currency.
+      required:
+      - account_type
+      - amount_paid
+      - booking_count
+      - date_joined
+      - email
+      - event_count
+      - events
+      - first_name
+      - google_linked
+      - has_password
+      - hotel_count
+      - hotels
+      - id
+      - is_active
+      - is_staff
+      - is_superuser
+      - last_login
+      - last_name
+      - name
+      - phone
+      - recent_bookings
+      - review_count
+      - role
+      - support_chat_count
+      - ticket_order_count
     StartConversationRequest:
       type: object
       properties:
@@ -7402,6 +9165,19 @@ components:
       description: |-
         * `night` - Nights
         * `hourly` - Hours
+    SupportCounts:
+      type: object
+      properties:
+        open:
+          type: integer
+        needs_reply:
+          type: integer
+        unassigned:
+          type: integer
+      required:
+      - needs_reply
+      - open
+      - unassigned
     SupportStatusEnum:
       enum:
       - open
@@ -8329,6 +10105,111 @@ components:
       - last_name
       - phone
       - role
+    UserBooking:
+      type: object
+      properties:
+        id:
+          type: integer
+        reference:
+          type: string
+        status:
+          type: string
+        unit_name:
+          type: string
+        property_name:
+          type: string
+        stay:
+          type: string
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - created_at
+      - id
+      - property_name
+      - reference
+      - status
+      - stay
+      - total_price
+      - unit_name
+    UserCounts:
+      type: object
+      properties:
+        total:
+          type: integer
+        guests:
+          type: integer
+        owners:
+          type: integer
+        organisers:
+          type: integer
+        staff:
+          type: integer
+        inactive:
+          type: integer
+        new_30d:
+          type: integer
+      required:
+      - guests
+      - inactive
+      - new_30d
+      - organisers
+      - owners
+      - staff
+      - total
+    UserEvent:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        starts_at:
+          type: string
+          format: date-time
+      required:
+      - slug
+      - starts_at
+      - status
+      - title
+    UserProperty:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 200
+            pattern: ^[-a-zA-Z0-9_]+$
+          - type: string
+            maxLength: 0
+        name:
+          type: string
+          maxLength: 150
+        city:
+          type: string
+          maxLength: 100
+        is_active:
+          type: boolean
+        unit_count:
+          type: integer
+          readOnly: true
+      required:
+      - city
+      - id
+      - is_active
+      - name
+      - slug
+      - unit_count
     VisitorCountry:
       type: object
       properties:
