@@ -4,6 +4,228 @@
  */
 
 export interface paths {
+    "/api/admin/hotels/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every hotel with its owner and numbers. Create and edit hotels and rooms through /dashboard/properties/. */
+        get: operations["admin_hotels_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/hotels/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every hotel with its owner and numbers. Create and edit hotels and rooms through /dashboard/properties/. */
+        get: operations["admin_hotels_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/hotels/{slug}/assign-owner/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Give the hotel to a hotel owner account, or (null) take it back for Shortlet Stay to manage. */
+        post: operations["admin_hotels_assign_owner_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/overview/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The whole platform's numbers for the admin home page. */
+        get: operations["admin_overview_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/payments/{id}/mark-refunded/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Record that a booking payment flagged for refund has been paid back (outside Shortlet Stay, e.g. by bank). */
+        post: operations["admin_payments_mark_refunded_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/ticket-orders/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Ticket orders across every event, newest first. Confirm and decline them through /dashboard/events/. */
+        get: operations["admin_ticket_orders_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/ticket-payments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Payments for event tickets, newest first. */
+        get: operations["admin_ticket_payments_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/ticket-payments/{id}/mark-refunded/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Record that a ticket payment flagged for refund has been paid back. */
+        post: operations["admin_ticket_payments_mark_refunded_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         *
+         *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+         */
+        get: operations["admin_users_list"];
+        put?: never;
+        /**
+         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         *
+         *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+         */
+        post: operations["admin_users_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         *
+         *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+         */
+        get: operations["admin_users_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         *
+         *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
+         */
+        patch: operations["admin_users_partial_update"];
+        trace?: never;
+    };
+    "/api/admin/users/{id}/send-password-reset/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Email them a link to choose a new password (also how an invited account sets its first one). */
+        post: operations["admin_users_send_password_reset_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}/sign-out/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description End every session the account has, on every device. */
+        post: operations["admin_users_sign_out_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/amenities/": {
         parameters: {
             query?: never;
@@ -1134,6 +1356,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/support/admin/conversations/{reference}/assign/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Hand the chat to a team member (null: unassigned). */
+        post: operations["support_admin_conversations_assign_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/support/admin/conversations/{reference}/close/": {
         parameters: {
             query?: never;
@@ -1264,7 +1503,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description The chat and its messages. Reading it marks the support team's replies as seen. */
+        /** @description The chat and its messages. Reading it marks the support team's replies as seen, unless peeking. */
         get: operations["support_conversations_retrieve"];
         put?: never;
         post?: never;
@@ -1579,7 +1818,9 @@ export interface components {
             /** @description Open, and the visitor wrote last. */
             readonly needs_reply: boolean;
             readonly last_message: components["schemas"]["Message"] | null;
+            readonly assigned_to: number | null;
             readonly assigned_to_name: string;
+            readonly user: number | null;
             readonly has_account: boolean;
             /** Format: date-time */
             readonly last_message_at: string;
@@ -1603,7 +1844,9 @@ export interface components {
             /** @description Open, and the visitor wrote last. */
             readonly needs_reply: boolean;
             readonly last_message: components["schemas"]["Message"] | null;
+            readonly assigned_to: number | null;
             readonly assigned_to_name: string;
+            readonly user: number | null;
             readonly has_account: boolean;
             /** Format: date-time */
             readonly last_message_at: string;
@@ -1647,6 +1890,14 @@ export interface components {
         AmenityRequest: {
             name: string;
             icon?: components["schemas"]["IconEnum"];
+        };
+        AssignOwnerRequest: {
+            /** @description A hotel owner's user id, or null for Shortlet Stay to manage it. */
+            owner: number | null;
+        };
+        AssignRequest: {
+            /** @description A team member's user id, or null. */
+            user: number | null;
         };
         /** @description One ticket with everything the organiser needs to register its holder. */
         Attendee: {
@@ -1739,6 +1990,8 @@ export interface components {
             readonly reference: string;
             unit: string;
             readonly unit_name: string;
+            readonly property_name: string;
+            readonly property_slug: string;
             status: components["schemas"]["StatusEnum"];
             readonly source: components["schemas"]["SourceEnum"];
             stay_type: components["schemas"]["StayType7a5Enum"];
@@ -1784,6 +2037,15 @@ export interface components {
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
+        };
+        BookingCounts: {
+            total: number;
+            new_30d: number;
+            /** @description Holding dates while waiting for payment or the host. */
+            pending: number;
+            in_house: number;
+            upcoming: number;
+            cancelled_30d: number;
         };
         /** @description Limit related-object choices to the request user's own properties/units. */
         BookingRequest: {
@@ -2273,6 +2535,12 @@ export interface components {
             readonly when_label: string;
             readonly where_label: string;
         };
+        EventCounts: {
+            /** @description Published and not finished. */
+            upcoming: number;
+            drafts: number;
+            tickets_sold: number;
+        };
         /** @description An event on a listing. */
         EventDetail: {
             readonly slug: string;
@@ -2317,6 +2585,9 @@ export interface components {
             readonly ticket_types: components["schemas"]["TicketTypeManage"][];
             readonly stats: components["schemas"]["EventStats"];
             readonly when_label: string;
+            readonly organiser_id: number | null;
+            /** Format: email */
+            readonly organiser_email: string | null;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -2381,6 +2652,37 @@ export interface components {
                 [key: string]: unknown;
             }[];
         };
+        /** @description A hotel in the admin's list, with who owns it and how it's doing. Edit it through /dashboard/properties/. */
+        Hotel: {
+            readonly id: number;
+            readonly slug: string;
+            readonly name: string;
+            /** @description Neighbourhood shown to guests. */
+            readonly area: string;
+            readonly city: string;
+            readonly state: string;
+            readonly country: components["schemas"]["CountryEnum"];
+            readonly country_name: string;
+            readonly is_active: boolean;
+            readonly owner_id: number | null;
+            readonly owner_name: string;
+            readonly owner_email: string;
+            readonly unit_count: number;
+            readonly published_count: number;
+            readonly booking_count: number;
+            readonly review_count: number;
+            /** Format: double */
+            readonly rating: number | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        HotelCounts: {
+            total: number;
+            active: number;
+            without_owner: number;
+            rooms: number;
+            rooms_published: number;
+        };
         /**
          * @description * `zap` - Power
          *     * `wifi` - Wi-Fi
@@ -2423,6 +2725,7 @@ export interface components {
             readonly created_at: string;
             readonly unit_slug: string;
             readonly property_name: string;
+            readonly property_slug: string;
             readonly booking_reference: string;
             /** @description Platform admins can hide a review that breaks the rules. */
             is_visible: boolean;
@@ -2437,6 +2740,32 @@ export interface components {
         };
         MessageInputRequest: {
             body: string;
+        };
+        Money: {
+            currency: string;
+            /** Format: decimal */
+            amount: string;
+        };
+        MoneyCounts: {
+            /** @description Successful booking payments, all time. */
+            bookings: components["schemas"]["Money"][];
+            bookings_30d: components["schemas"]["Money"][];
+            /** @description Successful ticket payments, all time. */
+            tickets: components["schemas"]["Money"][];
+            tickets_30d: components["schemas"]["Money"][];
+            /** @description Booking and ticket payments waiting for a refund. */
+            needs_refund: number;
+            failed_30d: number;
+        };
+        Month: {
+            /**
+             * Format: date
+             * @description First day of the month.
+             */
+            month: string;
+            /** @description Bookings made that month (not cancelled or expired). */
+            bookings: number;
+            signups: number;
         };
         /** @description The guest's own review of a stay. */
         MyReview: {
@@ -2668,6 +2997,21 @@ export interface components {
             previous: string | null;
             results: components["schemas"]["EventManage"][];
         };
+        PaginatedHotelList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["Hotel"][];
+        };
         PaginatedManagedReviewList: {
             /** @example 123 */
             count: number;
@@ -2772,6 +3116,51 @@ export interface components {
              */
             previous: string | null;
             results: components["schemas"]["Reservation"][];
+        };
+        PaginatedStaffTicketOrderList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["StaffTicketOrder"][];
+        };
+        PaginatedStaffTicketPaymentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["StaffTicketPayment"][];
+        };
+        PaginatedStaffUserList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["StaffUser"][];
         };
         PaginatedTransactionList: {
             /** @example 123 */
@@ -2942,6 +3331,28 @@ export interface components {
             longitude?: string | null;
             is_active?: boolean;
         };
+        /** @description An account as Shortlet Stay staff see it. Counts are annotated by the view. */
+        PatchedStaffUserRequest: {
+            first_name?: string;
+            last_name?: string;
+            phone?: string;
+            account_type?: components["schemas"]["AccountTypeEnum"];
+            /**
+             * Active
+             * @description Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+             */
+            is_active?: boolean;
+            /**
+             * Staff status
+             * @description Designates whether the user can log into this admin site.
+             */
+            is_staff?: boolean;
+            /**
+             * Superuser status
+             * @description Designates that this user has all permissions without explicitly assigning them.
+             */
+            is_superuser?: boolean;
+        };
         PatchedTicketTypeManageRequest: {
             name?: string;
             description?: string;
@@ -3058,9 +3469,10 @@ export interface components {
          *     * `confirmed` - Booking confirmed
          *     * `needs_refund` - Paid but couldn't confirm: needs refund
          *     * `already_settled` - Already settled, ignored
+         *     * `refunded` - Refunded by Shortlet Stay staff
          * @enum {string}
          */
-        PaymentEventKindEnum: "checkout_started" | "checkout_failed" | "guest_returned" | "webhook" | "verified" | "verify_error" | "pending" | "mismatch" | "failed" | "confirmed" | "needs_refund" | "already_settled";
+        PaymentEventKindEnum: "checkout_started" | "checkout_failed" | "guest_returned" | "webhook" | "verified" | "verify_error" | "pending" | "mismatch" | "failed" | "confirmed" | "needs_refund" | "already_settled" | "refunded";
         PaymentResultRequest: {
             tx_ref: string;
             transaction_id?: string;
@@ -3183,6 +3595,32 @@ export interface components {
          * @enum {string}
          */
         ReasonEnum: "maintenance" | "owner" | "other";
+        RecentBooking: {
+            id: number;
+            reference: string;
+            guest_name: string;
+            unit_name: string;
+            property_name: string;
+            stay: string;
+            status: string;
+            /** Format: decimal */
+            total_price: string | null;
+            /** Format: date-time */
+            created_at: string;
+        };
+        RecentUser: {
+            id: number;
+            /** Format: email */
+            email: string;
+            name: string;
+            role: components["schemas"]["RoleEnum"];
+            /** Format: date-time */
+            date_joined: string;
+        };
+        RefundRequest: {
+            /** @description e.g. the bank reference. */
+            note?: string;
+        };
         RegisterRequest: {
             /**
              * Email address
@@ -3269,6 +3707,14 @@ export interface components {
             /** Format: uri */
             readonly cover_image: string | null;
         };
+        ReviewCounts: {
+            total: number;
+            hidden: number;
+            /** Format: double */
+            hotel_average: number | null;
+            /** Format: double */
+            room_average: number | null;
+        };
         ReviewInputRequest: {
             hotel_rating: number;
             room_rating: number;
@@ -3303,6 +3749,227 @@ export interface components {
          * @enum {string}
          */
         SourceEnum: "website" | "staff";
+        StaffOverview: {
+            users: components["schemas"]["UserCounts"];
+            hotels: components["schemas"]["HotelCounts"];
+            bookings: components["schemas"]["BookingCounts"];
+            money: components["schemas"]["MoneyCounts"];
+            support: components["schemas"]["SupportCounts"];
+            reviews: components["schemas"]["ReviewCounts"];
+            events: components["schemas"]["EventCounts"];
+            /** @description The last six months, oldest first. */
+            months: components["schemas"]["Month"][];
+            recent_bookings: components["schemas"]["RecentBooking"][];
+            recent_users: components["schemas"]["RecentUser"][];
+        };
+        StaffTicketOrder: {
+            readonly reference: string;
+            readonly status: components["schemas"]["OrderStatusEnum"];
+            readonly payment_required: boolean;
+            /** Format: decimal */
+            readonly total_price: string;
+            readonly currency: string;
+            readonly buyer_name: string;
+            /** Format: email */
+            readonly buyer_email: string;
+            readonly buyer_phone: string;
+            readonly tickets: components["schemas"]["Ticket"][];
+            readonly needs_refund: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly event_slug: string;
+            readonly event_title: string;
+        };
+        StaffTicketPayment: {
+            readonly id: number;
+            readonly tx_ref: string;
+            /** Format: decimal */
+            readonly amount: string;
+            readonly currency: string;
+            readonly status: components["schemas"]["PaymentStatusEnum"];
+            readonly payment_type: string;
+            /** @description Paid, but the tickets can't stand (sold out or cancelled). */
+            readonly needs_refund: boolean;
+            readonly provider_transaction_id: string;
+            /** Format: date-time */
+            readonly paid_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly order_reference: string;
+            readonly event_title: string;
+            readonly buyer_name: string;
+            readonly buyer_email: string;
+        };
+        /** @description An account as Shortlet Stay staff see it. Counts are annotated by the view. */
+        StaffUser: {
+            readonly id: number;
+            /**
+             * Email address
+             * Format: email
+             */
+            readonly email: string;
+            readonly name: string;
+            first_name: string;
+            last_name: string;
+            phone: string;
+            account_type: components["schemas"]["AccountTypeEnum"];
+            readonly role: components["schemas"]["RoleEnum"];
+            /**
+             * Active
+             * @description Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+             */
+            is_active: boolean;
+            /**
+             * Staff status
+             * @description Designates whether the user can log into this admin site.
+             */
+            is_staff: boolean;
+            /**
+             * Superuser status
+             * @description Designates that this user has all permissions without explicitly assigning them.
+             */
+            is_superuser: boolean;
+            readonly has_password: boolean;
+            readonly google_linked: boolean;
+            /** @default 0 */
+            readonly hotel_count: number;
+            /** @default 0 */
+            readonly booking_count: number;
+            /** @default 0 */
+            readonly event_count: number;
+            /** Format: date-time */
+            readonly date_joined: string;
+            /** Format: date-time */
+            readonly last_login: string | null;
+        };
+        /**
+         * @description Add an account: a guest, hotel owner, organiser or staff member.
+         *
+         *     Without a password, they're emailed a link to choose one.
+         */
+        StaffUserCreate: {
+            readonly id: number;
+            /**
+             * Email address
+             * Format: email
+             */
+            email: string;
+            readonly name: string;
+            first_name: string;
+            last_name: string;
+            phone: string;
+            account_type: components["schemas"]["AccountTypeEnum"];
+            readonly role: components["schemas"]["RoleEnum"];
+            /**
+             * Active
+             * @description Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+             */
+            is_active: boolean;
+            /**
+             * Staff status
+             * @description Designates whether the user can log into this admin site.
+             */
+            is_staff: boolean;
+            /**
+             * Superuser status
+             * @description Designates that this user has all permissions without explicitly assigning them.
+             */
+            is_superuser: boolean;
+            readonly has_password: boolean;
+            readonly google_linked: boolean;
+            /** @default 0 */
+            readonly hotel_count: number;
+            /** @default 0 */
+            readonly booking_count: number;
+            /** @default 0 */
+            readonly event_count: number;
+            /** Format: date-time */
+            readonly date_joined: string;
+            /** Format: date-time */
+            readonly last_login: string | null;
+        };
+        /**
+         * @description Add an account: a guest, hotel owner, organiser or staff member.
+         *
+         *     Without a password, they're emailed a link to choose one.
+         */
+        StaffUserCreateRequest: {
+            /**
+             * Email address
+             * Format: email
+             */
+            email: string;
+            first_name: string;
+            last_name: string;
+            phone?: string;
+            account_type?: components["schemas"]["AccountTypeEnum"];
+            /**
+             * Active
+             * @description Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+             */
+            is_active?: boolean;
+            /**
+             * Staff status
+             * @description Designates whether the user can log into this admin site.
+             */
+            is_staff?: boolean;
+            /**
+             * Superuser status
+             * @description Designates that this user has all permissions without explicitly assigning them.
+             */
+            is_superuser?: boolean;
+            password?: string;
+        };
+        /** @description One account with what it owns and has done on Shortlet Stay. */
+        StaffUserDetail: {
+            readonly id: number;
+            /**
+             * Email address
+             * Format: email
+             */
+            readonly email: string;
+            readonly name: string;
+            first_name: string;
+            last_name: string;
+            phone: string;
+            account_type: components["schemas"]["AccountTypeEnum"];
+            readonly role: components["schemas"]["RoleEnum"];
+            /**
+             * Active
+             * @description Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+             */
+            is_active: boolean;
+            /**
+             * Staff status
+             * @description Designates whether the user can log into this admin site.
+             */
+            is_staff: boolean;
+            /**
+             * Superuser status
+             * @description Designates that this user has all permissions without explicitly assigning them.
+             */
+            is_superuser: boolean;
+            readonly has_password: boolean;
+            readonly google_linked: boolean;
+            /** @default 0 */
+            readonly hotel_count: number;
+            /** @default 0 */
+            readonly booking_count: number;
+            /** @default 0 */
+            readonly event_count: number;
+            /** Format: date-time */
+            readonly date_joined: string;
+            /** Format: date-time */
+            readonly last_login: string | null;
+            readonly hotels: components["schemas"]["UserProperty"][];
+            readonly recent_bookings: components["schemas"]["UserBooking"][];
+            readonly events: components["schemas"]["UserEvent"][];
+            readonly ticket_order_count: number;
+            readonly review_count: number;
+            readonly support_chat_count: number;
+            /** @description Successful booking payments, by currency. */
+            readonly amount_paid: components["schemas"]["Money"][];
+        };
         StartConversationRequest: {
             message: string;
             /** @description e.g. "Payments › My payment failed". */
@@ -3337,6 +4004,11 @@ export interface components {
          * @enum {string}
          */
         StayType7a5Enum: "night" | "hourly";
+        SupportCounts: {
+            open: number;
+            needs_reply: number;
+            unassigned: number;
+        };
         /**
          * @description * `open` - Open
          *     * `closed` - Closed
@@ -3698,6 +4370,42 @@ export interface components {
             readonly has_password: boolean;
             readonly google_linked: boolean;
         };
+        UserBooking: {
+            id: number;
+            reference: string;
+            status: string;
+            unit_name: string;
+            property_name: string;
+            stay: string;
+            /** Format: decimal */
+            total_price: string | null;
+            /** Format: date-time */
+            created_at: string;
+        };
+        UserCounts: {
+            total: number;
+            guests: number;
+            owners: number;
+            organisers: number;
+            staff: number;
+            inactive: number;
+            new_30d: number;
+        };
+        UserEvent: {
+            slug: string;
+            title: string;
+            status: string;
+            /** Format: date-time */
+            starts_at: string;
+        };
+        UserProperty: {
+            readonly id: number;
+            slug: string;
+            name: string;
+            city: string;
+            is_active: boolean;
+            readonly unit_count: number;
+        };
         VisitorCountry: {
             /** @description ISO 3166-1 alpha-2, e.g. GB. Null: every country. */
             code: string | null;
@@ -3712,6 +4420,433 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    admin_hotels_list: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                is_active?: boolean;
+                /** @description name, created_at, booking_count, rating (prefix - to reverse). */
+                ordering?: string;
+                /** @description An owner's user id, or "none" for hotels Shortlet Stay manages. */
+                owner?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Hotel name, area, city or the owner's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedHotelList"];
+                };
+            };
+        };
+    };
+    admin_hotels_retrieve: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                is_active?: boolean;
+                /** @description name, created_at, booking_count, rating (prefix - to reverse). */
+                ordering?: string;
+                /** @description An owner's user id, or "none" for hotels Shortlet Stay manages. */
+                owner?: string;
+                /** @description Hotel name, area, city or the owner's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Hotel"];
+                };
+            };
+        };
+    };
+    admin_hotels_assign_owner_create: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                is_active?: boolean;
+                /** @description name, created_at, booking_count, rating (prefix - to reverse). */
+                ordering?: string;
+                /** @description An owner's user id, or "none" for hotels Shortlet Stay manages. */
+                owner?: string;
+                /** @description Hotel name, area, city or the owner's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignOwnerRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssignOwnerRequest"];
+                "multipart/form-data": components["schemas"]["AssignOwnerRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Hotel"];
+                };
+            };
+        };
+    };
+    admin_overview_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffOverview"];
+                };
+            };
+        };
+    };
+    admin_payments_mark_refunded_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RefundRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RefundRequest"];
+                "multipart/form-data": components["schemas"]["RefundRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Transaction"];
+                };
+            };
+        };
+    };
+    admin_ticket_orders_list: {
+        parameters: {
+            query?: {
+                /** @description The event's slug. */
+                event?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Order reference, buyer name, email or phone. */
+                search?: string;
+                status?: "cancelled" | "confirmed" | "pending";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffTicketOrderList"];
+                };
+            };
+        };
+    };
+    admin_ticket_payments_list: {
+        parameters: {
+            query?: {
+                needs_refund?: boolean;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Payment or order reference, buyer name or email. */
+                search?: string;
+                status?: "failed" | "initiated" | "successful";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffTicketPaymentList"];
+                };
+            };
+        };
+    };
+    admin_ticket_payments_mark_refunded_create: {
+        parameters: {
+            query?: {
+                needs_refund?: boolean;
+                /** @description Payment or order reference, buyer name or email. */
+                search?: string;
+                status?: "failed" | "initiated" | "successful";
+            };
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this ticket payment. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RefundRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RefundRequest"];
+                "multipart/form-data": components["schemas"]["RefundRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffTicketPayment"];
+                };
+            };
+        };
+    };
+    admin_users_list: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description admin: Shortlet Stay staff. */
+                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description Name, email or phone. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffUserList"];
+                };
+            };
+        };
+    };
+    admin_users_create: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
+                ordering?: string;
+                /** @description admin: Shortlet Stay staff. */
+                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description Name, email or phone. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StaffUserCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["StaffUserCreateRequest"];
+                "multipart/form-data": components["schemas"]["StaffUserCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffUserCreate"];
+                };
+            };
+        };
+    };
+    admin_users_retrieve: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
+                ordering?: string;
+                /** @description admin: Shortlet Stay staff. */
+                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description Name, email or phone. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this user. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffUserDetail"];
+                };
+            };
+        };
+    };
+    admin_users_partial_update: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
+                ordering?: string;
+                /** @description admin: Shortlet Stay staff. */
+                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description Name, email or phone. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this user. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedStaffUserRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedStaffUserRequest"];
+                "multipart/form-data": components["schemas"]["PatchedStaffUserRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffUser"];
+                };
+            };
+        };
+    };
+    admin_users_send_password_reset_create: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
+                ordering?: string;
+                /** @description admin: Shortlet Stay staff. */
+                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description Name, email or phone. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this user. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    admin_users_sign_out_create: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
+                ordering?: string;
+                /** @description admin: Shortlet Stay staff. */
+                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description Name, email or phone. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this user. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
     amenities_list: {
         parameters: {
             query?: never;
@@ -4521,6 +5656,7 @@ export interface operations {
             query?: {
                 check_in__gte?: string;
                 check_in__lte?: string;
+                guest?: number;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -4530,12 +5666,23 @@ export interface operations {
                 /** @description A search term. */
                 search?: string;
                 /**
+                 * @description * `website` - Website
+                 *     * `staff` - Staff (offline)
+                 */
+                source?: "staff" | "website";
+                /**
                  * @description * `pending` - Pending payment
                  *     * `confirmed` - Confirmed
                  *     * `cancelled` - Cancelled
                  *     * `expired` - Expired
                  */
                 status?: "cancelled" | "confirmed" | "expired" | "pending";
+                /**
+                 * @description * `night` - Nights
+                 *     * `hourly` - Hours
+                 */
+                stay_type?: "hourly" | "night";
+                unit__property__slug?: string;
                 unit__slug?: string;
             };
             header?: never;
@@ -4700,10 +5847,15 @@ export interface operations {
     dashboard_events_list: {
         parameters: {
             query?: {
+                /** @description Organiser's user id (platform admins). */
+                organiser?: number;
                 /** @description A page number within the paginated result set. */
                 page?: number;
                 /** @description Number of results to return per page. */
                 page_size?: number;
+                /** @description Title, venue or city. */
+                search?: string;
+                status?: "cancelled" | "draft" | "published";
             };
             header?: never;
             path?: never;
@@ -5397,6 +6549,8 @@ export interface operations {
     dashboard_transactions_list: {
         parameters: {
             query?: {
+                booking__guest?: number;
+                booking__unit__property__slug?: string;
                 created_at__date__gte?: string;
                 created_at__date__lte?: string;
                 needs_refund?: boolean;
@@ -6002,6 +7156,8 @@ export interface operations {
     support_admin_conversations_list: {
         parameters: {
             query?: {
+                /** @description "me", "none", or a team member user id. */
+                assigned?: string;
                 /** @description A page number within the paginated result set. */
                 page?: number;
                 /** @description Reference, name, email or topic. */
@@ -6034,6 +7190,33 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminConversationDetail"];
+                };
+            };
+        };
+    };
+    support_admin_conversations_assign_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssignRequest"];
+                "multipart/form-data": components["schemas"]["AssignRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -6304,6 +7487,8 @@ export interface operations {
     support_conversations_retrieve: {
         parameters: {
             query?: {
+                /** @description Check for replies without marking them seen (e.g. for an unread badge). */
+                peek?: boolean;
                 /** @description The chat's token, for visitors without an account (or the X-Support-Token header). */
                 token?: string;
             };
