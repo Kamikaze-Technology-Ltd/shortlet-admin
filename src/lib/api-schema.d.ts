@@ -47,7 +47,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Give the car to a car rental host, or (null) take it back for Shortlet Stay to manage. */
+        /** @description Give the car to a car rental account, or (null) take it back for Shortlet Stay to manage. */
         post: operations["admin_cars_assign_owner_create"];
         delete?: never;
         options?: never;
@@ -132,7 +132,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Give the hotel to a stays host, or (null) take it back for Shortlet Stay to manage. */
+        /** @description Give the hotel to a host, or (null) take it back for Shortlet Stay to manage. */
         post: operations["admin_hotels_assign_owner_create"];
         delete?: never;
         options?: never;
@@ -250,14 +250,14 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
         get: operations["admin_users_list"];
         put?: never;
         /**
-         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -276,7 +276,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -287,7 +287,7 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -2178,10 +2178,11 @@ export interface components {
         /**
          * @description * `guest` - Guest
          *     * `owner` - Host
+         *     * `car_rental` - Car rental
          *     * `organiser` - Event organiser
          * @enum {string}
          */
-        AccountTypeEnum: "guest" | "owner" | "organiser";
+        AccountTypeEnum: "guest" | "owner" | "car_rental" | "organiser";
         /** @description A chat in the support inbox. */
         AdminConversation: {
             readonly reference: string;
@@ -2273,11 +2274,11 @@ export interface components {
             icon?: components["schemas"]["IconEnum"];
         };
         AssignCarOwnerRequest: {
-            /** @description A car rental host's user id, or null for Shortlet Stay to manage it. */
+            /** @description A car rental account's user id, or null for Shortlet Stay to manage it. */
             owner: number | null;
         };
         AssignOwnerRequest: {
-            /** @description A stays host's user id, or null for Shortlet Stay to manage it. */
+            /** @description A host's user id, or null for Shortlet Stay to manage it. */
             owner: number | null;
         };
         AssignRequest: {
@@ -3210,7 +3211,7 @@ export interface components {
          * @description Sign in, or sign up, with the ID token from Google's "Sign in with Google" button.
          *
          *     One endpoint serves both the sign-in and sign-up pages: an unknown Google account gets a new
-         *     account of the portal's type (guest, host or event organiser); a known one is signed in.
+         *     account of the portal's type (guest, host, car rental or event organiser); a known one is signed in.
          */
         GoogleAuthRequest: {
             /** @description The ID token (JWT) Google gives the browser. */
@@ -3223,7 +3224,6 @@ export interface components {
              *     * `hotel` - Hotel owner
              *     * `property_manager` - Property manager
              *     * `homeowner` - Home owner
-             *     * `car_rental` - Car rental
              */
             host_type?: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
         };
@@ -3249,10 +3249,9 @@ export interface components {
          * @description * `hotel` - Hotel owner
          *     * `property_manager` - Property manager
          *     * `homeowner` - Home owner
-         *     * `car_rental` - Car rental
          * @enum {string}
          */
-        HostTypeEnum: "hotel" | "property_manager" | "homeowner" | "car_rental";
+        HostTypeEnum: "hotel" | "property_manager" | "homeowner";
         /** @description A hotel in the admin's list, with who owns it and how it's doing. Edit it through /dashboard/properties/. */
         Hotel: {
             readonly id: number;
@@ -4228,10 +4227,11 @@ export interface components {
         /**
          * @description * `guest` - guest
          *     * `owner` - owner
+         *     * `car_rental` - car_rental
          *     * `organiser` - organiser
          * @enum {string}
          */
-        PortalEnum: "guest" | "owner" | "organiser";
+        PortalEnum: "guest" | "owner" | "car_rental" | "organiser";
         PropertyManage: {
             readonly id: number;
             name: string;
@@ -4564,11 +4564,12 @@ export interface components {
         /**
          * @description * `guest` - guest
          *     * `owner` - owner
+         *     * `car_rental` - car_rental
          *     * `organiser` - organiser
          *     * `admin` - admin
          * @enum {string}
          */
-        RoleEnum: "guest" | "owner" | "organiser" | "admin";
+        RoleEnum: "guest" | "owner" | "car_rental" | "organiser" | "admin";
         /**
          * @description * `user` - Visitor
          *     * `agent` - Support team
@@ -4762,7 +4763,7 @@ export interface components {
             readonly last_login: string | null;
         };
         /**
-         * @description Add an account: a guest, host, organiser or staff member.
+         * @description Add an account: a guest, host, car rental account, organiser or staff member.
          *
          *     Without a password, they're emailed a link to choose one.
          */
@@ -4811,7 +4812,7 @@ export interface components {
             readonly last_login: string | null;
         };
         /**
-         * @description Add an account: a guest, host, organiser or staff member.
+         * @description Add an account: a guest, host, car rental account, organiser or staff member.
          *
          *     Without a password, they're emailed a link to choose one.
          */
@@ -5324,9 +5325,10 @@ export interface components {
         UserCounts: {
             total: number;
             guests: number;
-            /** @description Hosts, of every type. */
+            /** @description Hosts (stays). */
             owners: number;
-            car_hosts: number;
+            /** @description Car rental accounts. */
+            car_rentals: number;
             organisers: number;
             staff: number;
             inactive: number;
@@ -5804,7 +5806,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
+                host_type?: "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
@@ -5812,8 +5814,8 @@ export interface operations {
                 page?: number;
                 /** @description Number of results to return per page. */
                 page_size?: number;
-                /** @description admin: Shortlet Stay staff. owner: hosts. */
-                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
+                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5837,12 +5839,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
+                host_type?: "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. */
-                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
+                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5872,12 +5874,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
+                host_type?: "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. */
-                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
+                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5904,12 +5906,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
+                host_type?: "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. */
-                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
+                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5942,12 +5944,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
+                host_type?: "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. */
-                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
+                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5974,12 +5976,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
+                host_type?: "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. */
-                role?: "admin" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
+                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };

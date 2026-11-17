@@ -29,7 +29,7 @@ export default function Rentals({ car = "" }: { car?: string }) {
   const busy = (r: Rental, action: string) => act.isPending && act.variables?.r.reference === r.reference && act.variables.action === action;
 
   return (
-    <Page title="Car rentals" subtitle="Every car rental request. Hosts answer their own; step in if one is stuck." wide>
+    <Page title="Car rentals" subtitle="Every car rental request. Car rental accounts answer their own; step in if one is stuck." wide>
       {flash}
       <ErrorText error={act.error} />
       <Tabs value={status} onChange={(v) => { setStatus(v); setPage(1); }} options={TABS} />
@@ -61,7 +61,7 @@ export default function Rentals({ car = "" }: { car?: string }) {
                   <Td>
                     <p>{r.car_title}{r.with_driver && " · with driver"}</p>
                     <p className="text-xs text-muted">
-                      {day(r.pickup_date)} – {day(r.return_date)} · {r.days} day{r.days === 1 ? "" : "s"} · host {r.host_email ?? "Shortlet Stay"}
+                      {day(r.pickup_date)} – {day(r.return_date)} · {r.days} day{r.days === 1 ? "" : "s"} · owner {r.host_email ?? "Shortlet Stay"}
                     </p>
                   </Td>
                   <Td className="whitespace-nowrap">{money(r.total_price, r.currency)}</Td>

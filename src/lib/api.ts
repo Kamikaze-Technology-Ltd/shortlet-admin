@@ -42,12 +42,11 @@ export type Car = S["StaffCar"];
 export type Rental = S["StaffRental"];
 export type RentalStatus = S["RentalStatusEnum"];
 
-/** What each kind of host offers. Hotels, property managers and home owners list stays; car rental hosts list cars. */
+/** What kind of stays a host offers. Cars are listed by car rental accounts, which aren't hosts. */
 export const HOST_TYPES: Record<HostType, string> = {
   hotel: "Hotel owner",
   property_manager: "Property manager",
   homeowner: "Home owner",
-  car_rental: "Car rental",
 };
 
 /** DRF errors: `{ field: ["msg"] }`, `{ detail: "msg" }` or `{ non_field_errors: [...] }`. */

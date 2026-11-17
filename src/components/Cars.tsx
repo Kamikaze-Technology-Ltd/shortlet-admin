@@ -36,7 +36,7 @@ export default function Cars({ owner = "" }: { owner?: string }) {
   };
 
   return (
-    <Page title="Cars" subtitle="Every car hosts rent out. Suspend one to take it off the site, whatever its host does." wide>
+    <Page title="Cars" subtitle="Every car listed by car rental accounts. Suspend one to take it off the site, whatever its owner does." wide>
       {flash}
       <ErrorText error={toggle.error} />
       <Toolbar>
@@ -58,7 +58,7 @@ export default function Cars({ owner = "" }: { owner?: string }) {
       </Toolbar>
       {owner && (
         <p className="text-sm text-muted">
-          Showing one host&apos;s cars. <Link href="/cars" className="font-medium text-brand-900 hover:underline">Show every car</Link>
+          Showing one account&apos;s cars. <Link href="/cars" className="font-medium text-brand-900 hover:underline">Show every car</Link>
         </p>
       )}
       <Card pad={false}>
@@ -67,7 +67,7 @@ export default function Cars({ owner = "" }: { owner?: string }) {
         {list.data && !list.data.results.length && <Empty>No cars match.</Empty>}
         {!!list.data?.results.length && (
           <>
-            <Table head={["Car", "Host", "Price", "Rentals", "Added", "Status", ""]}>
+            <Table head={["Car", "Owner", "Price", "Rentals", "Added", "Status", ""]}>
               {list.data.results.map((c) => (
                 <tr key={c.slug}>
                   <Td>
@@ -100,7 +100,7 @@ export default function Cars({ owner = "" }: { owner?: string }) {
                   </Td>
                   <Td>
                     <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => setMoving(c)}>Change host</Button>
+                      <Button size="sm" variant="outline" onClick={() => setMoving(c)}>Change owner</Button>
                       <Button
                         size="sm"
                         variant={c.is_active ? "danger" : "outline"}
@@ -123,13 +123,13 @@ export default function Cars({ owner = "" }: { owner?: string }) {
   );
 }
 
-/** Give a car to another car rental host, or back to Shortlet Stay. */
+/** Give a car to another car rental account, or back to Shortlet Stay. */
 function ChangeHost({ car, onClose, onSaved }: { car: Car; onClose: () => void; onSaved: (c: Car) => void }) {
   const queryClient = useQueryClient();
   const [owner, setOwner] = useState(car.owner_id ? String(car.owner_id) : "");
   const hosts = useQuery({
-    queryKey: ["users", { host_type: "car_rental", is_active: "true", page_size: 200 }],
-    queryFn: () => adminApi.users({ role: "owner", host_type: "car_rental", is_active: "true", page_size: 200 }),
+    queryKey: ["users", { role: "car_rental", is_active: "true", page_size: 200 }],
+    queryFn: () => adminApi.users({ role: "car_rental", is_active: "true", page_size: 200 }),
   });
   const save = useMutation({
     mutationFn: () => adminApi.assignCarOwner(car.slug, owner ? Number(owner) : null),
@@ -142,7 +142,7 @@ function ChangeHost({ car, onClose, onSaved }: { car: Car; onClose: () => void; 
 
   return (
     <Drawer
-      title={`Host of the ${car.title}`}
+      title={`Owner of the ${car.title}`}
       onClose={onClose}
       footer={
         <>
@@ -151,7 +151,7 @@ function ChangeHost({ car, onClose, onSaved }: { car: Car; onClose: () => void; 
         </>
       }
     >
-      <Field label="Host" hint="Only car rental hosts can take a car. Its rentals stay as they are.">
+      <Field label="Car rental account" hint="Only car rental accounts list cars. Its rentals stay as they are.">
         <select value={owner} onChange={(e) => setOwner(e.target.value)} className={inputClass}>
           <option value="">Shortlet Stay (no host)</option>
           {hosts.data?.results.map((u) => (
