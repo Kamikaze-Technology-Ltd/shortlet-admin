@@ -36,6 +36,7 @@ const NAV: { section?: string; items: { href: string; label: string; icon: typeo
       { href: "/users", label: "All users", icon: Users },
       { href: "/guests", label: "Guests", icon: UserRound },
       { href: "/hosts", label: "Hosts", icon: Building2 },
+      { href: "/car-rentals", label: "Car rental accounts", icon: Car },
       { href: "/organisers", label: "Organisers", icon: Ticket },
       { href: "/team", label: "Support team", icon: ShieldCheck },
     ],

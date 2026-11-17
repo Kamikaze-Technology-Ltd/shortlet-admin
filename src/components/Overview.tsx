@@ -40,7 +40,7 @@ export default function Overview() {
       <Section title="People">
         <Stat label="Accounts" value={d.users.total} hint={`${d.users.new_30d} joined in 30 days · ${d.users.inactive} deactivated`} />
         <Stat label="Guests" value={d.users.guests} />
-        <Stat label="Hosts" value={d.users.owners} hint={`${d.users.car_hosts} car rental · ${d.users.organisers} event organisers`} />
+        <Stat label="Hosts" value={d.users.owners} hint={`${d.users.car_rentals} car rental accounts · ${d.users.organisers} event organisers`} />
         <Stat label="Support team" value={d.users.staff} />
       </Section>
 

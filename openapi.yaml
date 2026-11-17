@@ -116,8 +116,8 @@ paths:
   /api/admin/cars/{slug}/assign-owner/:
     post:
       operationId: admin_cars_assign_owner_create
-      description: Give the car to a car rental host, or (null) take it back for Shortlet
-        Stay to manage.
+      description: Give the car to a car rental account, or (null) take it back for
+        Shortlet Stay to manage.
       parameters:
       - in: query
         name: country
@@ -380,8 +380,8 @@ paths:
   /api/admin/hotels/{slug}/assign-owner/:
     post:
       operationId: admin_hotels_assign_owner_create
-      description: Give the hotel to a stays host, or (null) take it back for Shortlet
-        Stay to manage.
+      description: Give the hotel to a host, or (null) take it back for Shortlet Stay
+        to manage.
       parameters:
       - in: query
         name: country
@@ -677,7 +677,7 @@ paths:
     get:
       operationId: admin_users_list
       description: |-
-        Every account: guests, hosts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -686,7 +686,6 @@ paths:
         schema:
           type: string
           enum:
-          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -718,10 +717,12 @@ paths:
           type: string
           enum:
           - admin
+          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
+          accounts.'
       - in: query
         name: search
         schema:
@@ -741,7 +742,7 @@ paths:
     post:
       operationId: admin_users_create
       description: |-
-        Every account: guests, hosts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -750,7 +751,6 @@ paths:
         schema:
           type: string
           enum:
-          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -770,10 +770,12 @@ paths:
           type: string
           enum:
           - admin
+          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
+          accounts.'
       - in: query
         name: search
         schema:
@@ -806,7 +808,7 @@ paths:
     get:
       operationId: admin_users_retrieve
       description: |-
-        Every account: guests, hosts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -815,7 +817,6 @@ paths:
         schema:
           type: string
           enum:
-          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -841,10 +842,12 @@ paths:
           type: string
           enum:
           - admin
+          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
+          accounts.'
       - in: query
         name: search
         schema:
@@ -864,7 +867,7 @@ paths:
     patch:
       operationId: admin_users_partial_update
       description: |-
-        Every account: guests, hosts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -873,7 +876,6 @@ paths:
         schema:
           type: string
           enum:
-          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -899,10 +901,12 @@ paths:
           type: string
           enum:
           - admin
+          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
+          accounts.'
       - in: query
         name: search
         schema:
@@ -941,7 +945,6 @@ paths:
         schema:
           type: string
           enum:
-          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -967,10 +970,12 @@ paths:
           type: string
           enum:
           - admin
+          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
+          accounts.'
       - in: query
         name: search
         schema:
@@ -997,7 +1002,6 @@ paths:
         schema:
           type: string
           enum:
-          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -1023,10 +1027,12 @@ paths:
           type: string
           enum:
           - admin
+          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
+          accounts.'
       - in: query
         name: search
         schema:
@@ -5281,11 +5287,13 @@ components:
       enum:
       - guest
       - owner
+      - car_rental
       - organiser
       type: string
       description: |-
         * `guest` - Guest
         * `owner` - Host
+        * `car_rental` - Car rental
         * `organiser` - Event organiser
     AdminConversation:
       type: object
@@ -5533,8 +5541,8 @@ components:
         owner:
           type: integer
           nullable: true
-          description: A car rental host's user id, or null for Shortlet Stay to manage
-            it.
+          description: A car rental account's user id, or null for Shortlet Stay to
+            manage it.
       required:
       - owner
     AssignOwnerRequest:
@@ -5543,8 +5551,7 @@ components:
         owner:
           type: integer
           nullable: true
-          description: A stays host's user id, or null for Shortlet Stay to manage
-            it.
+          description: A host's user id, or null for Shortlet Stay to manage it.
       required:
       - owner
     AssignRequest:
@@ -7714,7 +7721,7 @@ components:
         Sign in, or sign up, with the ID token from Google's "Sign in with Google" button.
 
         One endpoint serves both the sign-in and sign-up pages: an unknown Google account gets a new
-        account of the portal's type (guest, host or event organiser); a known one is signed in.
+        account of the portal's type (guest, host, car rental or event organiser); a known one is signed in.
       properties:
         credential:
           type: string
@@ -7734,7 +7741,6 @@ components:
             * `hotel` - Hotel owner
             * `property_manager` - Property manager
             * `homeowner` - Home owner
-            * `car_rental` - Car rental
           oneOf:
           - $ref: '#/components/schemas/HostTypeEnum'
           - $ref: '#/components/schemas/BlankEnum'
@@ -7790,13 +7796,11 @@ components:
       - hotel
       - property_manager
       - homeowner
-      - car_rental
       type: string
       description: |-
         * `hotel` - Hotel owner
         * `property_manager` - Property manager
         * `homeowner` - Home owner
-        * `car_rental` - Car rental
     Hotel:
       type: object
       description: A hotel in the admin's list, with who owns it and how it's doing.
@@ -9781,11 +9785,13 @@ components:
       enum:
       - guest
       - owner
+      - car_rental
       - organiser
       type: string
       description: |-
         * `guest` - guest
         * `owner` - owner
+        * `car_rental` - car_rental
         * `organiser` - organiser
     PropertyManage:
       type: object
@@ -10610,12 +10616,14 @@ components:
       enum:
       - guest
       - owner
+      - car_rental
       - organiser
       - admin
       type: string
       description: |-
         * `guest` - guest
         * `owner` - owner
+        * `car_rental` - car_rental
         * `organiser` - organiser
         * `admin` - admin
     SenderEnum:
@@ -11143,7 +11151,7 @@ components:
     StaffUserCreate:
       type: object
       description: |-
-        Add an account: a guest, host, organiser or staff member.
+        Add an account: a guest, host, car rental account, organiser or staff member.
 
         Without a password, they're emailed a link to choose one.
       properties:
@@ -11246,7 +11254,7 @@ components:
     StaffUserCreateRequest:
       type: object
       description: |-
-        Add an account: a guest, host, organiser or staff member.
+        Add an account: a guest, host, car rental account, organiser or staff member.
 
         Without a password, they're emailed a link to choose one.
       properties:
@@ -12504,9 +12512,10 @@ components:
           type: integer
         owners:
           type: integer
-          description: Hosts, of every type.
-        car_hosts:
+          description: Hosts (stays).
+        car_rentals:
           type: integer
+          description: Car rental accounts.
         organisers:
           type: integer
         staff:
@@ -12516,7 +12525,7 @@ components:
         new_30d:
           type: integer
       required:
-      - car_hosts
+      - car_rentals
       - guests
       - inactive
       - new_30d
