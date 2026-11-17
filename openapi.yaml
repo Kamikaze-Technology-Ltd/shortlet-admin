@@ -4,6 +4,280 @@ info:
   version: 1.0.0
   description: Shortlet Stay backend API
 paths:
+  /api/admin/cars/:
+    get:
+      operationId: admin_cars_list
+      description: Every car with its host and rentals. Edit cars through /dashboard/cars/;
+        suspend or reassign them here.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: cars Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: make, created_at, daily_rate, rental_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for cars Shortlet Stay manages.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Make, model, city or the host's name or email.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStaffCarList'
+          description: ''
+  /api/admin/cars/{slug}/:
+    get:
+      operationId: admin_cars_retrieve
+      description: Every car with its host and rentals. Edit cars through /dashboard/cars/;
+        suspend or reassign them here.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: cars Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: make, created_at, daily_rate, rental_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for cars Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Make, model, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffCar'
+          description: ''
+  /api/admin/cars/{slug}/assign-owner/:
+    post:
+      operationId: admin_cars_assign_owner_create
+      description: Give the car to a car rental host, or (null) take it back for Shortlet
+        Stay to manage.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: cars Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: make, created_at, daily_rate, rental_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for cars Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Make, model, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignCarOwnerRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignCarOwnerRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignCarOwnerRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffCar'
+          description: ''
+  /api/admin/cars/{slug}/restore/:
+    post:
+      operationId: admin_cars_restore_create
+      description: Every car with its host and rentals. Edit cars through /dashboard/cars/;
+        suspend or reassign them here.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: cars Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: make, created_at, daily_rate, rental_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for cars Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Make, model, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffCar'
+          description: ''
+  /api/admin/cars/{slug}/suspend/:
+    post:
+      operationId: admin_cars_suspend_create
+      description: Take the car off the site, whatever its host does. Rentals already
+        made stand.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: cars Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: make, created_at, daily_rate, rental_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for cars Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Make, model, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffCar'
+          description: ''
   /api/admin/hotels/:
     get:
       operationId: admin_hotels_list
@@ -106,8 +380,8 @@ paths:
   /api/admin/hotels/{slug}/assign-owner/:
     post:
       operationId: admin_hotels_assign_owner_create
-      description: Give the hotel to a hotel owner account, or (null) take it back
-        for Shortlet Stay to manage.
+      description: Give the hotel to a stays host, or (null) take it back for Shortlet
+        Stay to manage.
       parameters:
       - in: query
         name: country
@@ -208,6 +482,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Transaction'
+          description: ''
+  /api/admin/rentals/:
+    get:
+      operationId: admin_rentals_list
+      description: Car rentals across every host, newest first. Confirm and decline
+        them through /dashboard/rentals/.
+      parameters:
+      - in: query
+        name: car
+        schema:
+          type: string
+        description: The car's slug.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Reference, or the guest's name, email or phone.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - confirmed
+          - declined
+          - pending
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStaffRentalList'
           description: ''
   /api/admin/ticket-orders/:
     get:
@@ -355,10 +677,20 @@ paths:
     get:
       operationId: admin_users_list
       description: |-
-        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
+      - in: query
+        name: host_type
+        schema:
+          type: string
+          enum:
+          - car_rental
+          - homeowner
+          - hotel
+          - property_manager
+        description: Hosts of this kind.
       - in: query
         name: is_active
         schema:
@@ -389,7 +721,7 @@ paths:
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -409,10 +741,20 @@ paths:
     post:
       operationId: admin_users_create
       description: |-
-        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
+      - in: query
+        name: host_type
+        schema:
+          type: string
+          enum:
+          - car_rental
+          - homeowner
+          - hotel
+          - property_manager
+        description: Hosts of this kind.
       - in: query
         name: is_active
         schema:
@@ -431,7 +773,7 @@ paths:
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -464,10 +806,20 @@ paths:
     get:
       operationId: admin_users_retrieve
       description: |-
-        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
+      - in: query
+        name: host_type
+        schema:
+          type: string
+          enum:
+          - car_rental
+          - homeowner
+          - hotel
+          - property_manager
+        description: Hosts of this kind.
       - in: path
         name: id
         schema:
@@ -492,7 +844,7 @@ paths:
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -512,10 +864,20 @@ paths:
     patch:
       operationId: admin_users_partial_update
       description: |-
-        Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
+      - in: query
+        name: host_type
+        schema:
+          type: string
+          enum:
+          - car_rental
+          - homeowner
+          - hotel
+          - property_manager
+        description: Hosts of this kind.
       - in: path
         name: id
         schema:
@@ -540,7 +902,7 @@ paths:
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -574,6 +936,16 @@ paths:
       description: Email them a link to choose a new password (also how an invited
         account sets its first one).
       parameters:
+      - in: query
+        name: host_type
+        schema:
+          type: string
+          enum:
+          - car_rental
+          - homeowner
+          - hotel
+          - property_manager
+        description: Hosts of this kind.
       - in: path
         name: id
         schema:
@@ -598,7 +970,7 @@ paths:
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -620,6 +992,16 @@ paths:
       operationId: admin_users_sign_out_create
       description: End every session the account has, on every device.
       parameters:
+      - in: query
+        name: host_type
+        schema:
+          type: string
+          enum:
+          - car_rental
+          - homeowner
+          - hotel
+          - property_manager
+        description: Hosts of this kind.
       - in: path
         name: id
         schema:
@@ -644,7 +1026,7 @@ paths:
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -1196,6 +1578,259 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reservation'
+          description: ''
+  /api/car-rentals/:
+    get:
+      operationId: car_rentals_list
+      description: The signed-in guest's car rentals, and requesting new ones.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - car-rentals
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRentalList'
+          description: ''
+    post:
+      operationId: car_rentals_create
+      description: The signed-in guest's car rentals, and requesting new ones.
+      tags:
+      - car-rentals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentalCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RentalCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RentalCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+          description: ''
+  /api/car-rentals/{reference}/:
+    get:
+      operationId: car_rentals_retrieve
+      description: The signed-in guest's car rentals, and requesting new ones.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - car-rentals
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+          description: ''
+  /api/car-rentals/{reference}/cancel/:
+    post:
+      operationId: car_rentals_cancel_create
+      description: The signed-in guest's car rentals, and requesting new ones.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - car-rentals
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+          description: ''
+  /api/cars/:
+    get:
+      operationId: cars_list
+      description: Cars guests can rent.
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - bus
+          - economy
+          - luxury
+          - pickup
+          - sedan
+          - suv
+          - van
+      - in: query
+        name: city
+        schema:
+          type: string
+        description: Only cars collected in this city.
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: 'ISO country code: only cars in that country.'
+      - in: query
+        name: driver
+        schema:
+          type: string
+          enum:
+          - self_drive
+          - with_driver
+        description: Cars that can be rented this way.
+      - in: query
+        name: max_price
+        schema:
+          type: number
+          format: double
+        description: Daily rate at most this.
+      - in: query
+        name: ordering
+        schema:
+          type: string
+          enum:
+          - -daily_rate
+          - -year
+          - daily_rate
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: pickup_date
+        schema:
+          type: string
+          format: date
+        description: 'With return_date: only cars free for those days.'
+      - in: query
+        name: return_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Words in the make or model.
+      - in: query
+        name: seats
+        schema:
+          type: integer
+        description: At least this many seats.
+      - in: query
+        name: transmission
+        schema:
+          type: string
+          enum:
+          - automatic
+          - manual
+      tags:
+      - cars
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCarCardList'
+          description: ''
+  /api/cars/{slug}/:
+    get:
+      operationId: cars_retrieve
+      description: Cars guests can rent.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - cars
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDetail'
+          description: ''
+  /api/cars/{slug}/availability/:
+    get:
+      operationId: cars_availability_retrieve
+      description: The days the car is already booked, and its rental rules.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - cars
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAvailability'
+          description: ''
+  /api/cars/cities/:
+    get:
+      operationId: cars_cities_list
+      description: Cities with cars to rent, for browsing by city.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      tags:
+      - cars
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
           description: ''
   /api/dashboard/amenities/:
     get:
@@ -1769,6 +2404,283 @@ paths:
               schema:
                 $ref: '#/components/schemas/Calendar'
           description: ''
+  /api/dashboard/cars/:
+    get:
+      operationId: dashboard_cars_list
+      description: A car rental host's cars (every car, for Shortlet Stay staff).
+      parameters:
+      - in: query
+        name: owner
+        schema:
+          type: integer
+        description: A host's user id (platform admins).
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Make, model or city.
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCarManageList'
+          description: ''
+    post:
+      operationId: dashboard_cars_create
+      description: A car rental host's cars (every car, for Shortlet Stay staff).
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarManageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CarManageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CarManageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarManage'
+          description: ''
+  /api/dashboard/cars/{car_slug}/images/:
+    get:
+      operationId: dashboard_cars_images_list
+      description: Upload (multipart), reorder and delete a car's photos.
+      parameters:
+      - in: path
+        name: car_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarImage'
+          description: ''
+    post:
+      operationId: dashboard_cars_images_create
+      description: Upload (multipart), reorder and delete a car's photos.
+      parameters:
+      - in: path
+        name: car_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CarImageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CarImageRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarImageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarImage'
+          description: ''
+  /api/dashboard/cars/{car_slug}/images/{id}/:
+    patch:
+      operationId: dashboard_cars_images_partial_update
+      description: Upload (multipart), reorder and delete a car's photos.
+      parameters:
+      - in: path
+        name: car_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCarImageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCarImageRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCarImageRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarImage'
+          description: ''
+    delete:
+      operationId: dashboard_cars_images_destroy
+      description: Upload (multipart), reorder and delete a car's photos.
+      parameters:
+      - in: path
+        name: car_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/dashboard/cars/{slug}/:
+    get:
+      operationId: dashboard_cars_retrieve
+      description: A car rental host's cars (every car, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarManage'
+          description: ''
+    put:
+      operationId: dashboard_cars_update
+      description: A car rental host's cars (every car, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarManageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CarManageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CarManageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarManage'
+          description: ''
+    patch:
+      operationId: dashboard_cars_partial_update
+      description: A car rental host's cars (every car, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCarManageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCarManageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCarManageRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarManage'
+          description: ''
+    delete:
+      operationId: dashboard_cars_destroy
+      description: A car rental host's cars (every car, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/dashboard/events/:
     get:
       operationId: dashboard_events_list
@@ -2489,6 +3401,143 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/dashboard/rentals/:
+    get:
+      operationId: dashboard_rentals_list
+      description: Rentals of a host's cars, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: query
+        name: car
+        schema:
+          type: string
+        description: The car's slug.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Reference, or the guest's name, email or phone.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - confirmed
+          - declined
+          - expired
+          - pending
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRentalManageList'
+          description: ''
+  /api/dashboard/rentals/{reference}/:
+    get:
+      operationId: dashboard_rentals_retrieve
+      description: Rentals of a host's cars, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalManage'
+          description: ''
+  /api/dashboard/rentals/{reference}/cancel/:
+    post:
+      operationId: dashboard_rentals_cancel_create
+      description: Call off a confirmed rental before the car is collected. The guest
+        is told.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalManage'
+          description: ''
+  /api/dashboard/rentals/{reference}/confirm/:
+    post:
+      operationId: dashboard_rentals_confirm_create
+      description: Rentals of a host's cars, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalManage'
+          description: ''
+  /api/dashboard/rentals/{reference}/decline/:
+    post:
+      operationId: dashboard_rentals_decline_create
+      description: Rentals of a host's cars, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalManage'
+          description: ''
   /api/dashboard/reviews/:
     get:
       operationId: dashboard_reviews_list
@@ -4236,7 +5285,7 @@ components:
       type: string
       description: |-
         * `guest` - Guest
-        * `owner` - Hotel owner
+        * `owner` - Host
         * `organiser` - Event organiser
     AdminConversation:
       type: object
@@ -4478,13 +5527,23 @@ components:
           $ref: '#/components/schemas/IconEnum'
       required:
       - name
+    AssignCarOwnerRequest:
+      type: object
+      properties:
+        owner:
+          type: integer
+          nullable: true
+          description: A car rental host's user id, or null for Shortlet Stay to manage
+            it.
+      required:
+      - owner
     AssignOwnerRequest:
       type: object
       properties:
         owner:
           type: integer
           nullable: true
-          description: A hotel owner's user id, or null for Shortlet Stay to manage
+          description: A stays host's user id, or null for Shortlet Stay to manage
             it.
       required:
       - owner
@@ -5081,6 +6140,502 @@ components:
       - name
       - property_name
       - slug
+    CarAvailability:
+      type: object
+      properties:
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        min_days:
+          type: integer
+        driver_option:
+          $ref: '#/components/schemas/DriverOptionEnum'
+        window_start:
+          type: string
+          format: date
+        window_end:
+          type: string
+          format: date
+        taken:
+          type: array
+          items:
+            $ref: '#/components/schemas/TakenRange'
+          description: Busy from pickup_date up to (not including) return_date.
+      required:
+      - daily_rate
+      - driver_option
+      - min_days
+      - taken
+      - window_end
+      - window_start
+    CarCard:
+      type: object
+      description: A car on a listing.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          readOnly: true
+        make:
+          type: string
+          readOnly: true
+          description: e.g. Toyota
+        model:
+          type: string
+          readOnly: true
+          description: e.g. Corolla
+        year:
+          type: integer
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          readOnly: true
+        transmission:
+          allOf:
+          - $ref: '#/components/schemas/TransmissionEnum'
+          readOnly: true
+        fuel:
+          allOf:
+          - $ref: '#/components/schemas/FuelEnum'
+          readOnly: true
+        seats:
+          type: integer
+          readOnly: true
+        driver_option:
+          allOf:
+          - $ref: '#/components/schemas/DriverOptionEnum'
+          readOnly: true
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Price per day.
+        min_days:
+          type: integer
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryEnum'
+          readOnly: true
+        country_name:
+          type: string
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        area:
+          type: string
+          readOnly: true
+          description: Neighbourhood where it's collected, shown to guests.
+        cover_image:
+          allOf:
+          - $ref: '#/components/schemas/CarImage'
+          nullable: true
+          readOnly: true
+      required:
+      - area
+      - category
+      - city
+      - country
+      - country_name
+      - cover_image
+      - daily_rate
+      - driver_option
+      - fuel
+      - make
+      - min_days
+      - model
+      - seats
+      - slug
+      - title
+      - transmission
+      - year
+    CarCounts:
+      type: object
+      properties:
+        total:
+          type: integer
+        bookable:
+          type: integer
+          description: Published, not suspended, host active.
+        suspended:
+          type: integer
+        without_owner:
+          type: integer
+        rentals_pending:
+          type: integer
+          description: Requests waiting for the host.
+        rentals_upcoming:
+          type: integer
+          description: Confirmed, not yet collected.
+      required:
+      - bookable
+      - rentals_pending
+      - rentals_upcoming
+      - suspended
+      - total
+      - without_owner
+    CarDetail:
+      type: object
+      description: A car on a listing.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          readOnly: true
+        make:
+          type: string
+          readOnly: true
+          description: e.g. Toyota
+        model:
+          type: string
+          readOnly: true
+          description: e.g. Corolla
+        year:
+          type: integer
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          readOnly: true
+        transmission:
+          allOf:
+          - $ref: '#/components/schemas/TransmissionEnum'
+          readOnly: true
+        fuel:
+          allOf:
+          - $ref: '#/components/schemas/FuelEnum'
+          readOnly: true
+        seats:
+          type: integer
+          readOnly: true
+        driver_option:
+          allOf:
+          - $ref: '#/components/schemas/DriverOptionEnum'
+          readOnly: true
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Price per day.
+        min_days:
+          type: integer
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryEnum'
+          readOnly: true
+        country_name:
+          type: string
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        area:
+          type: string
+          readOnly: true
+          description: Neighbourhood where it's collected, shown to guests.
+        cover_image:
+          allOf:
+          - $ref: '#/components/schemas/CarImage'
+          nullable: true
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarImage'
+          readOnly: true
+        host_name:
+          type: string
+          description: 'First name only: the full contact details come with a confirmed
+            rental.'
+          readOnly: true
+      required:
+      - area
+      - category
+      - city
+      - country
+      - country_name
+      - cover_image
+      - daily_rate
+      - description
+      - driver_option
+      - fuel
+      - host_name
+      - images
+      - make
+      - min_days
+      - model
+      - seats
+      - slug
+      - title
+      - transmission
+      - year
+    CarImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        width:
+          type: integer
+          readOnly: true
+          nullable: true
+        height:
+          type: integer
+          readOnly: true
+          nullable: true
+        alt_text:
+          type: string
+          maxLength: 200
+        position:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Lowest first; the first image is the cover.
+      required:
+      - alt_text
+      - height
+      - id
+      - image
+      - position
+      - width
+    CarImageRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+        alt_text:
+          type: string
+          maxLength: 200
+        position:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Lowest first; the first image is the cover.
+      required:
+      - image
+    CarManage:
+      type: object
+      description: A car as its host (or Shortlet Stay staff) edits it. Only staff
+        can suspend or restore a car.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          readOnly: true
+        make:
+          type: string
+          description: e.g. Toyota
+          maxLength: 60
+        model:
+          type: string
+          description: e.g. Corolla
+          maxLength: 60
+        year:
+          type: integer
+          maximum: 2100
+          minimum: 1980
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        transmission:
+          $ref: '#/components/schemas/TransmissionEnum'
+        fuel:
+          $ref: '#/components/schemas/FuelEnum'
+        seats:
+          type: integer
+          maximum: 60
+          minimum: 1
+        driver_option:
+          $ref: '#/components/schemas/DriverOptionEnum'
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Price per day.
+        min_days:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+        description:
+          type: string
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+        city:
+          type: string
+          maxLength: 100
+        area:
+          type: string
+          description: Neighbourhood where it's collected, shown to guests.
+          maxLength: 100
+        pickup_address:
+          type: string
+          maxLength: 255
+        is_published:
+          type: boolean
+          description: The host has made it bookable.
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Untick to take it off the site, whatever the host does.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarImage'
+          readOnly: true
+        owner_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        owner_email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+        pending_requests:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - area
+      - category
+      - city
+      - country
+      - created_at
+      - daily_rate
+      - description
+      - driver_option
+      - fuel
+      - images
+      - is_active
+      - is_published
+      - make
+      - min_days
+      - model
+      - owner_email
+      - owner_id
+      - pending_requests
+      - pickup_address
+      - seats
+      - slug
+      - title
+      - transmission
+      - updated_at
+      - year
+    CarManageRequest:
+      type: object
+      description: A car as its host (or Shortlet Stay staff) edits it. Only staff
+        can suspend or restore a car.
+      properties:
+        make:
+          type: string
+          minLength: 1
+          description: e.g. Toyota
+          maxLength: 60
+        model:
+          type: string
+          minLength: 1
+          description: e.g. Corolla
+          maxLength: 60
+        year:
+          type: integer
+          maximum: 2100
+          minimum: 1980
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        transmission:
+          $ref: '#/components/schemas/TransmissionEnum'
+        fuel:
+          $ref: '#/components/schemas/FuelEnum'
+        seats:
+          type: integer
+          maximum: 60
+          minimum: 1
+        driver_option:
+          $ref: '#/components/schemas/DriverOptionEnum'
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Price per day.
+        min_days:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+        description:
+          type: string
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        area:
+          type: string
+          description: Neighbourhood where it's collected, shown to guests.
+          maxLength: 100
+        pickup_address:
+          type: string
+          maxLength: 255
+        is_published:
+          type: boolean
+          description: The host has made it bookable.
+      required:
+      - city
+      - country
+      - daily_rate
+      - make
+      - model
+      - year
+    CategoryEnum:
+      enum:
+      - economy
+      - sedan
+      - suv
+      - luxury
+      - van
+      - bus
+      - pickup
+      type: string
+      description: |-
+        * `economy` - Economy
+        * `sedan` - Sedan
+        * `suv` - SUV
+        * `luxury` - Luxury
+        * `van` - Van
+        * `bus` - Bus
+        * `pickup` - Pickup truck
     ChangePasswordRequest:
       type: object
       properties:
@@ -5808,6 +7363,16 @@ components:
           description: Last discounted night.
       required:
       - percent
+    DriverOptionEnum:
+      enum:
+      - self_drive
+      - with_driver
+      - either
+      type: string
+      description: |-
+        * `self_drive` - Self-drive only
+        * `with_driver` - Comes with a driver
+        * `either` - Self-drive or with a driver
     EventCard:
       type: object
       description: An event on a listing.
@@ -6131,13 +7696,25 @@ components:
         * `draft` - Draft
         * `published` - Published
         * `cancelled` - Cancelled
+    FuelEnum:
+      enum:
+      - petrol
+      - diesel
+      - hybrid
+      - electric
+      type: string
+      description: |-
+        * `petrol` - Petrol
+        * `diesel` - Diesel
+        * `hybrid` - Hybrid
+        * `electric` - Electric
     GoogleAuthRequest:
       type: object
       description: |-
         Sign in, or sign up, with the ID token from Google's "Sign in with Google" button.
 
         One endpoint serves both the sign-in and sign-up pages: an unknown Google account gets a new
-        account of the portal's type (guest, hotel owner or event organiser); a known one is signed in.
+        account of the portal's type (guest, host or event organiser); a known one is signed in.
       properties:
         credential:
           type: string
@@ -6149,6 +7726,18 @@ components:
           - $ref: '#/components/schemas/PortalEnum'
           writeOnly: true
           default: guest
+        host_type:
+          writeOnly: true
+          description: |-
+            A new host's type, from the sign-up page. Without it, the dashboard asks them first.
+
+            * `hotel` - Hotel owner
+            * `property_manager` - Property manager
+            * `homeowner` - Home owner
+            * `car_rental` - Car rental
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
       required:
       - credential
     Health:
@@ -6196,6 +7785,18 @@ components:
       - children
       - id
       - title
+    HostTypeEnum:
+      enum:
+      - hotel
+      - property_manager
+      - homeowner
+      - car_rental
+      type: string
+      description: |-
+        * `hotel` - Hotel owner
+        * `property_manager` - Property manager
+        * `homeowner` - Home owner
+        * `car_rental` - Car rental
     Hotel:
       type: object
       description: A hotel in the admin's list, with who owns it and how it's doing.
@@ -6596,6 +8197,10 @@ components:
       - event_updated
       - review_posted
       - support_reply
+      - rental_requested
+      - rental_confirmed
+      - rental_declined
+      - rental_cancelled
       type: string
       description: |-
         * `booking_requested` - New reservation request
@@ -6615,6 +8220,10 @@ components:
         * `event_updated` - An event you have tickets for changed
         * `review_posted` - A guest reviewed their stay
         * `support_reply` - Support replied to your message
+        * `rental_requested` - New car rental request
+        * `rental_confirmed` - Your car rental was confirmed
+        * `rental_declined` - Your car rental was declined
+        * `rental_cancelled` - A car rental was cancelled
     NotificationList:
       type: object
       properties:
@@ -6945,6 +8554,56 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Booking'
+    PaginatedCarCardList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarCard'
+    PaginatedCarManageList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarManage'
     PaginatedConversationList:
       type: object
       required:
@@ -7195,6 +8854,56 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PublicReview'
+    PaginatedRentalList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rental'
+    PaginatedRentalManageList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RentalManage'
     PaginatedReservationList:
       type: object
       required:
@@ -7220,6 +8929,56 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Reservation'
+    PaginatedStaffCarList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffCar'
+    PaginatedStaffRentalList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffRental'
     PaginatedStaffTicketOrderList:
       type: object
       required:
@@ -7506,6 +9265,80 @@ components:
           nullable: true
         notes:
           type: string
+    PatchedCarImageRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+        alt_text:
+          type: string
+          maxLength: 200
+        position:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Lowest first; the first image is the cover.
+    PatchedCarManageRequest:
+      type: object
+      description: A car as its host (or Shortlet Stay staff) edits it. Only staff
+        can suspend or restore a car.
+      properties:
+        make:
+          type: string
+          minLength: 1
+          description: e.g. Toyota
+          maxLength: 60
+        model:
+          type: string
+          minLength: 1
+          description: e.g. Corolla
+          maxLength: 60
+        year:
+          type: integer
+          maximum: 2100
+          minimum: 1980
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        transmission:
+          $ref: '#/components/schemas/TransmissionEnum'
+        fuel:
+          $ref: '#/components/schemas/FuelEnum'
+        seats:
+          type: integer
+          maximum: 60
+          minimum: 1
+        driver_option:
+          $ref: '#/components/schemas/DriverOptionEnum'
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Price per day.
+        min_days:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+        description:
+          type: string
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        area:
+          type: string
+          description: Neighbourhood where it's collected, shown to guests.
+          maxLength: 100
+        pickup_address:
+          type: string
+          maxLength: 255
+        is_published:
+          type: boolean
+          description: The host has made it bookable.
     PatchedDiscountRequest:
       type: object
       properties:
@@ -7625,6 +9458,10 @@ components:
           maxLength: 20
         account_type:
           $ref: '#/components/schemas/AccountTypeEnum'
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         is_active:
           type: boolean
           title: Active
@@ -7781,6 +9618,10 @@ components:
         phone:
           type: string
           maxLength: 20
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
     Payment:
       type: object
       description: A payment as the guest who made it sees it.
@@ -8291,11 +10132,237 @@ components:
           maxLength: 20
         account_type:
           $ref: '#/components/schemas/AccountTypeEnum'
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
       required:
       - email
       - first_name
       - last_name
       - password
+    Rental:
+      type: object
+      description: A rental as its guest sees it. The pickup address and host's contact
+        show once it's confirmed.
+      properties:
+        reference:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RentalStatusEnum'
+          readOnly: true
+        car:
+          allOf:
+          - $ref: '#/components/schemas/CarCard'
+          readOnly: true
+        pickup_date:
+          type: string
+          format: date
+          readOnly: true
+        return_date:
+          type: string
+          format: date
+          readOnly: true
+          description: The day the car comes back.
+        days:
+          type: integer
+          readOnly: true
+        with_driver:
+          type: boolean
+          readOnly: true
+        note:
+          type: string
+          readOnly: true
+          description: Anything the guest wants the host to know.
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Snapshot when booked.
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        hold_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: An unanswered request frees the car then.
+        pickup_address:
+          type: string
+          readOnly: true
+        host_name:
+          type: string
+          readOnly: true
+        host_phone:
+          type: string
+          readOnly: true
+        host_email:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - car
+      - created_at
+      - currency
+      - daily_rate
+      - days
+      - hold_expires_at
+      - host_email
+      - host_name
+      - host_phone
+      - note
+      - pickup_address
+      - pickup_date
+      - reference
+      - return_date
+      - status
+      - total_price
+      - with_driver
+    RentalCreateRequest:
+      type: object
+      properties:
+        car:
+          type: string
+          minLength: 1
+          pattern: ^[-a-zA-Z0-9_]+$
+        pickup_date:
+          type: string
+          format: date
+        return_date:
+          type: string
+          format: date
+          description: The day the car comes back.
+        with_driver:
+          type: boolean
+          nullable: true
+        note:
+          type: string
+          maxLength: 500
+        name:
+          type: string
+          description: Defaults to the account's.
+          maxLength: 150
+        phone:
+          type: string
+          maxLength: 20
+      required:
+      - car
+      - pickup_date
+      - return_date
+    RentalManage:
+      type: object
+      description: A rental as the car's host sees it.
+      properties:
+        reference:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RentalStatusEnum'
+          readOnly: true
+        car_slug:
+          type: string
+          readOnly: true
+        car_title:
+          type: string
+          readOnly: true
+        renter_name:
+          type: string
+          readOnly: true
+        renter_email:
+          type: string
+          format: email
+          readOnly: true
+        renter_phone:
+          type: string
+          readOnly: true
+        pickup_date:
+          type: string
+          format: date
+          readOnly: true
+        return_date:
+          type: string
+          format: date
+          readOnly: true
+          description: The day the car comes back.
+        days:
+          type: integer
+          readOnly: true
+        with_driver:
+          type: boolean
+          readOnly: true
+        note:
+          type: string
+          readOnly: true
+          description: Anything the guest wants the host to know.
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Snapshot when booked.
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        hold_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: An unanswered request frees the car then.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - car_slug
+      - car_title
+      - created_at
+      - currency
+      - daily_rate
+      - days
+      - hold_expires_at
+      - note
+      - pickup_date
+      - reference
+      - renter_email
+      - renter_name
+      - renter_phone
+      - return_date
+      - status
+      - total_price
+      - with_driver
+    RentalStatusEnum:
+      enum:
+      - pending
+      - confirmed
+      - declined
+      - cancelled
+      - expired
+      type: string
+      description: |-
+        * `pending` - pending
+        * `confirmed` - confirmed
+        * `declined` - declined
+        * `cancelled` - cancelled
+        * `expired` - expired
     Reservation:
       type: object
       properties:
@@ -8569,6 +10636,141 @@ components:
       description: |-
         * `website` - Website
         * `staff` - Staff (offline)
+    StaffCar:
+      type: object
+      description: A car with its host and how busy it is. Edit it through /dashboard/cars/.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          readOnly: true
+        make:
+          type: string
+          readOnly: true
+          description: e.g. Toyota
+        model:
+          type: string
+          readOnly: true
+          description: e.g. Corolla
+        year:
+          type: integer
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          readOnly: true
+        transmission:
+          allOf:
+          - $ref: '#/components/schemas/TransmissionEnum'
+          readOnly: true
+        fuel:
+          allOf:
+          - $ref: '#/components/schemas/FuelEnum'
+          readOnly: true
+        seats:
+          type: integer
+          readOnly: true
+        driver_option:
+          allOf:
+          - $ref: '#/components/schemas/DriverOptionEnum'
+          readOnly: true
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Price per day.
+        min_days:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryEnum'
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        area:
+          type: string
+          readOnly: true
+          description: Neighbourhood where it's collected, shown to guests.
+        pickup_address:
+          type: string
+          readOnly: true
+        is_published:
+          type: boolean
+          readOnly: true
+          description: The host has made it bookable.
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Untick to take it off the site, whatever the host does.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarImage'
+          readOnly: true
+        owner_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        owner_email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+        pending_requests:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        owner_name:
+          type: string
+          readOnly: true
+        rental_count:
+          type: integer
+          readOnly: true
+          default: 0
+      required:
+      - area
+      - category
+      - city
+      - country
+      - created_at
+      - daily_rate
+      - description
+      - driver_option
+      - fuel
+      - images
+      - is_active
+      - is_published
+      - make
+      - min_days
+      - model
+      - owner_email
+      - owner_id
+      - owner_name
+      - pending_requests
+      - pickup_address
+      - rental_count
+      - seats
+      - slug
+      - title
+      - transmission
+      - updated_at
+      - year
     StaffOverview:
       type: object
       properties:
@@ -8586,6 +10788,8 @@ components:
           $ref: '#/components/schemas/ReviewCounts'
         events:
           $ref: '#/components/schemas/EventCounts'
+        cars:
+          $ref: '#/components/schemas/CarCounts'
         months:
           type: array
           items:
@@ -8601,6 +10805,7 @@ components:
             $ref: '#/components/schemas/RecentUser'
       required:
       - bookings
+      - cars
       - events
       - hotels
       - money
@@ -8610,6 +10815,100 @@ components:
       - reviews
       - support
       - users
+    StaffRental:
+      type: object
+      description: A rental as the car's host sees it.
+      properties:
+        reference:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RentalStatusEnum'
+          readOnly: true
+        car_slug:
+          type: string
+          readOnly: true
+        car_title:
+          type: string
+          readOnly: true
+        renter_name:
+          type: string
+          readOnly: true
+        renter_email:
+          type: string
+          format: email
+          readOnly: true
+        renter_phone:
+          type: string
+          readOnly: true
+        pickup_date:
+          type: string
+          format: date
+          readOnly: true
+        return_date:
+          type: string
+          format: date
+          readOnly: true
+          description: The day the car comes back.
+        days:
+          type: integer
+          readOnly: true
+        with_driver:
+          type: boolean
+          readOnly: true
+        note:
+          type: string
+          readOnly: true
+          description: Anything the guest wants the host to know.
+        daily_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Snapshot when booked.
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        hold_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: An unanswered request frees the car then.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        host_email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+      required:
+      - car_slug
+      - car_title
+      - created_at
+      - currency
+      - daily_rate
+      - days
+      - hold_expires_at
+      - host_email
+      - note
+      - pickup_date
+      - reference
+      - renter_email
+      - renter_name
+      - renter_phone
+      - return_date
+      - status
+      - total_price
+      - with_driver
     StaffTicketOrder:
       type: object
       properties:
@@ -8767,6 +11066,10 @@ components:
           maxLength: 20
         account_type:
           $ref: '#/components/schemas/AccountTypeEnum'
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         role:
           allOf:
           - $ref: '#/components/schemas/RoleEnum'
@@ -8795,6 +11098,10 @@ components:
           type: integer
           readOnly: true
           default: 0
+        car_count:
+          type: integer
+          readOnly: true
+          default: 0
         booking_count:
           type: integer
           readOnly: true
@@ -8815,12 +11122,14 @@ components:
       required:
       - account_type
       - booking_count
+      - car_count
       - date_joined
       - email
       - event_count
       - first_name
       - google_linked
       - has_password
+      - host_type
       - hotel_count
       - id
       - is_active
@@ -8834,7 +11143,7 @@ components:
     StaffUserCreate:
       type: object
       description: |-
-        Add an account: a guest, hotel owner, organiser or staff member.
+        Add an account: a guest, host, organiser or staff member.
 
         Without a password, they're emailed a link to choose one.
       properties:
@@ -8860,6 +11169,10 @@ components:
           maxLength: 20
         account_type:
           $ref: '#/components/schemas/AccountTypeEnum'
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         role:
           allOf:
           - $ref: '#/components/schemas/RoleEnum'
@@ -8888,6 +11201,10 @@ components:
           type: integer
           readOnly: true
           default: 0
+        car_count:
+          type: integer
+          readOnly: true
+          default: 0
         booking_count:
           type: integer
           readOnly: true
@@ -8908,12 +11225,14 @@ components:
       required:
       - account_type
       - booking_count
+      - car_count
       - date_joined
       - email
       - event_count
       - first_name
       - google_linked
       - has_password
+      - host_type
       - hotel_count
       - id
       - is_active
@@ -8927,7 +11246,7 @@ components:
     StaffUserCreateRequest:
       type: object
       description: |-
-        Add an account: a guest, hotel owner, organiser or staff member.
+        Add an account: a guest, host, organiser or staff member.
 
         Without a password, they're emailed a link to choose one.
       properties:
@@ -8950,6 +11269,10 @@ components:
           maxLength: 20
         account_type:
           $ref: '#/components/schemas/AccountTypeEnum'
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         is_active:
           type: boolean
           title: Active
@@ -8997,6 +11320,10 @@ components:
           maxLength: 20
         account_type:
           $ref: '#/components/schemas/AccountTypeEnum'
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         role:
           allOf:
           - $ref: '#/components/schemas/RoleEnum'
@@ -9022,6 +11349,10 @@ components:
           type: boolean
           readOnly: true
         hotel_count:
+          type: integer
+          readOnly: true
+          default: 0
+        car_count:
           type: integer
           readOnly: true
           default: 0
@@ -9076,6 +11407,7 @@ components:
       - account_type
       - amount_paid
       - booking_count
+      - car_count
       - date_joined
       - email
       - event_count
@@ -9083,6 +11415,7 @@ components:
       - first_name
       - google_linked
       - has_password
+      - host_type
       - hotel_count
       - hotels
       - id
@@ -9199,6 +11532,18 @@ components:
       - needs_reply
       - open
       - unread
+    TakenRange:
+      type: object
+      properties:
+        pickup_date:
+          type: string
+          format: date
+        return_date:
+          type: string
+          format: date
+      required:
+      - pickup_date
+      - return_date
     Ticket:
       type: object
       properties:
@@ -9518,6 +11863,14 @@ components:
       - not_completed
       - received
       - successful
+    TransmissionEnum:
+      enum:
+      - automatic
+      - manual
+      type: string
+      description: |-
+        * `automatic` - Automatic
+        * `manual` - Manual
     UnitDetail:
       type: object
       properties:
@@ -10074,6 +12427,10 @@ components:
           allOf:
           - $ref: '#/components/schemas/AccountTypeEnum'
           readOnly: true
+        host_type:
+          oneOf:
+          - $ref: '#/components/schemas/HostTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
         role:
           allOf:
           - $ref: '#/components/schemas/RoleEnum'
@@ -10100,6 +12457,7 @@ components:
       - first_name
       - google_linked
       - has_password
+      - host_type
       - id
       - is_staff
       - last_name
@@ -10146,6 +12504,9 @@ components:
           type: integer
         owners:
           type: integer
+          description: Hosts, of every type.
+        car_hosts:
+          type: integer
         organisers:
           type: integer
         staff:
@@ -10155,6 +12516,7 @@ components:
         new_30d:
           type: integer
       required:
+      - car_hosts
       - guests
       - inactive
       - new_30d

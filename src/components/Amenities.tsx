@@ -32,7 +32,7 @@ export default function Amenities() {
   return (
     <Page
       title="Amenities"
-      subtitle="What rooms can offer. Hotel owners tick these for each room, and guests filter by them."
+      subtitle="What rooms can offer. Hosts tick these for each room, and guests filter by them."
       actions={<Button onClick={() => setEditing("new")}><Plus className="size-4" /> New amenity</Button>}
     >
       <Card pad={false}>
