@@ -37,6 +37,18 @@ export type Thread = S["AdminConversationDetail"];
 export type InboxSummary = S["SupportSummary"];
 export type HelpTopic = S["AdminHelpTopic"];
 export type HelpTopicInput = S["AdminHelpTopicRequest"];
+export type HostType = S["HostTypeEnum"];
+export type Car = S["StaffCar"];
+export type Rental = S["StaffRental"];
+export type RentalStatus = S["RentalStatusEnum"];
+
+/** What each kind of host offers. Hotels, property managers and home owners list stays; car rental hosts list cars. */
+export const HOST_TYPES: Record<HostType, string> = {
+  hotel: "Hotel owner",
+  property_manager: "Property manager",
+  homeowner: "Home owner",
+  car_rental: "Car rental",
+};
 
 /** DRF errors: `{ field: ["msg"] }`, `{ detail: "msg" }` or `{ non_field_errors: [...] }`. */
 export class ApiError extends Error {
@@ -125,10 +137,10 @@ export async function api<T>(path: string, init: RequestInit & { json?: unknown 
 }
 
 export const authApi = {
-  /** Platform staff sign in through the owner portal, which accepts admins. */
+  /** Platform staff sign in through the host portal ("owner" in the API), which accepts admins. */
   async login(email: string, password: string) {
     const data = await api<S["AuthResponse"]>("/auth/login/", { method: "POST", json: { email, password, portal: "owner" } });
-    if (data.user.role !== "admin") throw new ApiError(403, {}, "This app is for Shortlet Stay staff. Hotel owners use the website's dashboard.");
+    if (data.user.role !== "admin") throw new ApiError(403, {}, "This app is for Shortlet Stay staff. Hosts use the website's dashboard.");
     store.set(KEYS.access, data.access);
     store.set(KEYS.refresh, data.refresh);
     return data.user;
@@ -175,6 +187,16 @@ export const adminApi = {
   updateUser: (id: number, input: Partial<StaffUserInput>) => api<StaffUserDetail>(`/admin/users/${id}/`, { method: "PATCH", json: input }),
   sendPasswordReset: (id: number) => api<{ detail: string }>(`/admin/users/${id}/send-password-reset/`, { method: "POST" }),
   signOutUser: (id: number) => api<{ detail: string }>(`/admin/users/${id}/sign-out/`, { method: "POST" }),
+
+  // Cars: listed here with their hosts; suspended, restored or reassigned through the admin API.
+  cars: (params: Params) => api<Page<Car>>(`/admin/cars/${qs(params)}`),
+  suspendCar: (slug: string) => api<Car>(`/admin/cars/${ref(slug)}/suspend/`, { method: "POST" }),
+  restoreCar: (slug: string) => api<Car>(`/admin/cars/${ref(slug)}/restore/`, { method: "POST" }),
+  assignCarOwner: (slug: string, owner: number | null) => api<Car>(`/admin/cars/${ref(slug)}/assign-owner/`, { method: "POST", json: { owner } }),
+  rentals: (params: Params) => api<Page<Rental>>(`/admin/rentals/${qs(params)}`),
+  // Answering rentals goes through the hosts' dashboard endpoints, which accept staff for every car.
+  rentalAction: (reference: string, action: "confirm" | "decline" | "cancel") =>
+    api<Rental>(`/dashboard/rentals/${ref(reference)}/${action}/`, { method: "POST" }),
 
   hotels: (params: Params) => api<Page<Hotel>>(`/admin/hotels/${qs(params)}`),
   hotel: (slug: string) => api<Hotel>(`/admin/hotels/${ref(slug)}/`),

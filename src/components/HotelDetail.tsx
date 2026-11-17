@@ -18,7 +18,7 @@ export default function HotelDetail({ slug }: { slug: string | null }) {
     return (
       <Page title="Add a hotel" subtitle={<Back />}>
         <HotelForm property={null} />
-        <p className="text-sm text-muted">New hotels are managed by Shortlet Stay. Give one to a hotel owner after it&apos;s saved.</p>
+        <p className="text-sm text-muted">New hotels are managed by Shortlet Stay. Give one to a host after it&apos;s saved.</p>
       </Page>
     );
   }
@@ -165,7 +165,7 @@ function OwnerCard({ hotel }: { hotel: Hotel }) {
   });
 
   return (
-    <Card title="Owner">
+    <Card title="Host">
       {hotel.owner_id ? (
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
@@ -174,11 +174,11 @@ function OwnerCard({ hotel }: { hotel: Hotel }) {
           </div>
         </div>
       ) : (
-        <p className="text-sm text-muted">Managed by Shortlet Stay staff. No owner account sees it in their dashboard.</p>
+        <p className="text-sm text-muted">Managed by Shortlet Stay staff. No host sees it in their dashboard.</p>
       )}
       {picking ? (
         <div className="mt-4 space-y-2">
-          <SearchBox value={search} onChange={setSearch} placeholder="Find a hotel owner" />
+          <SearchBox value={search} onChange={setSearch} placeholder="Find a host" />
           {owners.isPending && <Loading />}
           <ul className="divide-y divide-brand-900/5">
             {owners.data?.results.map((o) => (
@@ -195,7 +195,7 @@ function OwnerCard({ hotel }: { hotel: Hotel }) {
           </ul>
           {owners.data && !owners.data.results.length && (
             <p className="text-sm text-muted">
-              No hotel owners match. <Link href="/owners" className="font-medium text-brand-900 hover:underline">Add one</Link> first.
+              No hosts match. <Link href="/hosts" className="font-medium text-brand-900 hover:underline">Add one</Link> first.
             </p>
           )}
           <div className="flex flex-wrap gap-2 pt-1">

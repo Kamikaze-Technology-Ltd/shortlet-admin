@@ -4,6 +4,91 @@
  */
 
 export interface paths {
+    "/api/admin/cars/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every car with its host and rentals. Edit cars through /dashboard/cars/; suspend or reassign them here. */
+        get: operations["admin_cars_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/cars/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every car with its host and rentals. Edit cars through /dashboard/cars/; suspend or reassign them here. */
+        get: operations["admin_cars_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/cars/{slug}/assign-owner/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Give the car to a car rental host, or (null) take it back for Shortlet Stay to manage. */
+        post: operations["admin_cars_assign_owner_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/cars/{slug}/restore/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Every car with its host and rentals. Edit cars through /dashboard/cars/; suspend or reassign them here. */
+        post: operations["admin_cars_restore_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/cars/{slug}/suspend/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Take the car off the site, whatever its host does. Rentals already made stand. */
+        post: operations["admin_cars_suspend_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/hotels/": {
         parameters: {
             query?: never;
@@ -47,7 +132,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Give the hotel to a hotel owner account, or (null) take it back for Shortlet Stay to manage. */
+        /** @description Give the hotel to a stays host, or (null) take it back for Shortlet Stay to manage. */
         post: operations["admin_hotels_assign_owner_create"];
         delete?: never;
         options?: never;
@@ -83,6 +168,23 @@ export interface paths {
         put?: never;
         /** @description Record that a booking payment flagged for refund has been paid back (outside Shortlet Stay, e.g. by bank). */
         post: operations["admin_payments_mark_refunded_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/rentals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Car rentals across every host, newest first. Confirm and decline them through /dashboard/rentals/. */
+        get: operations["admin_rentals_list"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -148,14 +250,14 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
         get: operations["admin_users_list"];
         put?: never;
         /**
-         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -174,7 +276,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -185,7 +287,7 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * @description Every account: guests, hotel owners, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -544,6 +646,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/car-rentals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The signed-in guest's car rentals, and requesting new ones. */
+        get: operations["car_rentals_list"];
+        put?: never;
+        /** @description The signed-in guest's car rentals, and requesting new ones. */
+        post: operations["car_rentals_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/car-rentals/{reference}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The signed-in guest's car rentals, and requesting new ones. */
+        get: operations["car_rentals_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/car-rentals/{reference}/cancel/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description The signed-in guest's car rentals, and requesting new ones. */
+        post: operations["car_rentals_cancel_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cars/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Cars guests can rent. */
+        get: operations["cars_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cars/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Cars guests can rent. */
+        get: operations["cars_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cars/{slug}/availability/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The days the car is already booked, and its rental rules. */
+        get: operations["cars_availability_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cars/cities/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Cities with cars to rent, for browsing by city. */
+        get: operations["cars_cities_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/dashboard/amenities/": {
         parameters: {
             query?: never;
@@ -693,6 +915,80 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/cars/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A car rental host's cars (every car, for Shortlet Stay staff). */
+        get: operations["dashboard_cars_list"];
+        put?: never;
+        /** @description A car rental host's cars (every car, for Shortlet Stay staff). */
+        post: operations["dashboard_cars_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/cars/{car_slug}/images/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Upload (multipart), reorder and delete a car's photos. */
+        get: operations["dashboard_cars_images_list"];
+        put?: never;
+        /** @description Upload (multipart), reorder and delete a car's photos. */
+        post: operations["dashboard_cars_images_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/cars/{car_slug}/images/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Upload (multipart), reorder and delete a car's photos. */
+        delete: operations["dashboard_cars_images_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Upload (multipart), reorder and delete a car's photos. */
+        patch: operations["dashboard_cars_images_partial_update"];
+        trace?: never;
+    };
+    "/api/dashboard/cars/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A car rental host's cars (every car, for Shortlet Stay staff). */
+        get: operations["dashboard_cars_retrieve"];
+        /** @description A car rental host's cars (every car, for Shortlet Stay staff). */
+        put: operations["dashboard_cars_update"];
+        post?: never;
+        /** @description A car rental host's cars (every car, for Shortlet Stay staff). */
+        delete: operations["dashboard_cars_destroy"];
+        options?: never;
+        head?: never;
+        /** @description A car rental host's cars (every car, for Shortlet Stay staff). */
+        patch: operations["dashboard_cars_partial_update"];
         trace?: never;
     };
     "/api/dashboard/events/": {
@@ -969,6 +1265,91 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["dashboard_properties_partial_update"];
+        trace?: never;
+    };
+    "/api/dashboard/rentals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Rentals of a host's cars, newest first, to confirm, decline or cancel. */
+        get: operations["dashboard_rentals_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/rentals/{reference}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Rentals of a host's cars, newest first, to confirm, decline or cancel. */
+        get: operations["dashboard_rentals_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/rentals/{reference}/cancel/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Call off a confirmed rental before the car is collected. The guest is told. */
+        post: operations["dashboard_rentals_cancel_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/rentals/{reference}/confirm/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Rentals of a host's cars, newest first, to confirm, decline or cancel. */
+        post: operations["dashboard_rentals_confirm_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/rentals/{reference}/decline/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Rentals of a host's cars, newest first, to confirm, decline or cancel. */
+        post: operations["dashboard_rentals_decline_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/dashboard/reviews/": {
@@ -1796,7 +2177,7 @@ export interface components {
     schemas: {
         /**
          * @description * `guest` - Guest
-         *     * `owner` - Hotel owner
+         *     * `owner` - Host
          *     * `organiser` - Event organiser
          * @enum {string}
          */
@@ -1891,8 +2272,12 @@ export interface components {
             name: string;
             icon?: components["schemas"]["IconEnum"];
         };
+        AssignCarOwnerRequest: {
+            /** @description A car rental host's user id, or null for Shortlet Stay to manage it. */
+            owner: number | null;
+        };
         AssignOwnerRequest: {
-            /** @description A hotel owner's user id, or null for Shortlet Stay to manage it. */
+            /** @description A stays host's user id, or null for Shortlet Stay to manage it. */
             owner: number | null;
         };
         AssignRequest: {
@@ -2157,6 +2542,190 @@ export interface components {
             bookings: components["schemas"]["CalendarBooking"][];
             blocked: components["schemas"]["CalendarBlock"][];
         };
+        CarAvailability: {
+            /** Format: decimal */
+            daily_rate: string;
+            min_days: number;
+            driver_option: components["schemas"]["DriverOptionEnum"];
+            /** Format: date */
+            window_start: string;
+            /** Format: date */
+            window_end: string;
+            /** @description Busy from pickup_date up to (not including) return_date. */
+            taken: components["schemas"]["TakenRange"][];
+        };
+        /** @description A car on a listing. */
+        CarCard: {
+            readonly slug: string;
+            readonly title: string;
+            /** @description e.g. Toyota */
+            readonly make: string;
+            /** @description e.g. Corolla */
+            readonly model: string;
+            readonly year: number;
+            readonly category: components["schemas"]["CategoryEnum"];
+            readonly transmission: components["schemas"]["TransmissionEnum"];
+            readonly fuel: components["schemas"]["FuelEnum"];
+            readonly seats: number;
+            readonly driver_option: components["schemas"]["DriverOptionEnum"];
+            /**
+             * Format: decimal
+             * @description Price per day.
+             */
+            readonly daily_rate: string;
+            readonly min_days: number;
+            readonly country: components["schemas"]["CountryEnum"];
+            readonly country_name: string;
+            readonly city: string;
+            /** @description Neighbourhood where it's collected, shown to guests. */
+            readonly area: string;
+            readonly cover_image: components["schemas"]["CarImage"] | null;
+        };
+        CarCounts: {
+            total: number;
+            /** @description Published, not suspended, host active. */
+            bookable: number;
+            suspended: number;
+            without_owner: number;
+            /** @description Requests waiting for the host. */
+            rentals_pending: number;
+            /** @description Confirmed, not yet collected. */
+            rentals_upcoming: number;
+        };
+        /** @description A car on a listing. */
+        CarDetail: {
+            readonly slug: string;
+            readonly title: string;
+            /** @description e.g. Toyota */
+            readonly make: string;
+            /** @description e.g. Corolla */
+            readonly model: string;
+            readonly year: number;
+            readonly category: components["schemas"]["CategoryEnum"];
+            readonly transmission: components["schemas"]["TransmissionEnum"];
+            readonly fuel: components["schemas"]["FuelEnum"];
+            readonly seats: number;
+            readonly driver_option: components["schemas"]["DriverOptionEnum"];
+            /**
+             * Format: decimal
+             * @description Price per day.
+             */
+            readonly daily_rate: string;
+            readonly min_days: number;
+            readonly country: components["schemas"]["CountryEnum"];
+            readonly country_name: string;
+            readonly city: string;
+            /** @description Neighbourhood where it's collected, shown to guests. */
+            readonly area: string;
+            readonly cover_image: components["schemas"]["CarImage"] | null;
+            readonly description: string;
+            readonly images: components["schemas"]["CarImage"][];
+            /** @description First name only: the full contact details come with a confirmed rental. */
+            readonly host_name: string;
+        };
+        CarImage: {
+            readonly id: number;
+            /** Format: uri */
+            image: string;
+            readonly width: number | null;
+            readonly height: number | null;
+            alt_text: string;
+            /**
+             * Format: int64
+             * @description Lowest first; the first image is the cover.
+             */
+            position: number;
+        };
+        CarImageRequest: {
+            /** Format: binary */
+            image: string;
+            alt_text?: string;
+            /**
+             * Format: int64
+             * @description Lowest first; the first image is the cover.
+             */
+            position?: number;
+        };
+        /** @description A car as its host (or Shortlet Stay staff) edits it. Only staff can suspend or restore a car. */
+        CarManage: {
+            readonly slug: string;
+            readonly title: string;
+            /** @description e.g. Toyota */
+            make: string;
+            /** @description e.g. Corolla */
+            model: string;
+            year: number;
+            category: components["schemas"]["CategoryEnum"];
+            transmission: components["schemas"]["TransmissionEnum"];
+            fuel: components["schemas"]["FuelEnum"];
+            seats: number;
+            driver_option: components["schemas"]["DriverOptionEnum"];
+            /**
+             * Format: decimal
+             * @description Price per day.
+             */
+            daily_rate: string;
+            /** Format: int64 */
+            min_days: number;
+            description: string;
+            country: components["schemas"]["CountryEnum"];
+            city: string;
+            /** @description Neighbourhood where it's collected, shown to guests. */
+            area: string;
+            pickup_address: string;
+            /** @description The host has made it bookable. */
+            is_published: boolean;
+            /** @description Untick to take it off the site, whatever the host does. */
+            readonly is_active: boolean;
+            readonly images: components["schemas"]["CarImage"][];
+            readonly owner_id: number | null;
+            /** Format: email */
+            readonly owner_email: string | null;
+            readonly pending_requests: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /** @description A car as its host (or Shortlet Stay staff) edits it. Only staff can suspend or restore a car. */
+        CarManageRequest: {
+            /** @description e.g. Toyota */
+            make: string;
+            /** @description e.g. Corolla */
+            model: string;
+            year: number;
+            category?: components["schemas"]["CategoryEnum"];
+            transmission?: components["schemas"]["TransmissionEnum"];
+            fuel?: components["schemas"]["FuelEnum"];
+            seats?: number;
+            driver_option?: components["schemas"]["DriverOptionEnum"];
+            /**
+             * Format: decimal
+             * @description Price per day.
+             */
+            daily_rate: string;
+            /** Format: int64 */
+            min_days?: number;
+            description?: string;
+            country: components["schemas"]["CountryEnum"];
+            city: string;
+            /** @description Neighbourhood where it's collected, shown to guests. */
+            area?: string;
+            pickup_address?: string;
+            /** @description The host has made it bookable. */
+            is_published?: boolean;
+        };
+        /**
+         * @description * `economy` - Economy
+         *     * `sedan` - Sedan
+         *     * `suv` - SUV
+         *     * `luxury` - Luxury
+         *     * `van` - Van
+         *     * `bus` - Bus
+         *     * `pickup` - Pickup truck
+         * @enum {string}
+         */
+        CategoryEnum: "economy" | "sedan" | "suv" | "luxury" | "van" | "bus" | "pickup";
         ChangePasswordRequest: {
             current_password?: string;
             new_password: string;
@@ -2514,6 +3083,13 @@ export interface components {
              */
             ends_on?: string | null;
         };
+        /**
+         * @description * `self_drive` - Self-drive only
+         *     * `with_driver` - Comes with a driver
+         *     * `either` - Self-drive or with a driver
+         * @enum {string}
+         */
+        DriverOptionEnum: "self_drive" | "with_driver" | "either";
         /** @description An event on a listing. */
         EventCard: {
             readonly slug: string;
@@ -2623,16 +3199,33 @@ export interface components {
          */
         EventStatusEnum: "draft" | "published" | "cancelled";
         /**
+         * @description * `petrol` - Petrol
+         *     * `diesel` - Diesel
+         *     * `hybrid` - Hybrid
+         *     * `electric` - Electric
+         * @enum {string}
+         */
+        FuelEnum: "petrol" | "diesel" | "hybrid" | "electric";
+        /**
          * @description Sign in, or sign up, with the ID token from Google's "Sign in with Google" button.
          *
          *     One endpoint serves both the sign-in and sign-up pages: an unknown Google account gets a new
-         *     account of the portal's type (guest, hotel owner or event organiser); a known one is signed in.
+         *     account of the portal's type (guest, host or event organiser); a known one is signed in.
          */
         GoogleAuthRequest: {
             /** @description The ID token (JWT) Google gives the browser. */
             credential: string;
             /** @default guest */
             portal: components["schemas"]["PortalEnum"];
+            /**
+             * @description A new host's type, from the sign-up page. Without it, the dashboard asks them first.
+             *
+             *     * `hotel` - Hotel owner
+             *     * `property_manager` - Property manager
+             *     * `homeowner` - Home owner
+             *     * `car_rental` - Car rental
+             */
+            host_type?: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
         };
         Health: {
             status: string;
@@ -2652,6 +3245,14 @@ export interface components {
                 [key: string]: unknown;
             }[];
         };
+        /**
+         * @description * `hotel` - Hotel owner
+         *     * `property_manager` - Property manager
+         *     * `homeowner` - Home owner
+         *     * `car_rental` - Car rental
+         * @enum {string}
+         */
+        HostTypeEnum: "hotel" | "property_manager" | "homeowner" | "car_rental";
         /** @description A hotel in the admin's list, with who owns it and how it's doing. Edit it through /dashboard/properties/. */
         Hotel: {
             readonly id: number;
@@ -2810,9 +3411,13 @@ export interface components {
          *     * `event_updated` - An event you have tickets for changed
          *     * `review_posted` - A guest reviewed their stay
          *     * `support_reply` - Support replied to your message
+         *     * `rental_requested` - New car rental request
+         *     * `rental_confirmed` - Your car rental was confirmed
+         *     * `rental_declined` - Your car rental was declined
+         *     * `rental_cancelled` - A car rental was cancelled
          * @enum {string}
          */
-        NotificationKindEnum: "booking_requested" | "booking_cancelled" | "booking_confirmed" | "booking_declined" | "booking_request_sent" | "booking_cancelled_by_host" | "booking_updated" | "booking_paid" | "payment_needs_refund" | "ticket_confirmed" | "ticket_declined" | "ticket_requested" | "ticket_sold" | "event_cancelled" | "event_updated" | "review_posted" | "support_reply";
+        NotificationKindEnum: "booking_requested" | "booking_cancelled" | "booking_confirmed" | "booking_declined" | "booking_request_sent" | "booking_cancelled_by_host" | "booking_updated" | "booking_paid" | "payment_needs_refund" | "ticket_confirmed" | "ticket_declined" | "ticket_requested" | "ticket_sold" | "event_cancelled" | "event_updated" | "review_posted" | "support_reply" | "rental_requested" | "rental_confirmed" | "rental_declined" | "rental_cancelled";
         NotificationList: {
             unread: number;
             results: components["schemas"]["Notification"][];
@@ -2951,6 +3556,36 @@ export interface components {
              */
             previous: string | null;
             results: components["schemas"]["Booking"][];
+        };
+        PaginatedCarCardList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["CarCard"][];
+        };
+        PaginatedCarManageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["CarManage"][];
         };
         PaginatedConversationList: {
             /** @example 123 */
@@ -3102,6 +3737,36 @@ export interface components {
             previous: string | null;
             results: components["schemas"]["PublicReview"][];
         };
+        PaginatedRentalList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["Rental"][];
+        };
+        PaginatedRentalManageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["RentalManage"][];
+        };
         PaginatedReservationList: {
             /** @example 123 */
             count: number;
@@ -3116,6 +3781,36 @@ export interface components {
              */
             previous: string | null;
             results: components["schemas"]["Reservation"][];
+        };
+        PaginatedStaffCarList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["StaffCar"][];
+        };
+        PaginatedStaffRentalList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["StaffRental"][];
         };
         PaginatedStaffTicketOrderList: {
             /** @example 123 */
@@ -3280,6 +3975,44 @@ export interface components {
             total_price?: string | null;
             notes?: string;
         };
+        PatchedCarImageRequest: {
+            /** Format: binary */
+            image?: string;
+            alt_text?: string;
+            /**
+             * Format: int64
+             * @description Lowest first; the first image is the cover.
+             */
+            position?: number;
+        };
+        /** @description A car as its host (or Shortlet Stay staff) edits it. Only staff can suspend or restore a car. */
+        PatchedCarManageRequest: {
+            /** @description e.g. Toyota */
+            make?: string;
+            /** @description e.g. Corolla */
+            model?: string;
+            year?: number;
+            category?: components["schemas"]["CategoryEnum"];
+            transmission?: components["schemas"]["TransmissionEnum"];
+            fuel?: components["schemas"]["FuelEnum"];
+            seats?: number;
+            driver_option?: components["schemas"]["DriverOptionEnum"];
+            /**
+             * Format: decimal
+             * @description Price per day.
+             */
+            daily_rate?: string;
+            /** Format: int64 */
+            min_days?: number;
+            description?: string;
+            country?: components["schemas"]["CountryEnum"];
+            city?: string;
+            /** @description Neighbourhood where it's collected, shown to guests. */
+            area?: string;
+            pickup_address?: string;
+            /** @description The host has made it bookable. */
+            is_published?: boolean;
+        };
         PatchedDiscountRequest: {
             /** @description Shown to guests, e.g. "Christmas offer". */
             label?: string;
@@ -3337,6 +4070,7 @@ export interface components {
             last_name?: string;
             phone?: string;
             account_type?: components["schemas"]["AccountTypeEnum"];
+            host_type?: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
             /**
              * Active
              * @description Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
@@ -3426,6 +4160,7 @@ export interface components {
             first_name?: string;
             last_name?: string;
             phone?: string;
+            host_type?: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
         };
         /** @description A payment as the guest who made it sees it. */
         Payment: {
@@ -3632,7 +4367,105 @@ export interface components {
             last_name: string;
             phone?: string;
             account_type?: components["schemas"]["AccountTypeEnum"];
+            host_type?: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
         };
+        /** @description A rental as its guest sees it. The pickup address and host's contact show once it's confirmed. */
+        Rental: {
+            readonly reference: string;
+            readonly status: components["schemas"]["RentalStatusEnum"];
+            readonly car: components["schemas"]["CarCard"];
+            /** Format: date */
+            readonly pickup_date: string;
+            /**
+             * Format: date
+             * @description The day the car comes back.
+             */
+            readonly return_date: string;
+            readonly days: number;
+            readonly with_driver: boolean;
+            /** @description Anything the guest wants the host to know. */
+            readonly note: string;
+            /**
+             * Format: decimal
+             * @description Snapshot when booked.
+             */
+            readonly daily_rate: string;
+            /** Format: decimal */
+            readonly total_price: string;
+            readonly currency: string;
+            /**
+             * Format: date-time
+             * @description An unanswered request frees the car then.
+             */
+            readonly hold_expires_at: string | null;
+            readonly pickup_address: string;
+            readonly host_name: string;
+            readonly host_phone: string;
+            readonly host_email: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        RentalCreateRequest: {
+            car: string;
+            /** Format: date */
+            pickup_date: string;
+            /**
+             * Format: date
+             * @description The day the car comes back.
+             */
+            return_date: string;
+            with_driver?: boolean | null;
+            note?: string;
+            /** @description Defaults to the account's. */
+            name?: string;
+            phone?: string;
+        };
+        /** @description A rental as the car's host sees it. */
+        RentalManage: {
+            readonly reference: string;
+            readonly status: components["schemas"]["RentalStatusEnum"];
+            readonly car_slug: string;
+            readonly car_title: string;
+            readonly renter_name: string;
+            /** Format: email */
+            readonly renter_email: string;
+            readonly renter_phone: string;
+            /** Format: date */
+            readonly pickup_date: string;
+            /**
+             * Format: date
+             * @description The day the car comes back.
+             */
+            readonly return_date: string;
+            readonly days: number;
+            readonly with_driver: boolean;
+            /** @description Anything the guest wants the host to know. */
+            readonly note: string;
+            /**
+             * Format: decimal
+             * @description Snapshot when booked.
+             */
+            readonly daily_rate: string;
+            /** Format: decimal */
+            readonly total_price: string;
+            readonly currency: string;
+            /**
+             * Format: date-time
+             * @description An unanswered request frees the car then.
+             */
+            readonly hold_expires_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `pending` - pending
+         *     * `confirmed` - confirmed
+         *     * `declined` - declined
+         *     * `cancelled` - cancelled
+         *     * `expired` - expired
+         * @enum {string}
+         */
+        RentalStatusEnum: "pending" | "confirmed" | "declined" | "cancelled" | "expired";
         Reservation: {
             readonly reference: string;
             readonly unit: components["schemas"]["ReservationUnit"];
@@ -3749,6 +4582,49 @@ export interface components {
          * @enum {string}
          */
         SourceEnum: "website" | "staff";
+        /** @description A car with its host and how busy it is. Edit it through /dashboard/cars/. */
+        StaffCar: {
+            readonly slug: string;
+            readonly title: string;
+            /** @description e.g. Toyota */
+            readonly make: string;
+            /** @description e.g. Corolla */
+            readonly model: string;
+            readonly year: number;
+            readonly category: components["schemas"]["CategoryEnum"];
+            readonly transmission: components["schemas"]["TransmissionEnum"];
+            readonly fuel: components["schemas"]["FuelEnum"];
+            readonly seats: number;
+            readonly driver_option: components["schemas"]["DriverOptionEnum"];
+            /**
+             * Format: decimal
+             * @description Price per day.
+             */
+            readonly daily_rate: string;
+            readonly min_days: number;
+            readonly description: string;
+            readonly country: components["schemas"]["CountryEnum"];
+            readonly city: string;
+            /** @description Neighbourhood where it's collected, shown to guests. */
+            readonly area: string;
+            readonly pickup_address: string;
+            /** @description The host has made it bookable. */
+            readonly is_published: boolean;
+            /** @description Untick to take it off the site, whatever the host does. */
+            readonly is_active: boolean;
+            readonly images: components["schemas"]["CarImage"][];
+            readonly owner_id: number | null;
+            /** Format: email */
+            readonly owner_email: string | null;
+            readonly pending_requests: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+            readonly owner_name: string;
+            /** @default 0 */
+            readonly rental_count: number;
+        };
         StaffOverview: {
             users: components["schemas"]["UserCounts"];
             hotels: components["schemas"]["HotelCounts"];
@@ -3757,10 +4633,50 @@ export interface components {
             support: components["schemas"]["SupportCounts"];
             reviews: components["schemas"]["ReviewCounts"];
             events: components["schemas"]["EventCounts"];
+            cars: components["schemas"]["CarCounts"];
             /** @description The last six months, oldest first. */
             months: components["schemas"]["Month"][];
             recent_bookings: components["schemas"]["RecentBooking"][];
             recent_users: components["schemas"]["RecentUser"][];
+        };
+        /** @description A rental as the car's host sees it. */
+        StaffRental: {
+            readonly reference: string;
+            readonly status: components["schemas"]["RentalStatusEnum"];
+            readonly car_slug: string;
+            readonly car_title: string;
+            readonly renter_name: string;
+            /** Format: email */
+            readonly renter_email: string;
+            readonly renter_phone: string;
+            /** Format: date */
+            readonly pickup_date: string;
+            /**
+             * Format: date
+             * @description The day the car comes back.
+             */
+            readonly return_date: string;
+            readonly days: number;
+            readonly with_driver: boolean;
+            /** @description Anything the guest wants the host to know. */
+            readonly note: string;
+            /**
+             * Format: decimal
+             * @description Snapshot when booked.
+             */
+            readonly daily_rate: string;
+            /** Format: decimal */
+            readonly total_price: string;
+            readonly currency: string;
+            /**
+             * Format: date-time
+             * @description An unanswered request frees the car then.
+             */
+            readonly hold_expires_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: email */
+            readonly host_email: string | null;
         };
         StaffTicketOrder: {
             readonly reference: string;
@@ -3813,6 +4729,7 @@ export interface components {
             last_name: string;
             phone: string;
             account_type: components["schemas"]["AccountTypeEnum"];
+            host_type: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
             readonly role: components["schemas"]["RoleEnum"];
             /**
              * Active
@@ -3834,6 +4751,8 @@ export interface components {
             /** @default 0 */
             readonly hotel_count: number;
             /** @default 0 */
+            readonly car_count: number;
+            /** @default 0 */
             readonly booking_count: number;
             /** @default 0 */
             readonly event_count: number;
@@ -3843,7 +4762,7 @@ export interface components {
             readonly last_login: string | null;
         };
         /**
-         * @description Add an account: a guest, hotel owner, organiser or staff member.
+         * @description Add an account: a guest, host, organiser or staff member.
          *
          *     Without a password, they're emailed a link to choose one.
          */
@@ -3859,6 +4778,7 @@ export interface components {
             last_name: string;
             phone: string;
             account_type: components["schemas"]["AccountTypeEnum"];
+            host_type: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
             readonly role: components["schemas"]["RoleEnum"];
             /**
              * Active
@@ -3880,6 +4800,8 @@ export interface components {
             /** @default 0 */
             readonly hotel_count: number;
             /** @default 0 */
+            readonly car_count: number;
+            /** @default 0 */
             readonly booking_count: number;
             /** @default 0 */
             readonly event_count: number;
@@ -3889,7 +4811,7 @@ export interface components {
             readonly last_login: string | null;
         };
         /**
-         * @description Add an account: a guest, hotel owner, organiser or staff member.
+         * @description Add an account: a guest, host, organiser or staff member.
          *
          *     Without a password, they're emailed a link to choose one.
          */
@@ -3903,6 +4825,7 @@ export interface components {
             last_name: string;
             phone?: string;
             account_type?: components["schemas"]["AccountTypeEnum"];
+            host_type?: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
             /**
              * Active
              * @description Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
@@ -3933,6 +4856,7 @@ export interface components {
             last_name: string;
             phone: string;
             account_type: components["schemas"]["AccountTypeEnum"];
+            host_type: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
             readonly role: components["schemas"]["RoleEnum"];
             /**
              * Active
@@ -3953,6 +4877,8 @@ export interface components {
             readonly google_linked: boolean;
             /** @default 0 */
             readonly hotel_count: number;
+            /** @default 0 */
+            readonly car_count: number;
             /** @default 0 */
             readonly booking_count: number;
             /** @default 0 */
@@ -4019,6 +4945,12 @@ export interface components {
             open: number;
             needs_reply: number;
             unread: number;
+        };
+        TakenRange: {
+            /** Format: date */
+            pickup_date: string;
+            /** Format: date */
+            return_date: string;
         };
         Ticket: {
             readonly code: string;
@@ -4144,6 +5076,12 @@ export interface components {
             not_completed: number;
             needs_refund: number;
         };
+        /**
+         * @description * `automatic` - Automatic
+         *     * `manual` - Manual
+         * @enum {string}
+         */
+        TransmissionEnum: "automatic" | "manual";
         UnitDetail: {
             readonly id: number;
             slug: string;
@@ -4359,6 +5297,7 @@ export interface components {
             last_name: string;
             phone: string;
             readonly account_type: components["schemas"]["AccountTypeEnum"];
+            host_type: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
             readonly role: components["schemas"]["RoleEnum"];
             /**
              * Staff status
@@ -4385,7 +5324,9 @@ export interface components {
         UserCounts: {
             total: number;
             guests: number;
+            /** @description Hosts, of every type. */
             owners: number;
+            car_hosts: number;
             organisers: number;
             staff: number;
             inactive: number;
@@ -4420,6 +5361,179 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    admin_cars_list: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: cars Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description make, created_at, daily_rate, rental_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for cars Shortlet Stay manages. */
+                owner?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Make, model, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffCarList"];
+                };
+            };
+        };
+    };
+    admin_cars_retrieve: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: cars Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description make, created_at, daily_rate, rental_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for cars Shortlet Stay manages. */
+                owner?: string;
+                /** @description Make, model, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffCar"];
+                };
+            };
+        };
+    };
+    admin_cars_assign_owner_create: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: cars Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description make, created_at, daily_rate, rental_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for cars Shortlet Stay manages. */
+                owner?: string;
+                /** @description Make, model, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignCarOwnerRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssignCarOwnerRequest"];
+                "multipart/form-data": components["schemas"]["AssignCarOwnerRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffCar"];
+                };
+            };
+        };
+    };
+    admin_cars_restore_create: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: cars Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description make, created_at, daily_rate, rental_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for cars Shortlet Stay manages. */
+                owner?: string;
+                /** @description Make, model, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffCar"];
+                };
+            };
+        };
+    };
+    admin_cars_suspend_create: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: cars Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description make, created_at, daily_rate, rental_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for cars Shortlet Stay manages. */
+                owner?: string;
+                /** @description Make, model, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffCar"];
+                };
+            };
+        };
+    };
     admin_hotels_list: {
         parameters: {
             query?: {
@@ -4567,6 +5681,35 @@ export interface operations {
             };
         };
     };
+    admin_rentals_list: {
+        parameters: {
+            query?: {
+                /** @description The car's slug. */
+                car?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Reference, or the guest's name, email or phone. */
+                search?: string;
+                status?: "cancelled" | "confirmed" | "declined" | "pending";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffRentalList"];
+                };
+            };
+        };
+    };
     admin_ticket_orders_list: {
         parameters: {
             query?: {
@@ -4660,6 +5803,8 @@ export interface operations {
     admin_users_list: {
         parameters: {
             query?: {
+                /** @description Hosts of this kind. */
+                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
@@ -4667,7 +5812,7 @@ export interface operations {
                 page?: number;
                 /** @description Number of results to return per page. */
                 page_size?: number;
-                /** @description admin: Shortlet Stay staff. */
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
                 role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
@@ -4691,10 +5836,12 @@ export interface operations {
     admin_users_create: {
         parameters: {
             query?: {
+                /** @description Hosts of this kind. */
+                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. */
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
                 role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
@@ -4724,10 +5871,12 @@ export interface operations {
     admin_users_retrieve: {
         parameters: {
             query?: {
+                /** @description Hosts of this kind. */
+                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. */
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
                 role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
@@ -4754,10 +5903,12 @@ export interface operations {
     admin_users_partial_update: {
         parameters: {
             query?: {
+                /** @description Hosts of this kind. */
+                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. */
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
                 role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
@@ -4790,10 +5941,12 @@ export interface operations {
     admin_users_send_password_reset_create: {
         parameters: {
             query?: {
+                /** @description Hosts of this kind. */
+                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. */
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
                 role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
@@ -4820,10 +5973,12 @@ export interface operations {
     admin_users_sign_out_create: {
         parameters: {
             query?: {
+                /** @description Hosts of this kind. */
+                host_type?: "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. */
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
                 role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
@@ -5357,6 +6512,199 @@ export interface operations {
             };
         };
     };
+    car_rentals_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedRentalList"];
+                };
+            };
+        };
+    };
+    car_rentals_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RentalCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RentalCreateRequest"];
+                "multipart/form-data": components["schemas"]["RentalCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Rental"];
+                };
+            };
+        };
+    };
+    car_rentals_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Rental"];
+                };
+            };
+        };
+    };
+    car_rentals_cancel_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Rental"];
+                };
+            };
+        };
+    };
+    cars_list: {
+        parameters: {
+            query?: {
+                category?: "bus" | "economy" | "luxury" | "pickup" | "sedan" | "suv" | "van";
+                /** @description Only cars collected in this city. */
+                city?: string;
+                /** @description ISO country code: only cars in that country. */
+                country?: string;
+                /** @description Cars that can be rented this way. */
+                driver?: "self_drive" | "with_driver";
+                /** @description Daily rate at most this. */
+                max_price?: number;
+                ordering?: "-daily_rate" | "-year" | "daily_rate";
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description With return_date: only cars free for those days. */
+                pickup_date?: string;
+                return_date?: string;
+                /** @description Words in the make or model. */
+                search?: string;
+                /** @description At least this many seats. */
+                seats?: number;
+                transmission?: "automatic" | "manual";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCarCardList"];
+                };
+            };
+        };
+    };
+    cars_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarDetail"];
+                };
+            };
+        };
+    };
+    cars_availability_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarAvailability"];
+                };
+            };
+        };
+    };
+    cars_cities_list: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+        };
+    };
     dashboard_amenities_list: {
         parameters: {
             query?: never;
@@ -5840,6 +7188,251 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Calendar"];
+                };
+            };
+        };
+    };
+    dashboard_cars_list: {
+        parameters: {
+            query?: {
+                /** @description A host's user id (platform admins). */
+                owner?: number;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Make, model or city. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCarManageList"];
+                };
+            };
+        };
+    };
+    dashboard_cars_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CarManageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CarManageRequest"];
+                "multipart/form-data": components["schemas"]["CarManageRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarManage"];
+                };
+            };
+        };
+    };
+    dashboard_cars_images_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                car_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarImage"][];
+                };
+            };
+        };
+    };
+    dashboard_cars_images_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                car_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["CarImageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CarImageRequest"];
+                "application/json": components["schemas"]["CarImageRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarImage"];
+                };
+            };
+        };
+    };
+    dashboard_cars_images_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                car_slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    dashboard_cars_images_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                car_slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["PatchedCarImageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCarImageRequest"];
+                "application/json": components["schemas"]["PatchedCarImageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarImage"];
+                };
+            };
+        };
+    };
+    dashboard_cars_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarManage"];
+                };
+            };
+        };
+    };
+    dashboard_cars_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CarManageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CarManageRequest"];
+                "multipart/form-data": components["schemas"]["CarManageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarManage"];
+                };
+            };
+        };
+    };
+    dashboard_cars_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    dashboard_cars_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCarManageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCarManageRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCarManageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarManage"];
                 };
             };
         };
@@ -6468,6 +8061,119 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PropertyManage"];
+                };
+            };
+        };
+    };
+    dashboard_rentals_list: {
+        parameters: {
+            query?: {
+                /** @description The car's slug. */
+                car?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Reference, or the guest's name, email or phone. */
+                search?: string;
+                status?: "cancelled" | "confirmed" | "declined" | "expired" | "pending";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedRentalManageList"];
+                };
+            };
+        };
+    };
+    dashboard_rentals_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RentalManage"];
+                };
+            };
+        };
+    };
+    dashboard_rentals_cancel_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RentalManage"];
+                };
+            };
+        };
+    };
+    dashboard_rentals_confirm_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RentalManage"];
+                };
+            };
+        };
+    };
+    dashboard_rentals_decline_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RentalManage"];
                 };
             };
         };

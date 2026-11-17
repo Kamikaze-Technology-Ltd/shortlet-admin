@@ -293,7 +293,7 @@ export function useFlash() {
   return [view, setNote] as const;
 }
 
-export const ROLE_LABEL: Record<string, string> = { guest: "Guest", owner: "Hotel owner", organiser: "Organiser", admin: "Staff" };
+export const ROLE_LABEL: Record<string, string> = { guest: "Guest", owner: "Host", organiser: "Organiser", admin: "Staff" };
 export function RoleBadge({ role, superuser }: { role: string; superuser?: boolean }) {
   const tone: Tone = role === "admin" ? "brand" : role === "owner" ? "blue" : role === "organiser" ? "amber" : "grey";
   return <Badge tone={tone}>{role === "admin" && superuser ? "Super admin" : ROLE_LABEL[role] ?? role}</Badge>;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Ban, CheckCircle2, KeyRound, LogOut } from "lucide-react";
-import { ApiError, adminApi, dateTime, day, money, moneyList, type StaffUserDetail } from "@/lib/api";
+import { ApiError, adminApi, dateTime, day, HOST_TYPES, money, moneyList, type HostType, type StaffUserDetail } from "@/lib/api";
 import { Badge, Button, Card, Check, Empty, ErrorText, Facts, Field, inputClass, Loading, Page, RoleBadge, StatusBadge, Table, Td, useFlash } from "./ui";
 
 export default function UserDetail({ id }: { id: number }) {
@@ -77,6 +77,12 @@ function Detail({ u }: { u: StaffUserDetail }) {
               ["Joined", dateTime(u.date_joined)],
               ["Last signed in", u.last_login ? dateTime(u.last_login) : "Never"],
               ["Sign-in", [u.has_password && "Password", u.google_linked && "Google"].filter(Boolean).join(" and ") || "No password set yet"],
+              ...(u.role === "owner"
+                ? ([
+                    ["Kind of host", u.host_type ? HOST_TYPES[u.host_type as HostType] : "Not chosen yet"],
+                    ["Cars listed", u.car_count ? <Link key="cars" href={`/cars?owner=${u.id}`} className="font-medium text-brand-900 hover:underline">{u.car_count}</Link> : 0],
+                  ] as [string, React.ReactNode][])
+                : []),
               ["Bookings", u.booking_count],
               ["Paid for stays", moneyList(u.amount_paid)],
               ["Ticket orders", u.ticket_order_count],
@@ -87,7 +93,7 @@ function Detail({ u }: { u: StaffUserDetail }) {
         </Card>
       </div>
 
-      {(u.account_type === "owner" || u.hotels.length > 0) && (
+      {((u.account_type === "owner" && u.host_type !== "car_rental") || u.hotels.length > 0) && (
         <Card title="Hotels" pad={false}>
           {u.hotels.length ? (
             <Table head={["Hotel", "City", "Rooms", "Status"]}>
@@ -149,7 +155,7 @@ function Detail({ u }: { u: StaffUserDetail }) {
 }
 
 function backLink(u: StaffUserDetail) {
-  return { guest: "/guests", owner: "/owners", organiser: "/organisers", admin: "/team" }[u.role] ?? "/users";
+  return { guest: "/guests", owner: "/hosts", organiser: "/organisers", admin: "/team" }[u.role] ?? "/users";
 }
 
 function ProfileForm({ u, onSaved }: { u: StaffUserDetail; onSaved: (u: StaffUserDetail) => void }) {
@@ -158,6 +164,7 @@ function ProfileForm({ u, onSaved }: { u: StaffUserDetail; onSaved: (u: StaffUse
     last_name: u.last_name,
     phone: u.phone,
     account_type: u.account_type,
+    host_type: u.host_type,
     is_staff: u.is_staff,
     is_superuser: u.is_superuser,
   });
@@ -184,13 +191,23 @@ function ProfileForm({ u, onSaved }: { u: StaffUserDetail; onSaved: (u: StaffUse
           <Field label="Phone" error={fields.phone}>
             <input value={form.phone} onChange={(e) => set("phone")(e.target.value)} className={inputClass} />
           </Field>
-          <Field label="Account type" error={fields.account_type} hint="Owners run hotels; organisers sell event tickets.">
+          <Field label="Account type" error={fields.account_type} hint="Hosts list stays or cars; organisers sell event tickets.">
             <select value={form.account_type} onChange={(e) => set("account_type")(e.target.value as typeof form.account_type)} className={inputClass}>
               <option value="guest">Guest</option>
-              <option value="owner">Hotel owner</option>
+              <option value="owner">Host</option>
               <option value="organiser">Event organiser</option>
             </select>
           </Field>
+          {form.account_type === "owner" && (
+            <Field label="Kind of host" error={fields.host_type} hint="Decides their dashboard. Can't change while they still list another kind.">
+              <select value={form.host_type} onChange={(e) => set("host_type")(e.target.value as typeof form.host_type)} className={inputClass}>
+                {!form.host_type && <option value="">Not chosen yet</option>}
+                {(Object.entries(HOST_TYPES) as [HostType, string][]).map(([v, l]) => (
+                  <option key={v} value={v}>{l}</option>
+                ))}
+              </select>
+            </Field>
+          )}
         </div>
         <div className="space-y-2 rounded-2xl bg-cream/60 p-4">
           <Check label="Shortlet Stay staff (can use this admin)" checked={form.is_staff} onChange={(v) => setForm((f) => ({ ...f, is_staff: v, is_superuser: v && f.is_superuser }))} />

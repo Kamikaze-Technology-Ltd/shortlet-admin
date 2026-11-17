@@ -30,10 +30,17 @@ export default function Overview() {
         <Stat label="Staying now" value={d.bookings.in_house} hint={`${d.bookings.upcoming} confirmed upcoming · ${d.bookings.pending} pending`} />
       </Section>
 
+      <Section title="Cars">
+        <Stat label="Cars" value={d.cars.total} hint={`${d.cars.bookable} bookable · ${d.cars.suspended} suspended`} />
+        <Stat label="Rental requests" value={d.cars.rentals_pending} tone={d.cars.rentals_pending ? "warn" : undefined} hint="Waiting for the host" />
+        <Stat label="Upcoming rentals" value={d.cars.rentals_upcoming} hint="Confirmed, not yet collected" />
+        <Stat label="Managed by Shortlet Stay" value={d.cars.without_owner} hint="Cars with no host" />
+      </Section>
+
       <Section title="People">
         <Stat label="Accounts" value={d.users.total} hint={`${d.users.new_30d} joined in 30 days · ${d.users.inactive} deactivated`} />
         <Stat label="Guests" value={d.users.guests} />
-        <Stat label="Hotel owners" value={d.users.owners} hint={`${d.users.organisers} event organisers`} />
+        <Stat label="Hosts" value={d.users.owners} hint={`${d.users.car_hosts} car rental · ${d.users.organisers} event organisers`} />
         <Stat label="Support team" value={d.users.staff} />
       </Section>
 
@@ -106,6 +113,7 @@ function Attention({ d }: { d: Data }) {
     d.support.needs_reply && { href: "/support", text: `${d.support.needs_reply} support chat${d.support.needs_reply === 1 ? "" : "s"} waiting for a reply` },
     d.money.needs_refund && { href: "/payments", text: `${d.money.needs_refund} payment${d.money.needs_refund === 1 ? "" : "s"} to refund` },
     d.bookings.pending && { href: "/bookings", text: `${d.bookings.pending} booking${d.bookings.pending === 1 ? "" : "s"} pending` },
+    d.cars.rentals_pending && { href: "/rentals", text: `${d.cars.rentals_pending} car rental request${d.cars.rentals_pending === 1 ? "" : "s"} waiting for the host` },
     d.hotels.without_owner && { href: "/hotels", text: `${d.hotels.without_owner} hotel${d.hotels.without_owner === 1 ? "" : "s"} managed by Shortlet Stay (no owner)` },
   ].filter(Boolean) as { href: string; text: string }[];
   if (!items.length) return null;

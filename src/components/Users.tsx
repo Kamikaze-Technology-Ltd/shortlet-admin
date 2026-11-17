@@ -5,15 +5,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { ApiError, adminApi, day, type Role, type StaffUser } from "@/lib/api";
+import { ApiError, adminApi, day, HOST_TYPES, type HostType, type Role, type StaffUser } from "@/lib/api";
 import { Badge, Button, Card, Check, Drawer, Empty, ErrorText, Field, inputClass, Loading, Page, Pager, RoleBadge, SearchBox, Select, Table, Td, Toolbar } from "./ui";
 
 const PAGE_SIZE = 25;
 
 const COPY: Record<Role | "all", { title: string; subtitle: string; add: string }> = {
-  all: { title: "All users", subtitle: "Every account on Shortlet Stay: guests, hotel owners, organisers and staff.", add: "Add account" },
+  all: { title: "All users", subtitle: "Every account on Shortlet Stay: guests, hosts, organisers and staff.", add: "Add account" },
   guest: { title: "Guests", subtitle: "People who book stays and buy tickets.", add: "Add guest" },
-  owner: { title: "Hotel owners", subtitle: "Accounts that list and run hotels from the website's dashboard.", add: "Add hotel owner" },
+  owner: {
+    title: "Hosts",
+    subtitle: "Hotels, property managers, home owners and car rental hosts, who list from the website's dashboard.",
+    add: "Add host",
+  },
   organiser: { title: "Organisers", subtitle: "Accounts that sell tickets to events.", add: "Add organiser" },
   admin: { title: "Support team", subtitle: "Shortlet Stay staff who can use this admin. Super admins can add and remove team members.", add: "Add team member" },
 };
@@ -23,10 +27,11 @@ export default function Users({ role }: { role?: Role }) {
   const [search, setSearch] = useState("");
   const [active, setActive] = useState<"" | "true" | "false">("");
   const [roleFilter, setRoleFilter] = useState<"" | Role>("");
+  const [hostType, setHostType] = useState<"" | HostType>("");
   const [ordering, setOrdering] = useState("-date_joined");
   const [page, setPage] = useState(1);
   const [adding, setAdding] = useState(false);
-  const params = { role: role ?? roleFilter, search, is_active: active, ordering, page, page_size: PAGE_SIZE };
+  const params = { role: role ?? roleFilter, host_type: role === "owner" ? hostType : "", search, is_active: active, ordering, page, page_size: PAGE_SIZE };
   const list = useQuery({ queryKey: ["users", params], queryFn: () => adminApi.users(params), placeholderData: (prev) => prev });
   const reset = <T,>(set: (v: T) => void) => (v: T) => {
     set(v);
@@ -42,7 +47,15 @@ export default function Users({ role }: { role?: Role }) {
             label="Role"
             value={roleFilter}
             onChange={reset(setRoleFilter)}
-            options={[["", "Every role"], ["guest", "Guests"], ["owner", "Hotel owners"], ["organiser", "Organisers"], ["admin", "Staff"]] as const}
+            options={[["", "Every role"], ["guest", "Guests"], ["owner", "Hosts"], ["organiser", "Organisers"], ["admin", "Staff"]] as const}
+          />
+        )}
+        {role === "owner" && (
+          <Select
+            label="Kind of host"
+            value={hostType}
+            onChange={reset(setHostType)}
+            options={[["", "Every kind"] as const, ...(Object.entries(HOST_TYPES) as [HostType, string][])]}
           />
         )}
         <Select label="Status" value={active} onChange={reset(setActive)} options={[["", "Active and deactivated"], ["true", "Active"], ["false", "Deactivated"]] as const} />
@@ -59,7 +72,7 @@ export default function Users({ role }: { role?: Role }) {
         {list.data && !list.data.results.length && <Empty>No accounts match.</Empty>}
         {!!list.data?.results.length && (
           <>
-            <Table head={["Name", "Role", role === "owner" ? "Hotels" : role === "organiser" ? "Events" : role === "admin" ? "Access" : "Bookings", "Joined", "Last signed in", "Status"]}>
+            <Table head={["Name", "Role", role === "owner" ? "Listings" : role === "organiser" ? "Events" : role === "admin" ? "Access" : "Bookings", "Joined", "Last signed in", "Status"]}>
               {list.data.results.map((u) => (
                 <UserRow key={u.id} u={u} role={role} />
               ))}
@@ -75,8 +88,9 @@ export default function Users({ role }: { role?: Role }) {
 
 function UserRow({ u, role }: { u: StaffUser; role?: Role }) {
   const router = useRouter();
+  const listings = u.host_type === "car_rental" ? `${u.car_count} car${u.car_count === 1 ? "" : "s"}` : `${u.hotel_count} propert${u.hotel_count === 1 ? "y" : "ies"}`;
   const metric =
-    role === "owner" ? u.hotel_count : role === "organiser" ? u.event_count : role === "admin" ? (u.is_superuser ? "Super admin" : "Support") : u.booking_count;
+    role === "owner" ? listings : role === "organiser" ? u.event_count : role === "admin" ? (u.is_superuser ? "Super admin" : "Support") : u.booking_count;
   return (
     <tr className="cursor-pointer hover:bg-mist" onClick={() => router.push(`/users/${u.id}`)}>
       <Td>
@@ -85,7 +99,10 @@ function UserRow({ u, role }: { u: StaffUser; role?: Role }) {
         </Link>
         <p className="text-xs text-muted">{u.email}{u.phone && ` · ${u.phone}`}</p>
       </Td>
-      <Td><RoleBadge role={u.role} superuser={u.is_superuser} /></Td>
+      <Td>
+        <RoleBadge role={u.role} superuser={u.is_superuser} />
+        {u.role === "owner" && <p className="mt-1 text-xs text-muted">{u.host_type ? HOST_TYPES[u.host_type as HostType] : "Not chosen yet"}</p>}
+      </Td>
       <Td>{metric}</Td>
       <Td className="whitespace-nowrap">{day(u.date_joined)}</Td>
       <Td className="whitespace-nowrap">{u.last_login ? day(u.last_login) : <span className="text-muted">Never</span>}</Td>
@@ -103,6 +120,7 @@ function NewUser({ role, onClose }: { role?: Role; onClose: () => void }) {
     email: "",
     phone: "",
     account_type: (role && role !== "admin" ? role : "guest") as "guest" | "owner" | "organiser",
+    host_type: (role === "owner" ? "hotel" : "") as HostType | "",
     is_staff: role === "admin",
     is_superuser: false,
     password: "",
@@ -146,10 +164,19 @@ function NewUser({ role, onClose }: { role?: Role; onClose: () => void }) {
         <Field label="Account type" error={fields.account_type} hint="What they do on the website and app.">
           <select value={form.account_type} onChange={(e) => set("account_type")(e.target.value as typeof form.account_type)} className={inputClass}>
             <option value="guest">Guest</option>
-            <option value="owner">Hotel owner</option>
+            <option value="owner">Host</option>
             <option value="organiser">Event organiser</option>
           </select>
         </Field>
+        {form.account_type === "owner" && (
+          <Field label="Kind of host" error={fields.host_type} hint="Decides what their dashboard shows." className="sm:col-span-2">
+            <select value={form.host_type} onChange={(e) => set("host_type")(e.target.value as HostType)} className={inputClass}>
+              {(Object.entries(HOST_TYPES) as [HostType, string][]).map(([v, l]) => (
+                <option key={v} value={v}>{l}</option>
+              ))}
+            </select>
+          </Field>
+        )}
       </div>
       <div className="space-y-2 rounded-2xl bg-cream/60 p-4">
         <Check label="Shortlet Stay staff (can use this admin)" checked={form.is_staff} onChange={(v) => setForm((f) => ({ ...f, is_staff: v, is_superuser: v && f.is_superuser }))} />

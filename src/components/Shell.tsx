@@ -8,9 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Building2,
   CalendarDays,
+  Car,
   CreditCard,
   Hotel,
   Inbox,
+  KeyRound,
   LayoutDashboard,
   Loader2,
   LogOut,
@@ -33,7 +35,7 @@ const NAV: { section?: string; items: { href: string; label: string; icon: typeo
     items: [
       { href: "/users", label: "All users", icon: Users },
       { href: "/guests", label: "Guests", icon: UserRound },
-      { href: "/owners", label: "Hotel owners", icon: Building2 },
+      { href: "/hosts", label: "Hosts", icon: Building2 },
       { href: "/organisers", label: "Organisers", icon: Ticket },
       { href: "/team", label: "Support team", icon: ShieldCheck },
     ],
@@ -47,6 +49,13 @@ const NAV: { section?: string; items: { href: string; label: string; icon: typeo
       { href: "/reviews", label: "Reviews", icon: Star },
       { href: "/events", label: "Events", icon: PartyPopper },
       { href: "/amenities", label: "Amenities", icon: Sparkles },
+    ],
+  },
+  {
+    section: "Cars",
+    items: [
+      { href: "/cars", label: "Cars", icon: Car },
+      { href: "/rentals", label: "Car rentals", icon: KeyRound },
     ],
   },
   {
