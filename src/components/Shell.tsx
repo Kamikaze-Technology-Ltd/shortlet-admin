@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Anchor,
   Building2,
   CalendarDays,
   Car,
@@ -19,6 +20,7 @@ import {
   MessageSquareText,
   PartyPopper,
   ShieldCheck,
+  Ship,
   Sparkles,
   Star,
   Ticket,
@@ -36,7 +38,6 @@ const NAV: { section?: string; items: { href: string; label: string; icon: typeo
       { href: "/users", label: "All users", icon: Users },
       { href: "/guests", label: "Guests", icon: UserRound },
       { href: "/hosts", label: "Hosts", icon: Building2 },
-      { href: "/car-rentals", label: "Car rental accounts", icon: Car },
       { href: "/organisers", label: "Organisers", icon: Ticket },
       { href: "/team", label: "Support team", icon: ShieldCheck },
     ],
@@ -57,6 +58,13 @@ const NAV: { section?: string; items: { href: string; label: string; icon: typeo
     items: [
       { href: "/cars", label: "Cars", icon: Car },
       { href: "/rentals", label: "Car rentals", icon: KeyRound },
+    ],
+  },
+  {
+    section: "Cruises",
+    items: [
+      { href: "/boats", label: "Boats", icon: Ship },
+      { href: "/charters", label: "Boat cruises", icon: Anchor },
     ],
   },
   {

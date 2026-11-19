@@ -11,17 +11,12 @@ import { Badge, Button, Card, Check, Drawer, Empty, ErrorText, Field, inputClass
 const PAGE_SIZE = 25;
 
 const COPY: Record<Role | "all", { title: string; subtitle: string; add: string }> = {
-  all: { title: "All users", subtitle: "Every account on Shortlet Stay: guests, hosts, car rental accounts, organisers and staff.", add: "Add account" },
+  all: { title: "All users", subtitle: "Every account on Shortlet Stay: guests, hosts, organisers and staff.", add: "Add account" },
   guest: { title: "Guests", subtitle: "People who book stays and buy tickets.", add: "Add guest" },
   owner: {
     title: "Hosts",
-    subtitle: "Hotels, property managers and home owners, who list stays from the website's dashboard.",
+    subtitle: "Hotels, property managers, home owners, car rentals and boat cruises. Each host offers one service.",
     add: "Add host",
-  },
-  car_rental: {
-    title: "Car rental accounts",
-    subtitle: "Car rental companies and car owners, who list cars to rent. They're separate from hosts and guests.",
-    add: "Add car rental account",
   },
   organiser: { title: "Organisers", subtitle: "Accounts that sell tickets to events.", add: "Add organiser" },
   admin: { title: "Support team", subtitle: "Shortlet Stay staff who can use this admin. Super admins can add and remove team members.", add: "Add team member" },
@@ -52,7 +47,7 @@ export default function Users({ role }: { role?: Role }) {
             label="Role"
             value={roleFilter}
             onChange={reset(setRoleFilter)}
-            options={[["", "Every role"], ["guest", "Guests"], ["owner", "Hosts"], ["car_rental", "Car rental"], ["organiser", "Organisers"], ["admin", "Staff"]] as const}
+            options={[["", "Every role"], ["guest", "Guests"], ["owner", "Hosts"], ["organiser", "Organisers"], ["admin", "Staff"]] as const}
           />
         )}
         {role === "owner" && (
@@ -77,7 +72,7 @@ export default function Users({ role }: { role?: Role }) {
         {list.data && !list.data.results.length && <Empty>No accounts match.</Empty>}
         {!!list.data?.results.length && (
           <>
-            <Table head={["Name", "Role", role === "owner" ? "Properties" : role === "car_rental" ? "Cars" : role === "organiser" ? "Events" : role === "admin" ? "Access" : "Bookings", "Joined", "Last signed in", "Status"]}>
+            <Table head={["Name", "Role", role === "owner" ? "Listings" : role === "organiser" ? "Events" : role === "admin" ? "Access" : "Bookings", "Joined", "Last signed in", "Status"]}>
               {list.data.results.map((u) => (
                 <UserRow key={u.id} u={u} role={role} />
               ))}
@@ -91,10 +86,17 @@ export default function Users({ role }: { role?: Role }) {
   );
 }
 
+/** "3 properties", "2 cars" or "1 boat": a host lists one kind of thing. */
+function listingsOf(u: StaffUser) {
+  const [n, one, many] =
+    u.host_type === "car_rental" ? [u.car_count, "car", "cars"] : u.host_type === "boat_cruise" ? [u.boat_count, "boat", "boats"] : [u.hotel_count, "property", "properties"];
+  return `${n} ${n === 1 ? one : many}`;
+}
+
 function UserRow({ u, role }: { u: StaffUser; role?: Role }) {
   const router = useRouter();
   const metric =
-    role === "owner" ? u.hotel_count : role === "car_rental" ? u.car_count : role === "organiser" ? u.event_count : role === "admin" ? (u.is_superuser ? "Super admin" : "Support") : u.booking_count;
+    role === "owner" ? listingsOf(u) : role === "organiser" ? u.event_count : role === "admin" ? (u.is_superuser ? "Super admin" : "Support") : u.booking_count;
   return (
     <tr className="cursor-pointer hover:bg-mist" onClick={() => router.push(`/users/${u.id}`)}>
       <Td>
@@ -123,7 +125,7 @@ function NewUser({ role, onClose }: { role?: Role; onClose: () => void }) {
     last_name: "",
     email: "",
     phone: "",
-    account_type: (role && role !== "admin" ? role : "guest") as "guest" | "owner" | "car_rental" | "organiser",
+    account_type: (role && role !== "admin" ? role : "guest") as "guest" | "owner" | "organiser",
     host_type: (role === "owner" ? "hotel" : "") as HostType | "",
     is_staff: role === "admin",
     is_superuser: false,
@@ -169,7 +171,6 @@ function NewUser({ role, onClose }: { role?: Role; onClose: () => void }) {
           <select value={form.account_type} onChange={(e) => set("account_type")(e.target.value as typeof form.account_type)} className={inputClass}>
             <option value="guest">Guest</option>
             <option value="owner">Host</option>
-            <option value="car_rental">Car rental</option>
             <option value="organiser">Event organiser</option>
           </select>
         </Field>
