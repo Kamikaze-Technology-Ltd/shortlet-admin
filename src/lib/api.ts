@@ -39,14 +39,18 @@ export type HelpTopic = S["AdminHelpTopic"];
 export type HelpTopicInput = S["AdminHelpTopicRequest"];
 export type HostType = S["HostTypeEnum"];
 export type Car = S["StaffCar"];
+export type Boat = S["StaffBoat"];
+export type Charter = S["StaffCharter"];
 export type Rental = S["StaffRental"];
 export type RentalStatus = S["RentalStatusEnum"];
 
-/** What kind of stays a host offers. Cars are listed by car rental accounts, which aren't hosts. */
+/** What a host offers. Each host offers one service: stays (the first three), cars or boat cruises. */
 export const HOST_TYPES: Record<HostType, string> = {
   hotel: "Hotel owner",
   property_manager: "Property manager",
   homeowner: "Home owner",
+  car_rental: "Car rental",
+  boat_cruise: "Boat cruise",
 };
 
 /** DRF errors: `{ field: ["msg"] }`, `{ detail: "msg" }` or `{ non_field_errors: [...] }`. */
@@ -193,6 +197,15 @@ export const adminApi = {
   restoreCar: (slug: string) => api<Car>(`/admin/cars/${ref(slug)}/restore/`, { method: "POST" }),
   assignCarOwner: (slug: string, owner: number | null) => api<Car>(`/admin/cars/${ref(slug)}/assign-owner/`, { method: "POST", json: { owner } }),
   rentals: (params: Params) => api<Page<Rental>>(`/admin/rentals/${qs(params)}`),
+
+  // Boats: like cars. Charters are answered through the hosts' dashboard endpoints, which accept staff.
+  boats: (params: Params) => api<Page<Boat>>(`/admin/boats/${qs(params)}`),
+  suspendBoat: (slug: string) => api<Boat>(`/admin/boats/${ref(slug)}/suspend/`, { method: "POST" }),
+  restoreBoat: (slug: string) => api<Boat>(`/admin/boats/${ref(slug)}/restore/`, { method: "POST" }),
+  assignBoatOwner: (slug: string, owner: number | null) => api<Boat>(`/admin/boats/${ref(slug)}/assign-owner/`, { method: "POST", json: { owner } }),
+  charters: (params: Params) => api<Page<Charter>>(`/admin/charters/${qs(params)}`),
+  charterAction: (reference: string, action: "confirm" | "decline" | "cancel") =>
+    api<Charter>(`/dashboard/charters/${ref(reference)}/${action}/`, { method: "POST" }),
   // Answering rentals goes through the hosts' dashboard endpoints, which accept staff for every car.
   rentalAction: (reference: string, action: "confirm" | "decline" | "cancel") =>
     api<Rental>(`/dashboard/rentals/${ref(reference)}/${action}/`, { method: "POST" }),

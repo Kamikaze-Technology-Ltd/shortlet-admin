@@ -37,10 +37,16 @@ export default function Overview() {
         <Stat label="Managed by Shortlet Stay" value={d.cars.without_owner} hint="Cars with no host" />
       </Section>
 
+      <Section title="Cruises">
+        <Stat label="Boats" value={d.cruises.total} hint={`${d.cruises.bookable} bookable · ${d.cruises.suspended} suspended`} />
+        <Stat label="Cruise requests" value={d.cruises.charters_pending} tone={d.cruises.charters_pending ? "warn" : undefined} hint="Waiting for the host" />
+        <Stat label="Upcoming cruises" value={d.cruises.charters_upcoming} hint="Confirmed, not yet started" />
+      </Section>
+
       <Section title="People">
         <Stat label="Accounts" value={d.users.total} hint={`${d.users.new_30d} joined in 30 days · ${d.users.inactive} deactivated`} />
         <Stat label="Guests" value={d.users.guests} />
-        <Stat label="Hosts" value={d.users.owners} hint={`${d.users.car_rentals} car rental accounts · ${d.users.organisers} event organisers`} />
+        <Stat label="Hosts" value={d.users.owners} hint={`${d.users.car_hosts} car rental · ${d.users.boat_hosts} boat cruise · ${d.users.organisers} organisers`} />
         <Stat label="Support team" value={d.users.staff} />
       </Section>
 
@@ -113,6 +119,7 @@ function Attention({ d }: { d: Data }) {
     d.support.needs_reply && { href: "/support", text: `${d.support.needs_reply} support chat${d.support.needs_reply === 1 ? "" : "s"} waiting for a reply` },
     d.money.needs_refund && { href: "/payments", text: `${d.money.needs_refund} payment${d.money.needs_refund === 1 ? "" : "s"} to refund` },
     d.bookings.pending && { href: "/bookings", text: `${d.bookings.pending} booking${d.bookings.pending === 1 ? "" : "s"} pending` },
+    d.cruises.charters_pending && { href: "/charters", text: `${d.cruises.charters_pending} boat cruise request${d.cruises.charters_pending === 1 ? "" : "s"} waiting for the host` },
     d.cars.rentals_pending && { href: "/rentals", text: `${d.cars.rentals_pending} car rental request${d.cars.rentals_pending === 1 ? "" : "s"} waiting for the host` },
     d.hotels.without_owner && { href: "/hotels", text: `${d.hotels.without_owner} hotel${d.hotels.without_owner === 1 ? "" : "s"} managed by Shortlet Stay (no owner)` },
   ].filter(Boolean) as { href: string; text: string }[];

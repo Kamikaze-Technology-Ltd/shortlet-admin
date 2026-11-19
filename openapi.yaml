@@ -4,6 +4,280 @@ info:
   version: 1.0.0
   description: Shortlet Stay backend API
 paths:
+  /api/admin/boats/:
+    get:
+      operationId: admin_boats_list
+      description: Every boat with its host and charters. Edit boats through /dashboard/boats/;
+        suspend or reassign them here.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: boats Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, hourly_rate, charter_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for boats Shortlet Stay manages.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, marina, city or the host's name or email.
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStaffBoatList'
+          description: ''
+  /api/admin/boats/{slug}/:
+    get:
+      operationId: admin_boats_retrieve
+      description: Every boat with its host and charters. Edit boats through /dashboard/boats/;
+        suspend or reassign them here.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: boats Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, hourly_rate, charter_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for boats Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, marina, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffBoat'
+          description: ''
+  /api/admin/boats/{slug}/assign-owner/:
+    post:
+      operationId: admin_boats_assign_owner_create
+      description: Give the boat to a boat cruise host, or (null) take it back for
+        Shortlet Stay to manage.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: boats Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, hourly_rate, charter_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for boats Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, marina, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignBoatOwnerRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignBoatOwnerRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignBoatOwnerRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffBoat'
+          description: ''
+  /api/admin/boats/{slug}/restore/:
+    post:
+      operationId: admin_boats_restore_create
+      description: Every boat with its host and charters. Edit boats through /dashboard/boats/;
+        suspend or reassign them here.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: boats Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, hourly_rate, charter_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for boats Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, marina, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffBoat'
+          description: ''
+  /api/admin/boats/{slug}/suspend/:
+    post:
+      operationId: admin_boats_suspend_create
+      description: Take the boat off the site, whatever its host does. Charters already
+        made stand.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: 'false: boats Shortlet Stay has suspended.'
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: name, created_at, hourly_rate, charter_count (prefix - to reverse).
+      - in: query
+        name: owner
+        schema:
+          type: string
+        description: A host's user id, or "none" for boats Shortlet Stay manages.
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, marina, city or the host's name or email.
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffBoat'
+          description: ''
   /api/admin/cars/:
     get:
       operationId: admin_cars_list
@@ -116,8 +390,8 @@ paths:
   /api/admin/cars/{slug}/assign-owner/:
     post:
       operationId: admin_cars_assign_owner_create
-      description: Give the car to a car rental account, or (null) take it back for
-        Shortlet Stay to manage.
+      description: Give the car to a car rental host, or (null) take it back for Shortlet
+        Stay to manage.
       parameters:
       - in: query
         name: country
@@ -278,6 +552,54 @@ paths:
               schema:
                 $ref: '#/components/schemas/StaffCar'
           description: ''
+  /api/admin/charters/:
+    get:
+      operationId: admin_charters_list
+      description: Boat charters across every host, newest first. Confirm and decline
+        them through /dashboard/charters/.
+      parameters:
+      - in: query
+        name: boat
+        schema:
+          type: string
+        description: The boat's slug.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Reference, or the guest's name, email or phone.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - confirmed
+          - declined
+          - pending
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStaffCharterList'
+          description: ''
   /api/admin/hotels/:
     get:
       operationId: admin_hotels_list
@@ -380,8 +702,8 @@ paths:
   /api/admin/hotels/{slug}/assign-owner/:
     post:
       operationId: admin_hotels_assign_owner_create
-      description: Give the hotel to a host, or (null) take it back for Shortlet Stay
-        to manage.
+      description: Give the hotel to a stays host, or (null) take it back for Shortlet
+        Stay to manage.
       parameters:
       - in: query
         name: country
@@ -677,7 +999,7 @@ paths:
     get:
       operationId: admin_users_list
       description: |-
-        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -686,6 +1008,8 @@ paths:
         schema:
           type: string
           enum:
+          - boat_cruise
+          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -717,12 +1041,10 @@ paths:
           type: string
           enum:
           - admin
-          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
-          accounts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -742,7 +1064,7 @@ paths:
     post:
       operationId: admin_users_create
       description: |-
-        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -751,6 +1073,8 @@ paths:
         schema:
           type: string
           enum:
+          - boat_cruise
+          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -770,12 +1094,10 @@ paths:
           type: string
           enum:
           - admin
-          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
-          accounts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -808,7 +1130,7 @@ paths:
     get:
       operationId: admin_users_retrieve
       description: |-
-        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -817,6 +1139,8 @@ paths:
         schema:
           type: string
           enum:
+          - boat_cruise
+          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -842,12 +1166,10 @@ paths:
           type: string
           enum:
           - admin
-          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
-          accounts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -867,7 +1189,7 @@ paths:
     patch:
       operationId: admin_users_partial_update
       description: |-
-        Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+        Every account: guests, hosts, event organisers and Shortlet Stay staff.
 
         Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
       parameters:
@@ -876,6 +1198,8 @@ paths:
         schema:
           type: string
           enum:
+          - boat_cruise
+          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -901,12 +1225,10 @@ paths:
           type: string
           enum:
           - admin
-          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
-          accounts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -945,6 +1267,8 @@ paths:
         schema:
           type: string
           enum:
+          - boat_cruise
+          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -970,12 +1294,10 @@ paths:
           type: string
           enum:
           - admin
-          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
-          accounts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -1002,6 +1324,8 @@ paths:
         schema:
           type: string
           enum:
+          - boat_cruise
+          - car_rental
           - homeowner
           - hotel
           - property_manager
@@ -1027,12 +1351,10 @@ paths:
           type: string
           enum:
           - admin
-          - car_rental
           - guest
           - organiser
           - owner
-        description: 'admin: Shortlet Stay staff. owner: hosts. car_rental: car rental
-          accounts.'
+        description: 'admin: Shortlet Stay staff. owner: hosts.'
       - in: query
         name: search
         schema:
@@ -1385,6 +1707,142 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/boats/:
+    get:
+      operationId: boats_list
+      description: Boats guests can charter.
+      parameters:
+      - in: query
+        name: boat_type
+        schema:
+          type: string
+          enum:
+          - catamaran
+          - party_boat
+          - pontoon
+          - sailboat
+          - speedboat
+          - yacht
+      - in: query
+        name: city
+        schema:
+          type: string
+        description: Only boats boarding in this city.
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: 'ISO country code: only boats in that country.'
+      - in: query
+        name: guests
+        schema:
+          type: integer
+        description: Takes at least this many guests.
+      - in: query
+        name: max_price
+        schema:
+          type: number
+          format: double
+        description: Hourly rate at most this.
+      - in: query
+        name: ordering
+        schema:
+          type: string
+          enum:
+          - -capacity
+          - -hourly_rate
+          - hourly_rate
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Words in the boat's name or marina.
+      tags:
+      - boats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBoatCardList'
+          description: ''
+  /api/boats/{slug}/:
+    get:
+      operationId: boats_retrieve
+      description: Boats guests can charter.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - boats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatDetail'
+          description: ''
+  /api/boats/{slug}/availability/:
+    get:
+      operationId: boats_availability_retrieve
+      description: The hours the boat is already booked, and its charter rules.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - boats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatAvailability'
+          description: ''
+  /api/boats/cities/:
+    get:
+      operationId: boats_cities_list
+      description: Cities with boats to charter, for browsing by city.
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: ISO country code.
+      tags:
+      - boats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+          description: ''
   /api/bookings/:
     get:
       operationId: bookings_list
@@ -1838,6 +2296,96 @@ paths:
                 items:
                   type: string
           description: ''
+  /api/charters/:
+    get:
+      operationId: charters_list
+      description: The signed-in guest's boat charters, and requesting new ones.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - charters
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCharterList'
+          description: ''
+    post:
+      operationId: charters_create
+      description: The signed-in guest's boat charters, and requesting new ones.
+      tags:
+      - charters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharterCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CharterCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CharterCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charter'
+          description: ''
+  /api/charters/{reference}/:
+    get:
+      operationId: charters_retrieve
+      description: The signed-in guest's boat charters, and requesting new ones.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - charters
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charter'
+          description: ''
+  /api/charters/{reference}/cancel/:
+    post:
+      operationId: charters_cancel_create
+      description: The signed-in guest's boat charters, and requesting new ones.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - charters
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charter'
+          description: ''
   /api/dashboard/amenities/:
     get:
       operationId: dashboard_amenities_list
@@ -2149,6 +2697,283 @@ paths:
         schema:
           type: integer
         description: A unique integer value identifying this blocked period.
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/dashboard/boats/:
+    get:
+      operationId: dashboard_boats_list
+      description: A boat cruise host's boats (every boat, for Shortlet Stay staff).
+      parameters:
+      - in: query
+        name: owner
+        schema:
+          type: integer
+        description: A host's user id (platform admins).
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Name, marina or city.
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBoatManageList'
+          description: ''
+    post:
+      operationId: dashboard_boats_create
+      description: A boat cruise host's boats (every boat, for Shortlet Stay staff).
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoatManageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BoatManageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BoatManageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatManage'
+          description: ''
+  /api/dashboard/boats/{boat_slug}/images/:
+    get:
+      operationId: dashboard_boats_images_list
+      description: Upload (multipart), reorder and delete a boat's photos.
+      parameters:
+      - in: path
+        name: boat_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BoatImage'
+          description: ''
+    post:
+      operationId: dashboard_boats_images_create
+      description: Upload (multipart), reorder and delete a boat's photos.
+      parameters:
+      - in: path
+        name: boat_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BoatImageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BoatImageRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoatImageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatImage'
+          description: ''
+  /api/dashboard/boats/{boat_slug}/images/{id}/:
+    patch:
+      operationId: dashboard_boats_images_partial_update
+      description: Upload (multipart), reorder and delete a boat's photos.
+      parameters:
+      - in: path
+        name: boat_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBoatImageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBoatImageRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBoatImageRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatImage'
+          description: ''
+    delete:
+      operationId: dashboard_boats_images_destroy
+      description: Upload (multipart), reorder and delete a boat's photos.
+      parameters:
+      - in: path
+        name: boat_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/dashboard/boats/{slug}/:
+    get:
+      operationId: dashboard_boats_retrieve
+      description: A boat cruise host's boats (every boat, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatManage'
+          description: ''
+    put:
+      operationId: dashboard_boats_update
+      description: A boat cruise host's boats (every boat, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoatManageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BoatManageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BoatManageRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatManage'
+          description: ''
+    patch:
+      operationId: dashboard_boats_partial_update
+      description: A boat cruise host's boats (every boat, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBoatManageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBoatManageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBoatManageRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoatManage'
+          description: ''
+    delete:
+      operationId: dashboard_boats_destroy
+      description: A boat cruise host's boats (every boat, for Shortlet Stay staff).
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
         required: true
       tags:
       - dashboard
@@ -2687,6 +3512,142 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/dashboard/charters/:
+    get:
+      operationId: dashboard_charters_list
+      description: Charters of a host's boats, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: query
+        name: boat
+        schema:
+          type: string
+        description: The boat's slug.
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Reference, or the guest's name, email or phone.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - confirmed
+          - declined
+          - expired
+          - pending
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCharterManageList'
+          description: ''
+  /api/dashboard/charters/{reference}/:
+    get:
+      operationId: dashboard_charters_retrieve
+      description: Charters of a host's boats, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharterManage'
+          description: ''
+  /api/dashboard/charters/{reference}/cancel/:
+    post:
+      operationId: dashboard_charters_cancel_create
+      description: Call off a confirmed charter before it starts. The guest is told.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharterManage'
+          description: ''
+  /api/dashboard/charters/{reference}/confirm/:
+    post:
+      operationId: dashboard_charters_confirm_create
+      description: Charters of a host's boats, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharterManage'
+          description: ''
+  /api/dashboard/charters/{reference}/decline/:
+    post:
+      operationId: dashboard_charters_decline_create
+      description: Charters of a host's boats, newest first, to confirm, decline or
+        cancel.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - dashboard
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharterManage'
+          description: ''
   /api/dashboard/events/:
     get:
       operationId: dashboard_events_list
@@ -5287,13 +6248,11 @@ components:
       enum:
       - guest
       - owner
-      - car_rental
       - organiser
       type: string
       description: |-
         * `guest` - Guest
         * `owner` - Host
-        * `car_rental` - Car rental
         * `organiser` - Event organiser
     AdminConversation:
       type: object
@@ -5535,14 +6494,24 @@ components:
           $ref: '#/components/schemas/IconEnum'
       required:
       - name
+    AssignBoatOwnerRequest:
+      type: object
+      properties:
+        owner:
+          type: integer
+          nullable: true
+          description: A boat cruise host's user id, or null for Shortlet Stay to
+            manage it.
+      required:
+      - owner
     AssignCarOwnerRequest:
       type: object
       properties:
         owner:
           type: integer
           nullable: true
-          description: A car rental account's user id, or null for Shortlet Stay to
-            manage it.
+          description: A car rental host's user id, or null for Shortlet Stay to manage
+            it.
       required:
       - owner
     AssignOwnerRequest:
@@ -5551,7 +6520,8 @@ components:
         owner:
           type: integer
           nullable: true
-          description: A host's user id, or null for Shortlet Stay to manage it.
+          description: A stays host's user id, or null for Shortlet Stay to manage
+            it.
       required:
       - owner
     AssignRequest:
@@ -5750,6 +6720,413 @@ components:
       - end_date
       - start_date
       - unit
+    BoatAvailability:
+      type: object
+      properties:
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        min_hours:
+          type: integer
+        max_hours:
+          type: integer
+        capacity:
+          type: integer
+        window_end:
+          type: string
+          format: date
+        utc_offset:
+          type: string
+          description: 'The site''s time zone, e.g. +01:00: charter times are in it.'
+        taken:
+          type: array
+          items:
+            $ref: '#/components/schemas/TakenTime'
+      required:
+      - capacity
+      - hourly_rate
+      - max_hours
+      - min_hours
+      - taken
+      - utc_offset
+      - window_end
+    BoatCard:
+      type: object
+      description: A boat on a listing.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          readOnly: true
+          description: e.g. Ocean Pearl
+        boat_type:
+          allOf:
+          - $ref: '#/components/schemas/BoatTypeEnum'
+          readOnly: true
+        capacity:
+          type: integer
+          readOnly: true
+          description: Most guests on board.
+        length_m:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Length in metres.
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Price per hour, crew included.
+        min_hours:
+          type: integer
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryEnum'
+          readOnly: true
+        country_name:
+          type: string
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        marina:
+          type: string
+          readOnly: true
+          description: Where guests board, shown to guests.
+        cover_image:
+          allOf:
+          - $ref: '#/components/schemas/BoatImage'
+          nullable: true
+          readOnly: true
+      required:
+      - boat_type
+      - capacity
+      - city
+      - country
+      - country_name
+      - cover_image
+      - hourly_rate
+      - length_m
+      - marina
+      - min_hours
+      - name
+      - slug
+    BoatDetail:
+      type: object
+      description: A boat on a listing.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          readOnly: true
+          description: e.g. Ocean Pearl
+        boat_type:
+          allOf:
+          - $ref: '#/components/schemas/BoatTypeEnum'
+          readOnly: true
+        capacity:
+          type: integer
+          readOnly: true
+          description: Most guests on board.
+        length_m:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Length in metres.
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Price per hour, crew included.
+        min_hours:
+          type: integer
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryEnum'
+          readOnly: true
+        country_name:
+          type: string
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        marina:
+          type: string
+          readOnly: true
+          description: Where guests board, shown to guests.
+        cover_image:
+          allOf:
+          - $ref: '#/components/schemas/BoatImage'
+          nullable: true
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+          description: The boat, the route, what's on board.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoatImage'
+          readOnly: true
+        host_name:
+          type: string
+          description: 'First name only: the full contact details come with a confirmed
+            charter.'
+          readOnly: true
+      required:
+      - boat_type
+      - capacity
+      - city
+      - country
+      - country_name
+      - cover_image
+      - description
+      - host_name
+      - hourly_rate
+      - images
+      - length_m
+      - marina
+      - min_hours
+      - name
+      - slug
+    BoatImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        width:
+          type: integer
+          readOnly: true
+          nullable: true
+        height:
+          type: integer
+          readOnly: true
+          nullable: true
+        alt_text:
+          type: string
+          maxLength: 200
+        position:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Lowest first; the first image is the cover.
+      required:
+      - alt_text
+      - height
+      - id
+      - image
+      - position
+      - width
+    BoatImageRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+        alt_text:
+          type: string
+          maxLength: 200
+        position:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Lowest first; the first image is the cover.
+      required:
+      - image
+    BoatManage:
+      type: object
+      description: A boat as its host (or Shortlet Stay staff) edits it. Only staff
+        can suspend or restore a boat.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          description: e.g. Ocean Pearl
+          maxLength: 120
+        boat_type:
+          $ref: '#/components/schemas/BoatTypeEnum'
+        capacity:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Most guests on board.
+        length_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Length in metres.
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Price per hour, crew included.
+        min_hours:
+          type: integer
+          maximum: 24
+          minimum: 1
+        description:
+          type: string
+          description: The boat, the route, what's on board.
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+        city:
+          type: string
+          maxLength: 100
+        marina:
+          type: string
+          description: Where guests board, shown to guests.
+          maxLength: 150
+        boarding_address:
+          type: string
+          maxLength: 255
+        is_published:
+          type: boolean
+          description: The host has made it bookable.
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Untick to take it off the site, whatever the host does.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoatImage'
+          readOnly: true
+        owner_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        owner_email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+        pending_requests:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - boarding_address
+      - boat_type
+      - capacity
+      - city
+      - country
+      - created_at
+      - description
+      - hourly_rate
+      - images
+      - is_active
+      - is_published
+      - length_m
+      - marina
+      - min_hours
+      - name
+      - owner_email
+      - owner_id
+      - pending_requests
+      - slug
+      - updated_at
+    BoatManageRequest:
+      type: object
+      description: A boat as its host (or Shortlet Stay staff) edits it. Only staff
+        can suspend or restore a boat.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: e.g. Ocean Pearl
+          maxLength: 120
+        boat_type:
+          $ref: '#/components/schemas/BoatTypeEnum'
+        capacity:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Most guests on board.
+        length_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Length in metres.
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Price per hour, crew included.
+        min_hours:
+          type: integer
+          maximum: 24
+          minimum: 1
+        description:
+          type: string
+          description: The boat, the route, what's on board.
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        marina:
+          type: string
+          description: Where guests board, shown to guests.
+          maxLength: 150
+        boarding_address:
+          type: string
+          maxLength: 255
+        is_published:
+          type: boolean
+          description: The host has made it bookable.
+      required:
+      - city
+      - country
+      - hourly_rate
+      - name
+    BoatTypeEnum:
+      enum:
+      - yacht
+      - speedboat
+      - catamaran
+      - party_boat
+      - pontoon
+      - sailboat
+      type: string
+      description: |-
+        * `yacht` - Yacht
+        * `speedboat` - Speedboat
+        * `catamaran` - Catamaran
+        * `party_boat` - Party boat
+        * `pontoon` - Pontoon
+        * `sailboat` - Sailboat
     Booking:
       type: object
       description: Limit related-object choices to the request user's own properties/units.
@@ -6656,6 +8033,215 @@ components:
           minLength: 1
       required:
       - new_password
+    Charter:
+      type: object
+      description: A charter as its guest sees it. The boarding address and host's
+        contact show once it's confirmed.
+      properties:
+        reference:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RentalStatusEnum'
+          readOnly: true
+        boat:
+          allOf:
+          - $ref: '#/components/schemas/BoatCard'
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+        hours:
+          type: integer
+          readOnly: true
+        party_size:
+          type: integer
+          readOnly: true
+          description: How many guests are coming.
+        note:
+          type: string
+          readOnly: true
+          description: 'Occasion, music, catering: anything for the host.'
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Snapshot when booked.
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        hold_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: An unanswered request frees the boat then.
+        boarding_address:
+          type: string
+          readOnly: true
+        host_name:
+          type: string
+          readOnly: true
+        host_phone:
+          type: string
+          readOnly: true
+        host_email:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - boarding_address
+      - boat
+      - created_at
+      - currency
+      - ends_at
+      - hold_expires_at
+      - host_email
+      - host_name
+      - host_phone
+      - hourly_rate
+      - hours
+      - note
+      - party_size
+      - reference
+      - starts_at
+      - status
+      - total_price
+    CharterCreateRequest:
+      type: object
+      properties:
+        boat:
+          type: string
+          minLength: 1
+          pattern: ^[-a-zA-Z0-9_]+$
+        starts_at:
+          type: string
+          format: date-time
+          description: On the hour, in the site's time zone if no offset is given.
+        hours:
+          type: integer
+          minimum: 1
+        party_size:
+          type: integer
+          minimum: 1
+        note:
+          type: string
+          maxLength: 500
+        name:
+          type: string
+          description: Defaults to the account's.
+          maxLength: 150
+        phone:
+          type: string
+          maxLength: 20
+      required:
+      - boat
+      - hours
+      - party_size
+      - starts_at
+    CharterManage:
+      type: object
+      description: A charter as the boat's host sees it.
+      properties:
+        reference:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RentalStatusEnum'
+          readOnly: true
+        boat_slug:
+          type: string
+          readOnly: true
+        boat_name:
+          type: string
+          readOnly: true
+        guest_name:
+          type: string
+          readOnly: true
+        guest_email:
+          type: string
+          format: email
+          readOnly: true
+        guest_phone:
+          type: string
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+        hours:
+          type: integer
+          readOnly: true
+        party_size:
+          type: integer
+          readOnly: true
+          description: How many guests are coming.
+        note:
+          type: string
+          readOnly: true
+          description: 'Occasion, music, catering: anything for the host.'
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Snapshot when booked.
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        hold_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: An unanswered request frees the boat then.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - boat_name
+      - boat_slug
+      - created_at
+      - currency
+      - ends_at
+      - guest_email
+      - guest_name
+      - guest_phone
+      - hold_expires_at
+      - hourly_rate
+      - hours
+      - note
+      - party_size
+      - reference
+      - starts_at
+      - status
+      - total_price
     CheckInRequest:
       type: object
       properties:
@@ -7271,6 +8857,28 @@ components:
         * `YE` - Yemen
         * `ZM` - Zambia
         * `ZW` - Zimbabwe
+    CruiseCounts:
+      type: object
+      properties:
+        total:
+          type: integer
+        bookable:
+          type: integer
+          description: Published, not suspended, host active.
+        suspended:
+          type: integer
+        charters_pending:
+          type: integer
+          description: Requests waiting for the host.
+        charters_upcoming:
+          type: integer
+          description: Confirmed, not yet started.
+      required:
+      - bookable
+      - charters_pending
+      - charters_upcoming
+      - suspended
+      - total
     DateRange:
       type: object
       properties:
@@ -7721,7 +9329,7 @@ components:
         Sign in, or sign up, with the ID token from Google's "Sign in with Google" button.
 
         One endpoint serves both the sign-in and sign-up pages: an unknown Google account gets a new
-        account of the portal's type (guest, host, car rental or event organiser); a known one is signed in.
+        account of the portal's type (guest, host or event organiser); a known one is signed in.
       properties:
         credential:
           type: string
@@ -7741,6 +9349,8 @@ components:
             * `hotel` - Hotel owner
             * `property_manager` - Property manager
             * `homeowner` - Home owner
+            * `car_rental` - Car rental
+            * `boat_cruise` - Boat cruise
           oneOf:
           - $ref: '#/components/schemas/HostTypeEnum'
           - $ref: '#/components/schemas/BlankEnum'
@@ -7796,11 +9406,15 @@ components:
       - hotel
       - property_manager
       - homeowner
+      - car_rental
+      - boat_cruise
       type: string
       description: |-
         * `hotel` - Hotel owner
         * `property_manager` - Property manager
         * `homeowner` - Home owner
+        * `car_rental` - Car rental
+        * `boat_cruise` - Boat cruise
     Hotel:
       type: object
       description: A hotel in the admin's list, with who owns it and how it's doing.
@@ -8205,6 +9819,10 @@ components:
       - rental_confirmed
       - rental_declined
       - rental_cancelled
+      - charter_requested
+      - charter_confirmed
+      - charter_declined
+      - charter_cancelled
       type: string
       description: |-
         * `booking_requested` - New reservation request
@@ -8228,6 +9846,10 @@ components:
         * `rental_confirmed` - Your car rental was confirmed
         * `rental_declined` - Your car rental was declined
         * `rental_cancelled` - A car rental was cancelled
+        * `charter_requested` - New boat cruise request
+        * `charter_confirmed` - Your boat cruise was confirmed
+        * `charter_declined` - Your boat cruise was declined
+        * `charter_cancelled` - A boat cruise was cancelled
     NotificationList:
       type: object
       properties:
@@ -8533,6 +10155,56 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BlockedPeriod'
+    PaginatedBoatCardList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoatCard'
+    PaginatedBoatManageList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoatManage'
     PaginatedBookingList:
       type: object
       required:
@@ -8608,6 +10280,56 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CarManage'
+    PaginatedCharterList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Charter'
+    PaginatedCharterManageList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharterManage'
     PaginatedConversationList:
       type: object
       required:
@@ -8933,6 +10655,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Reservation'
+    PaginatedStaffBoatList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffBoat'
     PaginatedStaffCarList:
       type: object
       required:
@@ -8958,6 +10705,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/StaffCar'
+    PaginatedStaffCharterList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffCharter'
     PaginatedStaffRentalList:
       type: object
       required:
@@ -9209,6 +10981,73 @@ components:
         note:
           type: string
           maxLength: 255
+    PatchedBoatImageRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+        alt_text:
+          type: string
+          maxLength: 200
+        position:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Lowest first; the first image is the cover.
+    PatchedBoatManageRequest:
+      type: object
+      description: A boat as its host (or Shortlet Stay staff) edits it. Only staff
+        can suspend or restore a boat.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: e.g. Ocean Pearl
+          maxLength: 120
+        boat_type:
+          $ref: '#/components/schemas/BoatTypeEnum'
+        capacity:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Most guests on board.
+        length_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Length in metres.
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Price per hour, crew included.
+        min_hours:
+          type: integer
+          maximum: 24
+          minimum: 1
+        description:
+          type: string
+          description: The boat, the route, what's on board.
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        marina:
+          type: string
+          description: Where guests board, shown to guests.
+          maxLength: 150
+        boarding_address:
+          type: string
+          maxLength: 255
+        is_published:
+          type: boolean
+          description: The host has made it bookable.
     PatchedBookingRequest:
       type: object
       description: Limit related-object choices to the request user's own properties/units.
@@ -9785,13 +11624,11 @@ components:
       enum:
       - guest
       - owner
-      - car_rental
       - organiser
       type: string
       description: |-
         * `guest` - guest
         * `owner` - owner
-        * `car_rental` - car_rental
         * `organiser` - organiser
     PropertyManage:
       type: object
@@ -10616,14 +12453,12 @@ components:
       enum:
       - guest
       - owner
-      - car_rental
       - organiser
       - admin
       type: string
       description: |-
         * `guest` - guest
         * `owner` - owner
-        * `car_rental` - car_rental
         * `organiser` - organiser
         * `admin` - admin
     SenderEnum:
@@ -10644,6 +12479,121 @@ components:
       description: |-
         * `website` - Website
         * `staff` - Staff (offline)
+    StaffBoat:
+      type: object
+      description: A boat with its host and how busy it is. Edit it through /dashboard/boats/.
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          readOnly: true
+          description: e.g. Ocean Pearl
+        boat_type:
+          allOf:
+          - $ref: '#/components/schemas/BoatTypeEnum'
+          readOnly: true
+        capacity:
+          type: integer
+          readOnly: true
+          description: Most guests on board.
+        length_m:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Length in metres.
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Price per hour, crew included.
+        min_hours:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+          description: The boat, the route, what's on board.
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryEnum'
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        marina:
+          type: string
+          readOnly: true
+          description: Where guests board, shown to guests.
+        boarding_address:
+          type: string
+          readOnly: true
+        is_published:
+          type: boolean
+          readOnly: true
+          description: The host has made it bookable.
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Untick to take it off the site, whatever the host does.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoatImage'
+          readOnly: true
+        owner_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        owner_email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+        pending_requests:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        owner_name:
+          type: string
+          readOnly: true
+        charter_count:
+          type: integer
+          readOnly: true
+          default: 0
+      required:
+      - boarding_address
+      - boat_type
+      - capacity
+      - charter_count
+      - city
+      - country
+      - created_at
+      - description
+      - hourly_rate
+      - images
+      - is_active
+      - is_published
+      - length_m
+      - marina
+      - min_hours
+      - name
+      - owner_email
+      - owner_id
+      - owner_name
+      - pending_requests
+      - slug
+      - updated_at
     StaffCar:
       type: object
       description: A car with its host and how busy it is. Edit it through /dashboard/cars/.
@@ -10779,6 +12729,100 @@ components:
       - transmission
       - updated_at
       - year
+    StaffCharter:
+      type: object
+      description: A charter as the boat's host sees it.
+      properties:
+        reference:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RentalStatusEnum'
+          readOnly: true
+        boat_slug:
+          type: string
+          readOnly: true
+        boat_name:
+          type: string
+          readOnly: true
+        guest_name:
+          type: string
+          readOnly: true
+        guest_email:
+          type: string
+          format: email
+          readOnly: true
+        guest_phone:
+          type: string
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+        hours:
+          type: integer
+          readOnly: true
+        party_size:
+          type: integer
+          readOnly: true
+          description: How many guests are coming.
+        note:
+          type: string
+          readOnly: true
+          description: 'Occasion, music, catering: anything for the host.'
+        hourly_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Snapshot when booked.
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        hold_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: An unanswered request frees the boat then.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        host_email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+      required:
+      - boat_name
+      - boat_slug
+      - created_at
+      - currency
+      - ends_at
+      - guest_email
+      - guest_name
+      - guest_phone
+      - hold_expires_at
+      - host_email
+      - hourly_rate
+      - hours
+      - note
+      - party_size
+      - reference
+      - starts_at
+      - status
+      - total_price
     StaffOverview:
       type: object
       properties:
@@ -10798,6 +12842,8 @@ components:
           $ref: '#/components/schemas/EventCounts'
         cars:
           $ref: '#/components/schemas/CarCounts'
+        cruises:
+          $ref: '#/components/schemas/CruiseCounts'
         months:
           type: array
           items:
@@ -10814,6 +12860,7 @@ components:
       required:
       - bookings
       - cars
+      - cruises
       - events
       - hotels
       - money
@@ -11110,6 +13157,10 @@ components:
           type: integer
           readOnly: true
           default: 0
+        boat_count:
+          type: integer
+          readOnly: true
+          default: 0
         booking_count:
           type: integer
           readOnly: true
@@ -11129,6 +13180,7 @@ components:
           nullable: true
       required:
       - account_type
+      - boat_count
       - booking_count
       - car_count
       - date_joined
@@ -11151,7 +13203,7 @@ components:
     StaffUserCreate:
       type: object
       description: |-
-        Add an account: a guest, host, car rental account, organiser or staff member.
+        Add an account: a guest, host, organiser or staff member.
 
         Without a password, they're emailed a link to choose one.
       properties:
@@ -11213,6 +13265,10 @@ components:
           type: integer
           readOnly: true
           default: 0
+        boat_count:
+          type: integer
+          readOnly: true
+          default: 0
         booking_count:
           type: integer
           readOnly: true
@@ -11232,6 +13288,7 @@ components:
           nullable: true
       required:
       - account_type
+      - boat_count
       - booking_count
       - car_count
       - date_joined
@@ -11254,7 +13311,7 @@ components:
     StaffUserCreateRequest:
       type: object
       description: |-
-        Add an account: a guest, host, car rental account, organiser or staff member.
+        Add an account: a guest, host, organiser or staff member.
 
         Without a password, they're emailed a link to choose one.
       properties:
@@ -11364,6 +13421,10 @@ components:
           type: integer
           readOnly: true
           default: 0
+        boat_count:
+          type: integer
+          readOnly: true
+          default: 0
         booking_count:
           type: integer
           readOnly: true
@@ -11414,6 +13475,7 @@ components:
       required:
       - account_type
       - amount_paid
+      - boat_count
       - booking_count
       - car_count
       - date_joined
@@ -11552,6 +13614,18 @@ components:
       required:
       - pickup_date
       - return_date
+    TakenTime:
+      type: object
+      properties:
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+      required:
+      - ends_at
+      - starts_at
     Ticket:
       type: object
       properties:
@@ -12512,10 +14586,13 @@ components:
           type: integer
         owners:
           type: integer
-          description: Hosts (stays).
-        car_rentals:
+          description: Hosts, of every service.
+        car_hosts:
           type: integer
-          description: Car rental accounts.
+          description: Car rental hosts.
+        boat_hosts:
+          type: integer
+          description: Boat cruise hosts.
         organisers:
           type: integer
         staff:
@@ -12525,7 +14602,8 @@ components:
         new_30d:
           type: integer
       required:
-      - car_rentals
+      - boat_hosts
+      - car_hosts
       - guests
       - inactive
       - new_30d

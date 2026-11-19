@@ -4,6 +4,91 @@
  */
 
 export interface paths {
+    "/api/admin/boats/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every boat with its host and charters. Edit boats through /dashboard/boats/; suspend or reassign them here. */
+        get: operations["admin_boats_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/boats/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Every boat with its host and charters. Edit boats through /dashboard/boats/; suspend or reassign them here. */
+        get: operations["admin_boats_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/boats/{slug}/assign-owner/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Give the boat to a boat cruise host, or (null) take it back for Shortlet Stay to manage. */
+        post: operations["admin_boats_assign_owner_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/boats/{slug}/restore/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Every boat with its host and charters. Edit boats through /dashboard/boats/; suspend or reassign them here. */
+        post: operations["admin_boats_restore_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/boats/{slug}/suspend/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Take the boat off the site, whatever its host does. Charters already made stand. */
+        post: operations["admin_boats_suspend_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/cars/": {
         parameters: {
             query?: never;
@@ -47,7 +132,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Give the car to a car rental account, or (null) take it back for Shortlet Stay to manage. */
+        /** @description Give the car to a car rental host, or (null) take it back for Shortlet Stay to manage. */
         post: operations["admin_cars_assign_owner_create"];
         delete?: never;
         options?: never;
@@ -83,6 +168,23 @@ export interface paths {
         put?: never;
         /** @description Take the car off the site, whatever its host does. Rentals already made stand. */
         post: operations["admin_cars_suspend_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/charters/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Boat charters across every host, newest first. Confirm and decline them through /dashboard/charters/. */
+        get: operations["admin_charters_list"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -132,7 +234,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Give the hotel to a host, or (null) take it back for Shortlet Stay to manage. */
+        /** @description Give the hotel to a stays host, or (null) take it back for Shortlet Stay to manage. */
         post: operations["admin_hotels_assign_owner_create"];
         delete?: never;
         options?: never;
@@ -250,14 +352,14 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
         get: operations["admin_users_list"];
         put?: never;
         /**
-         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -276,7 +378,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -287,7 +389,7 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * @description Every account: guests, hosts, car rental accounts, event organisers and Shortlet Stay staff.
+         * @description Every account: guests, hosts, event organisers and Shortlet Stay staff.
          *
          *     Accounts are deactivated rather than deleted, so their bookings, payments and reviews stay on record.
          */
@@ -543,6 +645,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/boats/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Boats guests can charter. */
+        get: operations["boats_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/boats/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Boats guests can charter. */
+        get: operations["boats_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/boats/{slug}/availability/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The hours the boat is already booked, and its charter rules. */
+        get: operations["boats_availability_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/boats/cities/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Cities with boats to charter, for browsing by city. */
+        get: operations["boats_cities_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/bookings/": {
         parameters: {
             query?: never;
@@ -766,6 +936,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/charters/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The signed-in guest's boat charters, and requesting new ones. */
+        get: operations["charters_list"];
+        put?: never;
+        /** @description The signed-in guest's boat charters, and requesting new ones. */
+        post: operations["charters_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/charters/{reference}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The signed-in guest's boat charters, and requesting new ones. */
+        get: operations["charters_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/charters/{reference}/cancel/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description The signed-in guest's boat charters, and requesting new ones. */
+        post: operations["charters_cancel_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/dashboard/amenities/": {
         parameters: {
             query?: never;
@@ -828,6 +1050,80 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["dashboard_blocked_periods_partial_update"];
+        trace?: never;
+    };
+    "/api/dashboard/boats/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A boat cruise host's boats (every boat, for Shortlet Stay staff). */
+        get: operations["dashboard_boats_list"];
+        put?: never;
+        /** @description A boat cruise host's boats (every boat, for Shortlet Stay staff). */
+        post: operations["dashboard_boats_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/boats/{boat_slug}/images/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Upload (multipart), reorder and delete a boat's photos. */
+        get: operations["dashboard_boats_images_list"];
+        put?: never;
+        /** @description Upload (multipart), reorder and delete a boat's photos. */
+        post: operations["dashboard_boats_images_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/boats/{boat_slug}/images/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Upload (multipart), reorder and delete a boat's photos. */
+        delete: operations["dashboard_boats_images_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Upload (multipart), reorder and delete a boat's photos. */
+        patch: operations["dashboard_boats_images_partial_update"];
+        trace?: never;
+    };
+    "/api/dashboard/boats/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A boat cruise host's boats (every boat, for Shortlet Stay staff). */
+        get: operations["dashboard_boats_retrieve"];
+        /** @description A boat cruise host's boats (every boat, for Shortlet Stay staff). */
+        put: operations["dashboard_boats_update"];
+        post?: never;
+        /** @description A boat cruise host's boats (every boat, for Shortlet Stay staff). */
+        delete: operations["dashboard_boats_destroy"];
+        options?: never;
+        head?: never;
+        /** @description A boat cruise host's boats (every boat, for Shortlet Stay staff). */
+        patch: operations["dashboard_boats_partial_update"];
         trace?: never;
     };
     "/api/dashboard/bookings/": {
@@ -989,6 +1285,91 @@ export interface paths {
         head?: never;
         /** @description A car rental host's cars (every car, for Shortlet Stay staff). */
         patch: operations["dashboard_cars_partial_update"];
+        trace?: never;
+    };
+    "/api/dashboard/charters/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Charters of a host's boats, newest first, to confirm, decline or cancel. */
+        get: operations["dashboard_charters_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/charters/{reference}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Charters of a host's boats, newest first, to confirm, decline or cancel. */
+        get: operations["dashboard_charters_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/charters/{reference}/cancel/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Call off a confirmed charter before it starts. The guest is told. */
+        post: operations["dashboard_charters_cancel_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/charters/{reference}/confirm/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Charters of a host's boats, newest first, to confirm, decline or cancel. */
+        post: operations["dashboard_charters_confirm_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/dashboard/charters/{reference}/decline/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Charters of a host's boats, newest first, to confirm, decline or cancel. */
+        post: operations["dashboard_charters_decline_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/dashboard/events/": {
@@ -2178,11 +2559,10 @@ export interface components {
         /**
          * @description * `guest` - Guest
          *     * `owner` - Host
-         *     * `car_rental` - Car rental
          *     * `organiser` - Event organiser
          * @enum {string}
          */
-        AccountTypeEnum: "guest" | "owner" | "car_rental" | "organiser";
+        AccountTypeEnum: "guest" | "owner" | "organiser";
         /** @description A chat in the support inbox. */
         AdminConversation: {
             readonly reference: string;
@@ -2273,12 +2653,16 @@ export interface components {
             name: string;
             icon?: components["schemas"]["IconEnum"];
         };
+        AssignBoatOwnerRequest: {
+            /** @description A boat cruise host's user id, or null for Shortlet Stay to manage it. */
+            owner: number | null;
+        };
         AssignCarOwnerRequest: {
-            /** @description A car rental account's user id, or null for Shortlet Stay to manage it. */
+            /** @description A car rental host's user id, or null for Shortlet Stay to manage it. */
             owner: number | null;
         };
         AssignOwnerRequest: {
-            /** @description A host's user id, or null for Shortlet Stay to manage it. */
+            /** @description A stays host's user id, or null for Shortlet Stay to manage it. */
             owner: number | null;
         };
         AssignRequest: {
@@ -2370,6 +2754,170 @@ export interface components {
             reason?: components["schemas"]["ReasonEnum"];
             note?: string;
         };
+        BoatAvailability: {
+            /** Format: decimal */
+            hourly_rate: string;
+            min_hours: number;
+            max_hours: number;
+            capacity: number;
+            /** Format: date */
+            window_end: string;
+            /** @description The site's time zone, e.g. +01:00: charter times are in it. */
+            utc_offset: string;
+            taken: components["schemas"]["TakenTime"][];
+        };
+        /** @description A boat on a listing. */
+        BoatCard: {
+            readonly slug: string;
+            /** @description e.g. Ocean Pearl */
+            readonly name: string;
+            readonly boat_type: components["schemas"]["BoatTypeEnum"];
+            /** @description Most guests on board. */
+            readonly capacity: number;
+            /** @description Length in metres. */
+            readonly length_m: number | null;
+            /**
+             * Format: decimal
+             * @description Price per hour, crew included.
+             */
+            readonly hourly_rate: string;
+            readonly min_hours: number;
+            readonly country: components["schemas"]["CountryEnum"];
+            readonly country_name: string;
+            readonly city: string;
+            /** @description Where guests board, shown to guests. */
+            readonly marina: string;
+            readonly cover_image: components["schemas"]["BoatImage"] | null;
+        };
+        /** @description A boat on a listing. */
+        BoatDetail: {
+            readonly slug: string;
+            /** @description e.g. Ocean Pearl */
+            readonly name: string;
+            readonly boat_type: components["schemas"]["BoatTypeEnum"];
+            /** @description Most guests on board. */
+            readonly capacity: number;
+            /** @description Length in metres. */
+            readonly length_m: number | null;
+            /**
+             * Format: decimal
+             * @description Price per hour, crew included.
+             */
+            readonly hourly_rate: string;
+            readonly min_hours: number;
+            readonly country: components["schemas"]["CountryEnum"];
+            readonly country_name: string;
+            readonly city: string;
+            /** @description Where guests board, shown to guests. */
+            readonly marina: string;
+            readonly cover_image: components["schemas"]["BoatImage"] | null;
+            /** @description The boat, the route, what's on board. */
+            readonly description: string;
+            readonly images: components["schemas"]["BoatImage"][];
+            /** @description First name only: the full contact details come with a confirmed charter. */
+            readonly host_name: string;
+        };
+        BoatImage: {
+            readonly id: number;
+            /** Format: uri */
+            image: string;
+            readonly width: number | null;
+            readonly height: number | null;
+            alt_text: string;
+            /**
+             * Format: int64
+             * @description Lowest first; the first image is the cover.
+             */
+            position: number;
+        };
+        BoatImageRequest: {
+            /** Format: binary */
+            image: string;
+            alt_text?: string;
+            /**
+             * Format: int64
+             * @description Lowest first; the first image is the cover.
+             */
+            position?: number;
+        };
+        /** @description A boat as its host (or Shortlet Stay staff) edits it. Only staff can suspend or restore a boat. */
+        BoatManage: {
+            readonly slug: string;
+            /** @description e.g. Ocean Pearl */
+            name: string;
+            boat_type: components["schemas"]["BoatTypeEnum"];
+            /** @description Most guests on board. */
+            capacity: number;
+            /**
+             * Format: int64
+             * @description Length in metres.
+             */
+            length_m: number | null;
+            /**
+             * Format: decimal
+             * @description Price per hour, crew included.
+             */
+            hourly_rate: string;
+            min_hours: number;
+            /** @description The boat, the route, what's on board. */
+            description: string;
+            country: components["schemas"]["CountryEnum"];
+            city: string;
+            /** @description Where guests board, shown to guests. */
+            marina: string;
+            boarding_address: string;
+            /** @description The host has made it bookable. */
+            is_published: boolean;
+            /** @description Untick to take it off the site, whatever the host does. */
+            readonly is_active: boolean;
+            readonly images: components["schemas"]["BoatImage"][];
+            readonly owner_id: number | null;
+            /** Format: email */
+            readonly owner_email: string | null;
+            readonly pending_requests: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /** @description A boat as its host (or Shortlet Stay staff) edits it. Only staff can suspend or restore a boat. */
+        BoatManageRequest: {
+            /** @description e.g. Ocean Pearl */
+            name: string;
+            boat_type?: components["schemas"]["BoatTypeEnum"];
+            /** @description Most guests on board. */
+            capacity?: number;
+            /**
+             * Format: int64
+             * @description Length in metres.
+             */
+            length_m?: number | null;
+            /**
+             * Format: decimal
+             * @description Price per hour, crew included.
+             */
+            hourly_rate: string;
+            min_hours?: number;
+            /** @description The boat, the route, what's on board. */
+            description?: string;
+            country: components["schemas"]["CountryEnum"];
+            city: string;
+            /** @description Where guests board, shown to guests. */
+            marina?: string;
+            boarding_address?: string;
+            /** @description The host has made it bookable. */
+            is_published?: boolean;
+        };
+        /**
+         * @description * `yacht` - Yacht
+         *     * `speedboat` - Speedboat
+         *     * `catamaran` - Catamaran
+         *     * `party_boat` - Party boat
+         *     * `pontoon` - Pontoon
+         *     * `sailboat` - Sailboat
+         * @enum {string}
+         */
+        BoatTypeEnum: "yacht" | "speedboat" | "catamaran" | "party_boat" | "pontoon" | "sailboat";
         /** @description Limit related-object choices to the request user's own properties/units. */
         Booking: {
             readonly id: number;
@@ -2731,6 +3279,89 @@ export interface components {
             current_password?: string;
             new_password: string;
         };
+        /** @description A charter as its guest sees it. The boarding address and host's contact show once it's confirmed. */
+        Charter: {
+            readonly reference: string;
+            readonly status: components["schemas"]["RentalStatusEnum"];
+            readonly boat: components["schemas"]["BoatCard"];
+            /** Format: date-time */
+            readonly starts_at: string;
+            /** Format: date-time */
+            readonly ends_at: string;
+            readonly hours: number;
+            /** @description How many guests are coming. */
+            readonly party_size: number;
+            /** @description Occasion, music, catering: anything for the host. */
+            readonly note: string;
+            /**
+             * Format: decimal
+             * @description Snapshot when booked.
+             */
+            readonly hourly_rate: string;
+            /** Format: decimal */
+            readonly total_price: string;
+            readonly currency: string;
+            /**
+             * Format: date-time
+             * @description An unanswered request frees the boat then.
+             */
+            readonly hold_expires_at: string | null;
+            readonly boarding_address: string;
+            readonly host_name: string;
+            readonly host_phone: string;
+            readonly host_email: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        CharterCreateRequest: {
+            boat: string;
+            /**
+             * Format: date-time
+             * @description On the hour, in the site's time zone if no offset is given.
+             */
+            starts_at: string;
+            hours: number;
+            party_size: number;
+            note?: string;
+            /** @description Defaults to the account's. */
+            name?: string;
+            phone?: string;
+        };
+        /** @description A charter as the boat's host sees it. */
+        CharterManage: {
+            readonly reference: string;
+            readonly status: components["schemas"]["RentalStatusEnum"];
+            readonly boat_slug: string;
+            readonly boat_name: string;
+            readonly guest_name: string;
+            /** Format: email */
+            readonly guest_email: string;
+            readonly guest_phone: string;
+            /** Format: date-time */
+            readonly starts_at: string;
+            /** Format: date-time */
+            readonly ends_at: string;
+            readonly hours: number;
+            /** @description How many guests are coming. */
+            readonly party_size: number;
+            /** @description Occasion, music, catering: anything for the host. */
+            readonly note: string;
+            /**
+             * Format: decimal
+             * @description Snapshot when booked.
+             */
+            readonly hourly_rate: string;
+            /** Format: decimal */
+            readonly total_price: string;
+            readonly currency: string;
+            /**
+             * Format: date-time
+             * @description An unanswered request frees the boat then.
+             */
+            readonly hold_expires_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
         CheckInRequest: {
             code: string;
         };
@@ -3031,6 +3662,16 @@ export interface components {
          * @enum {string}
          */
         CountryEnum: "AF" | "AX" | "AL" | "DZ" | "AS" | "AD" | "AO" | "AI" | "AQ" | "AG" | "AR" | "AM" | "AW" | "AU" | "AT" | "AZ" | "BS" | "BH" | "BD" | "BB" | "BY" | "BE" | "BZ" | "BJ" | "BM" | "BT" | "BO" | "BQ" | "BA" | "BW" | "BV" | "BR" | "IO" | "BN" | "BG" | "BF" | "BI" | "CV" | "KH" | "CM" | "CA" | "KY" | "CF" | "TD" | "CL" | "CN" | "CX" | "CC" | "CO" | "KM" | "CG" | "CK" | "CR" | "CI" | "HR" | "CU" | "CW" | "CY" | "CZ" | "CD" | "DK" | "DJ" | "DM" | "DO" | "EC" | "EG" | "SV" | "GQ" | "ER" | "EE" | "SZ" | "ET" | "FK" | "FO" | "FJ" | "FI" | "FR" | "GF" | "PF" | "TF" | "GA" | "GM" | "GE" | "DE" | "GH" | "GI" | "GR" | "GL" | "GD" | "GP" | "GU" | "GT" | "GG" | "GN" | "GW" | "GY" | "HT" | "HM" | "HN" | "HK" | "HU" | "IS" | "IN" | "ID" | "IR" | "IQ" | "IE" | "IM" | "IL" | "IT" | "JM" | "JP" | "JE" | "JO" | "KZ" | "KE" | "KI" | "KW" | "KG" | "LA" | "LV" | "LB" | "LS" | "LR" | "LY" | "LI" | "LT" | "LU" | "MO" | "MG" | "MW" | "MY" | "MV" | "ML" | "MT" | "MH" | "MQ" | "MR" | "MU" | "YT" | "MX" | "FM" | "MD" | "MC" | "MN" | "ME" | "MS" | "MA" | "MZ" | "MM" | "NA" | "NR" | "NP" | "NL" | "NC" | "NZ" | "NI" | "NE" | "NG" | "NU" | "NF" | "KP" | "MK" | "MP" | "NO" | "OM" | "PK" | "PW" | "PS" | "PA" | "PG" | "PY" | "PE" | "PH" | "PN" | "PL" | "PT" | "PR" | "QA" | "RE" | "RO" | "RU" | "RW" | "BL" | "SH" | "KN" | "LC" | "MF" | "PM" | "VC" | "WS" | "SM" | "ST" | "SA" | "SN" | "RS" | "SC" | "SL" | "SG" | "SX" | "SK" | "SI" | "SB" | "SO" | "ZA" | "GS" | "KR" | "SS" | "ES" | "LK" | "SD" | "SR" | "SJ" | "SE" | "CH" | "SY" | "TW" | "TJ" | "TZ" | "TH" | "TL" | "TG" | "TK" | "TO" | "TT" | "TN" | "TR" | "TM" | "TC" | "TV" | "UG" | "UA" | "AE" | "GB" | "US" | "UM" | "UY" | "UZ" | "VU" | "VA" | "VE" | "VN" | "VG" | "VI" | "WF" | "EH" | "YE" | "ZM" | "ZW";
+        CruiseCounts: {
+            total: number;
+            /** @description Published, not suspended, host active. */
+            bookable: number;
+            suspended: number;
+            /** @description Requests waiting for the host. */
+            charters_pending: number;
+            /** @description Confirmed, not yet started. */
+            charters_upcoming: number;
+        };
         DateRange: {
             /** Format: date */
             start: string;
@@ -3211,7 +3852,7 @@ export interface components {
          * @description Sign in, or sign up, with the ID token from Google's "Sign in with Google" button.
          *
          *     One endpoint serves both the sign-in and sign-up pages: an unknown Google account gets a new
-         *     account of the portal's type (guest, host, car rental or event organiser); a known one is signed in.
+         *     account of the portal's type (guest, host or event organiser); a known one is signed in.
          */
         GoogleAuthRequest: {
             /** @description The ID token (JWT) Google gives the browser. */
@@ -3224,6 +3865,8 @@ export interface components {
              *     * `hotel` - Hotel owner
              *     * `property_manager` - Property manager
              *     * `homeowner` - Home owner
+             *     * `car_rental` - Car rental
+             *     * `boat_cruise` - Boat cruise
              */
             host_type?: components["schemas"]["HostTypeEnum"] | components["schemas"]["BlankEnum"];
         };
@@ -3249,9 +3892,11 @@ export interface components {
          * @description * `hotel` - Hotel owner
          *     * `property_manager` - Property manager
          *     * `homeowner` - Home owner
+         *     * `car_rental` - Car rental
+         *     * `boat_cruise` - Boat cruise
          * @enum {string}
          */
-        HostTypeEnum: "hotel" | "property_manager" | "homeowner";
+        HostTypeEnum: "hotel" | "property_manager" | "homeowner" | "car_rental" | "boat_cruise";
         /** @description A hotel in the admin's list, with who owns it and how it's doing. Edit it through /dashboard/properties/. */
         Hotel: {
             readonly id: number;
@@ -3414,9 +4059,13 @@ export interface components {
          *     * `rental_confirmed` - Your car rental was confirmed
          *     * `rental_declined` - Your car rental was declined
          *     * `rental_cancelled` - A car rental was cancelled
+         *     * `charter_requested` - New boat cruise request
+         *     * `charter_confirmed` - Your boat cruise was confirmed
+         *     * `charter_declined` - Your boat cruise was declined
+         *     * `charter_cancelled` - A boat cruise was cancelled
          * @enum {string}
          */
-        NotificationKindEnum: "booking_requested" | "booking_cancelled" | "booking_confirmed" | "booking_declined" | "booking_request_sent" | "booking_cancelled_by_host" | "booking_updated" | "booking_paid" | "payment_needs_refund" | "ticket_confirmed" | "ticket_declined" | "ticket_requested" | "ticket_sold" | "event_cancelled" | "event_updated" | "review_posted" | "support_reply" | "rental_requested" | "rental_confirmed" | "rental_declined" | "rental_cancelled";
+        NotificationKindEnum: "booking_requested" | "booking_cancelled" | "booking_confirmed" | "booking_declined" | "booking_request_sent" | "booking_cancelled_by_host" | "booking_updated" | "booking_paid" | "payment_needs_refund" | "ticket_confirmed" | "ticket_declined" | "ticket_requested" | "ticket_sold" | "event_cancelled" | "event_updated" | "review_posted" | "support_reply" | "rental_requested" | "rental_confirmed" | "rental_declined" | "rental_cancelled" | "charter_requested" | "charter_confirmed" | "charter_declined" | "charter_cancelled";
         NotificationList: {
             unread: number;
             results: components["schemas"]["Notification"][];
@@ -3541,6 +4190,36 @@ export interface components {
             previous: string | null;
             results: components["schemas"]["BlockedPeriod"][];
         };
+        PaginatedBoatCardList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["BoatCard"][];
+        };
+        PaginatedBoatManageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["BoatManage"][];
+        };
         PaginatedBookingList: {
             /** @example 123 */
             count: number;
@@ -3585,6 +4264,36 @@ export interface components {
              */
             previous: string | null;
             results: components["schemas"]["CarManage"][];
+        };
+        PaginatedCharterList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["Charter"][];
+        };
+        PaginatedCharterManageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["CharterManage"][];
         };
         PaginatedConversationList: {
             /** @example 123 */
@@ -3781,6 +4490,21 @@ export interface components {
             previous: string | null;
             results: components["schemas"]["Reservation"][];
         };
+        PaginatedStaffBoatList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["StaffBoat"][];
+        };
         PaginatedStaffCarList: {
             /** @example 123 */
             count: number;
@@ -3795,6 +4519,21 @@ export interface components {
              */
             previous: string | null;
             results: components["schemas"]["StaffCar"][];
+        };
+        PaginatedStaffCharterList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous: string | null;
+            results: components["schemas"]["StaffCharter"][];
         };
         PaginatedStaffRentalList: {
             /** @example 123 */
@@ -3939,6 +4678,44 @@ export interface components {
             end_date?: string;
             reason?: components["schemas"]["ReasonEnum"];
             note?: string;
+        };
+        PatchedBoatImageRequest: {
+            /** Format: binary */
+            image?: string;
+            alt_text?: string;
+            /**
+             * Format: int64
+             * @description Lowest first; the first image is the cover.
+             */
+            position?: number;
+        };
+        /** @description A boat as its host (or Shortlet Stay staff) edits it. Only staff can suspend or restore a boat. */
+        PatchedBoatManageRequest: {
+            /** @description e.g. Ocean Pearl */
+            name?: string;
+            boat_type?: components["schemas"]["BoatTypeEnum"];
+            /** @description Most guests on board. */
+            capacity?: number;
+            /**
+             * Format: int64
+             * @description Length in metres.
+             */
+            length_m?: number | null;
+            /**
+             * Format: decimal
+             * @description Price per hour, crew included.
+             */
+            hourly_rate?: string;
+            min_hours?: number;
+            /** @description The boat, the route, what's on board. */
+            description?: string;
+            country?: components["schemas"]["CountryEnum"];
+            city?: string;
+            /** @description Where guests board, shown to guests. */
+            marina?: string;
+            boarding_address?: string;
+            /** @description The host has made it bookable. */
+            is_published?: boolean;
         };
         /** @description Limit related-object choices to the request user's own properties/units. */
         PatchedBookingRequest: {
@@ -4227,11 +5004,10 @@ export interface components {
         /**
          * @description * `guest` - guest
          *     * `owner` - owner
-         *     * `car_rental` - car_rental
          *     * `organiser` - organiser
          * @enum {string}
          */
-        PortalEnum: "guest" | "owner" | "car_rental" | "organiser";
+        PortalEnum: "guest" | "owner" | "organiser";
         PropertyManage: {
             readonly id: number;
             name: string;
@@ -4564,12 +5340,11 @@ export interface components {
         /**
          * @description * `guest` - guest
          *     * `owner` - owner
-         *     * `car_rental` - car_rental
          *     * `organiser` - organiser
          *     * `admin` - admin
          * @enum {string}
          */
-        RoleEnum: "guest" | "owner" | "car_rental" | "organiser" | "admin";
+        RoleEnum: "guest" | "owner" | "organiser" | "admin";
         /**
          * @description * `user` - Visitor
          *     * `agent` - Support team
@@ -4583,6 +5358,46 @@ export interface components {
          * @enum {string}
          */
         SourceEnum: "website" | "staff";
+        /** @description A boat with its host and how busy it is. Edit it through /dashboard/boats/. */
+        StaffBoat: {
+            readonly slug: string;
+            /** @description e.g. Ocean Pearl */
+            readonly name: string;
+            readonly boat_type: components["schemas"]["BoatTypeEnum"];
+            /** @description Most guests on board. */
+            readonly capacity: number;
+            /** @description Length in metres. */
+            readonly length_m: number | null;
+            /**
+             * Format: decimal
+             * @description Price per hour, crew included.
+             */
+            readonly hourly_rate: string;
+            readonly min_hours: number;
+            /** @description The boat, the route, what's on board. */
+            readonly description: string;
+            readonly country: components["schemas"]["CountryEnum"];
+            readonly city: string;
+            /** @description Where guests board, shown to guests. */
+            readonly marina: string;
+            readonly boarding_address: string;
+            /** @description The host has made it bookable. */
+            readonly is_published: boolean;
+            /** @description Untick to take it off the site, whatever the host does. */
+            readonly is_active: boolean;
+            readonly images: components["schemas"]["BoatImage"][];
+            readonly owner_id: number | null;
+            /** Format: email */
+            readonly owner_email: string | null;
+            readonly pending_requests: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+            readonly owner_name: string;
+            /** @default 0 */
+            readonly charter_count: number;
+        };
         /** @description A car with its host and how busy it is. Edit it through /dashboard/cars/. */
         StaffCar: {
             readonly slug: string;
@@ -4626,6 +5441,43 @@ export interface components {
             /** @default 0 */
             readonly rental_count: number;
         };
+        /** @description A charter as the boat's host sees it. */
+        StaffCharter: {
+            readonly reference: string;
+            readonly status: components["schemas"]["RentalStatusEnum"];
+            readonly boat_slug: string;
+            readonly boat_name: string;
+            readonly guest_name: string;
+            /** Format: email */
+            readonly guest_email: string;
+            readonly guest_phone: string;
+            /** Format: date-time */
+            readonly starts_at: string;
+            /** Format: date-time */
+            readonly ends_at: string;
+            readonly hours: number;
+            /** @description How many guests are coming. */
+            readonly party_size: number;
+            /** @description Occasion, music, catering: anything for the host. */
+            readonly note: string;
+            /**
+             * Format: decimal
+             * @description Snapshot when booked.
+             */
+            readonly hourly_rate: string;
+            /** Format: decimal */
+            readonly total_price: string;
+            readonly currency: string;
+            /**
+             * Format: date-time
+             * @description An unanswered request frees the boat then.
+             */
+            readonly hold_expires_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: email */
+            readonly host_email: string | null;
+        };
         StaffOverview: {
             users: components["schemas"]["UserCounts"];
             hotels: components["schemas"]["HotelCounts"];
@@ -4635,6 +5487,7 @@ export interface components {
             reviews: components["schemas"]["ReviewCounts"];
             events: components["schemas"]["EventCounts"];
             cars: components["schemas"]["CarCounts"];
+            cruises: components["schemas"]["CruiseCounts"];
             /** @description The last six months, oldest first. */
             months: components["schemas"]["Month"][];
             recent_bookings: components["schemas"]["RecentBooking"][];
@@ -4754,6 +5607,8 @@ export interface components {
             /** @default 0 */
             readonly car_count: number;
             /** @default 0 */
+            readonly boat_count: number;
+            /** @default 0 */
             readonly booking_count: number;
             /** @default 0 */
             readonly event_count: number;
@@ -4763,7 +5618,7 @@ export interface components {
             readonly last_login: string | null;
         };
         /**
-         * @description Add an account: a guest, host, car rental account, organiser or staff member.
+         * @description Add an account: a guest, host, organiser or staff member.
          *
          *     Without a password, they're emailed a link to choose one.
          */
@@ -4803,6 +5658,8 @@ export interface components {
             /** @default 0 */
             readonly car_count: number;
             /** @default 0 */
+            readonly boat_count: number;
+            /** @default 0 */
             readonly booking_count: number;
             /** @default 0 */
             readonly event_count: number;
@@ -4812,7 +5669,7 @@ export interface components {
             readonly last_login: string | null;
         };
         /**
-         * @description Add an account: a guest, host, car rental account, organiser or staff member.
+         * @description Add an account: a guest, host, organiser or staff member.
          *
          *     Without a password, they're emailed a link to choose one.
          */
@@ -4880,6 +5737,8 @@ export interface components {
             readonly hotel_count: number;
             /** @default 0 */
             readonly car_count: number;
+            /** @default 0 */
+            readonly boat_count: number;
             /** @default 0 */
             readonly booking_count: number;
             /** @default 0 */
@@ -4952,6 +5811,12 @@ export interface components {
             pickup_date: string;
             /** Format: date */
             return_date: string;
+        };
+        TakenTime: {
+            /** Format: date-time */
+            starts_at: string;
+            /** Format: date-time */
+            ends_at: string;
         };
         Ticket: {
             readonly code: string;
@@ -5325,10 +6190,12 @@ export interface components {
         UserCounts: {
             total: number;
             guests: number;
-            /** @description Hosts (stays). */
+            /** @description Hosts, of every service. */
             owners: number;
-            /** @description Car rental accounts. */
-            car_rentals: number;
+            /** @description Car rental hosts. */
+            car_hosts: number;
+            /** @description Boat cruise hosts. */
+            boat_hosts: number;
             organisers: number;
             staff: number;
             inactive: number;
@@ -5363,6 +6230,179 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    admin_boats_list: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: boats Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description name, created_at, hourly_rate, charter_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for boats Shortlet Stay manages. */
+                owner?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Name, marina, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffBoatList"];
+                };
+            };
+        };
+    };
+    admin_boats_retrieve: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: boats Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description name, created_at, hourly_rate, charter_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for boats Shortlet Stay manages. */
+                owner?: string;
+                /** @description Name, marina, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffBoat"];
+                };
+            };
+        };
+    };
+    admin_boats_assign_owner_create: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: boats Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description name, created_at, hourly_rate, charter_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for boats Shortlet Stay manages. */
+                owner?: string;
+                /** @description Name, marina, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignBoatOwnerRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssignBoatOwnerRequest"];
+                "multipart/form-data": components["schemas"]["AssignBoatOwnerRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffBoat"];
+                };
+            };
+        };
+    };
+    admin_boats_restore_create: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: boats Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description name, created_at, hourly_rate, charter_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for boats Shortlet Stay manages. */
+                owner?: string;
+                /** @description Name, marina, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffBoat"];
+                };
+            };
+        };
+    };
+    admin_boats_suspend_create: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+                /** @description false: boats Shortlet Stay has suspended. */
+                is_active?: boolean;
+                is_published?: boolean;
+                /** @description name, created_at, hourly_rate, charter_count (prefix - to reverse). */
+                ordering?: string;
+                /** @description A host's user id, or "none" for boats Shortlet Stay manages. */
+                owner?: string;
+                /** @description Name, marina, city or the host's name or email. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffBoat"];
+                };
+            };
+        };
+    };
     admin_cars_list: {
         parameters: {
             query?: {
@@ -5532,6 +6572,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StaffCar"];
+                };
+            };
+        };
+    };
+    admin_charters_list: {
+        parameters: {
+            query?: {
+                /** @description The boat's slug. */
+                boat?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Reference, or the guest's name, email or phone. */
+                search?: string;
+                status?: "cancelled" | "confirmed" | "declined" | "pending";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffCharterList"];
                 };
             };
         };
@@ -5806,7 +6875,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "homeowner" | "hotel" | "property_manager";
+                host_type?: "boat_cruise" | "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
@@ -5814,8 +6883,8 @@ export interface operations {
                 page?: number;
                 /** @description Number of results to return per page. */
                 page_size?: number;
-                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
-                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
+                role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5839,12 +6908,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "homeowner" | "hotel" | "property_manager";
+                host_type?: "boat_cruise" | "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
-                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
+                role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5874,12 +6943,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "homeowner" | "hotel" | "property_manager";
+                host_type?: "boat_cruise" | "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
-                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
+                role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5906,12 +6975,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "homeowner" | "hotel" | "property_manager";
+                host_type?: "boat_cruise" | "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
-                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
+                role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5944,12 +7013,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "homeowner" | "hotel" | "property_manager";
+                host_type?: "boat_cruise" | "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
-                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
+                role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -5976,12 +7045,12 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Hosts of this kind. */
-                host_type?: "homeowner" | "hotel" | "property_manager";
+                host_type?: "boat_cruise" | "car_rental" | "homeowner" | "hotel" | "property_manager";
                 is_active?: boolean;
                 /** @description date_joined, last_login, email, first_name (prefix - to reverse). */
                 ordering?: string;
-                /** @description admin: Shortlet Stay staff. owner: hosts. car_rental: car rental accounts. */
-                role?: "admin" | "car_rental" | "guest" | "organiser" | "owner";
+                /** @description admin: Shortlet Stay staff. owner: hosts. */
+                role?: "admin" | "guest" | "organiser" | "owner";
                 /** @description Name, email or phone. */
                 search?: string;
             };
@@ -6333,6 +7402,104 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    boats_list: {
+        parameters: {
+            query?: {
+                boat_type?: "catamaran" | "party_boat" | "pontoon" | "sailboat" | "speedboat" | "yacht";
+                /** @description Only boats boarding in this city. */
+                city?: string;
+                /** @description ISO country code: only boats in that country. */
+                country?: string;
+                /** @description Takes at least this many guests. */
+                guests?: number;
+                /** @description Hourly rate at most this. */
+                max_price?: number;
+                ordering?: "-capacity" | "-hourly_rate" | "hourly_rate";
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Words in the boat's name or marina. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBoatCardList"];
+                };
+            };
+        };
+    };
+    boats_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatDetail"];
+                };
+            };
+        };
+    };
+    boats_availability_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatAvailability"];
+                };
+            };
+        };
+    };
+    boats_cities_list: {
+        parameters: {
+            query?: {
+                /** @description ISO country code. */
+                country?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
             };
         };
     };
@@ -6707,6 +7874,95 @@ export interface operations {
             };
         };
     };
+    charters_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCharterList"];
+                };
+            };
+        };
+    };
+    charters_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CharterCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CharterCreateRequest"];
+                "multipart/form-data": components["schemas"]["CharterCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Charter"];
+                };
+            };
+        };
+    };
+    charters_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Charter"];
+                };
+            };
+        };
+    };
+    charters_cancel_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Charter"];
+                };
+            };
+        };
+    };
     dashboard_amenities_list: {
         parameters: {
             query?: never;
@@ -6997,6 +8253,251 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BlockedPeriod"];
+                };
+            };
+        };
+    };
+    dashboard_boats_list: {
+        parameters: {
+            query?: {
+                /** @description A host's user id (platform admins). */
+                owner?: number;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Name, marina or city. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBoatManageList"];
+                };
+            };
+        };
+    };
+    dashboard_boats_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoatManageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BoatManageRequest"];
+                "multipart/form-data": components["schemas"]["BoatManageRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatManage"];
+                };
+            };
+        };
+    };
+    dashboard_boats_images_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                boat_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatImage"][];
+                };
+            };
+        };
+    };
+    dashboard_boats_images_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                boat_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["BoatImageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BoatImageRequest"];
+                "application/json": components["schemas"]["BoatImageRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatImage"];
+                };
+            };
+        };
+    };
+    dashboard_boats_images_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                boat_slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    dashboard_boats_images_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                boat_slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["PatchedBoatImageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedBoatImageRequest"];
+                "application/json": components["schemas"]["PatchedBoatImageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatImage"];
+                };
+            };
+        };
+    };
+    dashboard_boats_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatManage"];
+                };
+            };
+        };
+    };
+    dashboard_boats_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoatManageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BoatManageRequest"];
+                "multipart/form-data": components["schemas"]["BoatManageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatManage"];
+                };
+            };
+        };
+    };
+    dashboard_boats_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    dashboard_boats_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedBoatManageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedBoatManageRequest"];
+                "multipart/form-data": components["schemas"]["PatchedBoatManageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoatManage"];
                 };
             };
         };
@@ -7435,6 +8936,119 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CarManage"];
+                };
+            };
+        };
+    };
+    dashboard_charters_list: {
+        parameters: {
+            query?: {
+                /** @description The boat's slug. */
+                boat?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description Reference, or the guest's name, email or phone. */
+                search?: string;
+                status?: "cancelled" | "confirmed" | "declined" | "expired" | "pending";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCharterManageList"];
+                };
+            };
+        };
+    };
+    dashboard_charters_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CharterManage"];
+                };
+            };
+        };
+    };
+    dashboard_charters_cancel_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CharterManage"];
+                };
+            };
+        };
+    };
+    dashboard_charters_confirm_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CharterManage"];
+                };
+            };
+        };
+    };
+    dashboard_charters_decline_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CharterManage"];
                 };
             };
         };
