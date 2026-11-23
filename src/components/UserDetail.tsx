@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Ban, CheckCircle2, KeyRound, LogOut } from "lucide-react";
 import { ApiError, adminApi, dateTime, day, HOST_TYPES, money, moneyList, type HostType, type StaffUserDetail } from "@/lib/api";
-import { Badge, Button, Card, Check, Empty, ErrorText, Facts, Field, inputClass, Loading, Page, RoleBadge, StatusBadge, Table, Td, useFlash } from "./ui";
+import { Badge, Button, Card, Empty, ErrorText, Facts, Field, inputClass, Loading, Page, RoleBadge, StatusBadge, Table, Td, useFlash } from "./ui";
+import StaffAccess from "./StaffAccess";
 
 export default function UserDetail({ id }: { id: number }) {
   const user = useQuery({ queryKey: ["user", id], queryFn: () => adminApi.user(id) });
@@ -174,6 +175,7 @@ function ProfileForm({ u, onSaved }: { u: StaffUserDetail; onSaved: (u: StaffUse
     host_type: u.host_type,
     is_staff: u.is_staff,
     is_superuser: u.is_superuser,
+    staff_areas: u.staff_areas,
   });
   const set = <K extends keyof typeof form>(k: K) => (v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
   const save = useMutation({ mutationFn: () => adminApi.updateUser(u.id, form), onSuccess: onSaved });
@@ -216,11 +218,7 @@ function ProfileForm({ u, onSaved }: { u: StaffUserDetail; onSaved: (u: StaffUse
             </Field>
           )}
         </div>
-        <div className="space-y-2 rounded-2xl bg-cream/60 p-4">
-          <Check label="Shortlet Stay staff (can use this admin)" checked={form.is_staff} onChange={(v) => setForm((f) => ({ ...f, is_staff: v, is_superuser: v && f.is_superuser }))} />
-          <Check label="Super admin (can manage the support team)" checked={form.is_superuser} disabled={!form.is_staff} onChange={set("is_superuser")} />
-          <p className="text-xs text-muted">Only super admins can change these.</p>
-        </div>
+        <StaffAccess value={form} onChange={(access) => setForm((f) => ({ ...f, ...access }))} error={fields.staff_areas ?? fields.is_staff} />
         {save.error && !Object.keys(fields).length && <ErrorText error={save.error} />}
         <Button busy={save.isPending}>Save changes</Button>
       </form>

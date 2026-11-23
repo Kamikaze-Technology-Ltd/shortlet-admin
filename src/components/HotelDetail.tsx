@@ -231,7 +231,7 @@ function Rooms({ hotel }: { hotel: Hotel }) {
       {rooms.error && <div className="p-4"><ErrorText error={rooms.error} /></div>}
       {rooms.data && !rooms.data.results.length && <Empty>No rooms yet.</Empty>}
       {!!rooms.data?.results.length && (
-        <Table head={["Room", "Sleeps", "Per night", "Per hour", "Photos", "Status"]}>
+        <Table head={["Room", "Sleeps", "Per night", "Photos", "Status"]}>
           {rooms.data.results.map((r) => (
             <tr key={r.id} className="cursor-pointer hover:bg-mist" onClick={() => setOpen(r)}>
               <Td>
@@ -250,7 +250,6 @@ function Rooms({ hotel }: { hotel: Hotel }) {
               </Td>
               <Td>{r.max_guests}</Td>
               <Td>{money(r.base_price)}</Td>
-              <Td>{r.hourly_enabled ? money(r.hourly_rate) : <span className="text-muted">Off</span>}</Td>
               <Td>{r.images.length}</Td>
               <Td>
                 <div className="flex flex-wrap gap-1">

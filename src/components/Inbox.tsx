@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, CheckCircle2, Loader2, RotateCcw, Search, Send, UserRound } from "lucide-react";
-import { adminApi, supportApi, when, type InboxItem, type Thread } from "@/lib/api";
+import { supportApi, when, type InboxItem, type Thread } from "@/lib/api";
 
 /** Chats from the help bot: a list on the left, the selected conversation on the right. Both refresh on their own. */
 export default function Inbox() {
@@ -121,11 +121,7 @@ function Conversation({ reference, onBack }: { reference: string; onBack: () => 
   });
   const close = useMutation({ mutationFn: () => supportApi.close(reference), onSuccess: update });
   const assign = useMutation({ mutationFn: (user: number | null) => supportApi.assign(reference, user), onSuccess: update });
-  const team = useQuery({
-    queryKey: ["users", { role: "admin", is_active: "true", page_size: 100 }],
-    queryFn: () => adminApi.users({ role: "admin", is_active: "true", page_size: 100 }),
-    staleTime: 60_000,
-  });
+  const team = useQuery({ queryKey: ["support-team"], queryFn: supportApi.team, staleTime: 60_000 });
   const reopen = useMutation({ mutationFn: () => supportApi.reopen(reference), onSuccess: update });
   const count = thread.data?.messages.length ?? 0;
   useEffect(() => {
@@ -165,7 +161,7 @@ function Conversation({ reference, onBack }: { reference: string; onBack: () => 
           className="h-9 max-w-44 rounded-full border border-brand-900/15 bg-white px-3 text-sm outline-none focus:border-gold-500"
         >
           <option value="">Unassigned</option>
-          {team.data?.results.map((m) => (
+          {team.data?.map((m) => (
             <option key={m.id} value={m.id}>
               {m.name}
             </option>

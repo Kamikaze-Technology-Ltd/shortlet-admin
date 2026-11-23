@@ -53,6 +53,48 @@ export const HOST_TYPES: Record<HostType, string> = {
   boat_cruise: "Boat cruise",
 };
 
+export type StaffArea = S["StaffAreaEnum"];
+
+/** The parts of this admin a staff member can be given. Super admins have them all, and manage the team. */
+export const STAFF_AREAS: { value: StaffArea; label: string; hint: string }[] = [
+  { value: "users", label: "People", hint: "Guests, hosts and organisers" },
+  { value: "stays", label: "Stays", hint: "Hotels, rooms, bookings, reviews, amenities" },
+  { value: "cars", label: "Cars", hint: "Cars and car rentals" },
+  { value: "cruises", label: "Cruises", hint: "Boats and boat cruises" },
+  { value: "events", label: "Events", hint: "Events and ticket orders" },
+  { value: "payments", label: "Payments", hint: "Payments and refunds" },
+  { value: "support", label: "Support", hint: "Support inbox and help bot answers" },
+];
+export const areaLabel = (a: StaffArea) => STAFF_AREAS.find((x) => x.value === a)?.label ?? a;
+
+/** Which area each page belongs to. Pages not listed (the overview) are open to everyone on the team. */
+const PAGE_AREAS: [string, StaffArea][] = [
+  ["/users", "users"],
+  ["/guests", "users"],
+  ["/hosts", "users"],
+  ["/organisers", "users"],
+  ["/team", "users"],
+  ["/hotels", "stays"],
+  ["/bookings", "stays"],
+  ["/reviews", "stays"],
+  ["/amenities", "stays"],
+  ["/payments", "payments"],
+  ["/events", "events"],
+  ["/cars", "cars"],
+  ["/rentals", "cars"],
+  ["/boats", "cruises"],
+  ["/charters", "cruises"],
+  ["/support", "support"],
+  ["/topics", "support"],
+];
+export const areaOfPage = (path: string) => PAGE_AREAS.find(([p]) => path === p || path.startsWith(`${p}/`))?.[1] ?? null;
+/** Whether this staff member may open a page. */
+export const canOpen = (user: User | undefined, path: string) => {
+  const area = areaOfPage(path);
+  return !area || !!user?.areas.includes(area);
+};
+export const isSuperAdmin = (user: User | undefined) => user?.staff_level === "super_admin";
+
 /** DRF errors: `{ field: ["msg"] }`, `{ detail: "msg" }` or `{ non_field_errors: [...] }`. */
 export class ApiError extends Error {
   constructor(public status: number, public fields: Record<string, string> = {}, message = "Something went wrong. Please try again.") {
@@ -170,6 +212,8 @@ export const supportApi = {
   assign: (reference: string, user: number | null) =>
     api<Thread>(`/support/admin/conversations/${ref(reference)}/assign/`, { method: "POST", json: { user } }),
   summary: () => api<InboxSummary>("/support/admin/conversations/summary/"),
+  /** Who chats can be handed to: the support team. */
+  team: () => api<S["TeamMember"][]>("/support/admin/conversations/team/"),
   thread: (reference: string) => api<Thread>(`/support/admin/conversations/${ref(reference)}/`),
   reply: (reference: string, body: string) => api<Thread>(`/support/admin/conversations/${ref(reference)}/reply/`, { method: "POST", json: { body } }),
   close: (reference: string) => api<Thread>(`/support/admin/conversations/${ref(reference)}/close/`, { method: "POST" }),
