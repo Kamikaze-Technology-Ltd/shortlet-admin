@@ -23,7 +23,7 @@ export default function Payments() {
   const filters = { search, status, needs_refund: refund };
 
   return (
-    <Page title="Payments" subtitle="Card and bank payments through Flutterwave, for stays and event tickets." wide>
+    <Page title="Payments" subtitle="Card and bank payments through Paystack, for stays and event tickets. Car and cruise payments show on their bookings." wide>
       <Toolbar>
         <Tabs value={tab} onChange={reset(setTab)} options={[["bookings", "Stays"], ["tickets", "Event tickets"]] as const} />
         <SearchBox key={tab} value={search} onChange={reset(setSearch)} placeholder="Payment or booking reference, name or email" />
@@ -109,9 +109,9 @@ function TransactionDrawer({ payment: p, onChange, onClose }: { payment: Transac
     <Drawer title={<span className="flex items-center gap-2">{p.tx_ref} <StatusBadge status={p.status} /></span>} onClose={onClose}>
       {p.needs_refund && (
         <div className="space-y-3 rounded-2xl bg-red-50 p-4 text-sm text-red-900">
-          <p>The guest paid, but the booking couldn&apos;t be confirmed (its time was taken while they paid). Refund them through Flutterwave or by bank transfer, then record it here.</p>
+          <p>The guest paid, but the booking couldn&apos;t be confirmed (its time was taken while they paid). Refund them from the Paystack dashboard or by bank transfer, then record it here.</p>
           <Field label="Refund note">
-            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Flutterwave refund ID or bank reference" className={inputClass} />
+            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Paystack refund ID or bank reference" className={inputClass} />
           </Field>
           <ErrorText error={refund.error} />
           <Button busy={refund.isPending} onClick={() => refund.mutate()}>Mark as refunded</Button>
@@ -127,8 +127,8 @@ function TransactionDrawer({ payment: p, onChange, onClose }: { payment: Transac
           ["Method", p.payment_type || "—"],
           ["Paid", dateTime(p.paid_at)],
           ["Started", dateTime(p.created_at)],
-          ["Flutterwave ID", p.provider_transaction_id || "—"],
-          ["Flutterwave ref", p.provider_ref || "—"],
+          ["Paystack ID", p.provider_transaction_id || "—"],
+          ["Paystack ref", p.provider_ref || "—"],
         ]}
       />
       <section>

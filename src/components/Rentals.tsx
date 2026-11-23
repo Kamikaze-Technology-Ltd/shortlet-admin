@@ -65,10 +65,19 @@ export default function Rentals({ car = "" }: { car?: string }) {
                     </p>
                   </Td>
                   <Td className="whitespace-nowrap">{money(r.total_price, r.currency)}</Td>
-                  <Td><StatusBadge status={r.status} /></Td>
+                  <Td>
+                    <StatusBadge status={r.status} />
+                    {r.needs_refund ? (
+                      <p className="mt-1 text-xs font-semibold text-amber-700">Needs refund (Paystack)</p>
+                    ) : r.is_paid ? (
+                      <p className="mt-1 text-xs text-emerald-700">Paid online</p>
+                    ) : r.payment_required && r.status === "pending" ? (
+                      <p className="mt-1 text-xs text-muted">Awaiting payment</p>
+                    ) : null}
+                  </Td>
                   <Td>
                     <div className="flex justify-end gap-2">
-                      {r.status === "pending" && (
+                      {r.status === "pending" && !r.payment_required && (
                         <>
                           <Button size="sm" busy={busy(r, "confirm")} onClick={() => act.mutate({ r, action: "confirm" })}>Confirm</Button>
                           <Button size="sm" variant="outline" busy={busy(r, "decline")} onClick={() => act.mutate({ r, action: "decline" })}>Decline</Button>

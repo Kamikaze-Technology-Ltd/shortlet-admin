@@ -10,7 +10,7 @@ For Shortlet Stay staff (accounts with `is_staff` in the API). Next.js 16, the s
 - **Hotels & rooms** (`/hotels`): every hotel with its owner and numbers. Edit hotels, give one to an owner or take it
   back for Shortlet Stay, add and edit rooms, prices, amenities, photos and discounts.
 - **Bookings** (`/bookings`): every booking; confirm, decline or cancel, internal notes.
-- **Payments** (`/payments`): stay and ticket payments, each payment's Flutterwave timeline, and the refund queue
+- **Payments** (`/payments`): stay and ticket payments, each payment's Paystack timeline, and the refund queue
   (record a refund once it's been paid back).
 - **Reviews** (`/reviews`): hide or show guests' reviews.
 - **Events** (`/events`): every event and ticket order; publish, unpublish, cancel, edit, confirm or decline orders,

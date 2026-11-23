@@ -774,7 +774,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Start a Flutterwave checkout for a booking awaiting payment; send the guest to checkout_url. */
+        /** @description Start a Paystack checkout for a booking awaiting payment; send the guest to checkout_url. */
         post: operations["bookings_pay_create"];
         delete?: never;
         options?: never;
@@ -808,7 +808,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Called on returning from checkout with Flutterwave's ?tx_ref=&transaction_id=. */
+        /** @description Called on returning from checkout with Paystack's ?reference= (our tx_ref). */
         post: operations["bookings_verify_payment_create"];
         delete?: never;
         options?: never;
@@ -862,6 +862,40 @@ export interface paths {
         put?: never;
         /** @description The signed-in guest's car rentals, and requesting new ones. */
         post: operations["car_rentals_cancel_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/car-rentals/{reference}/pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Start a Paystack checkout for a booking awaiting payment; send the guest to checkout_url. */
+        post: operations["car_rentals_pay_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/car-rentals/{reference}/verify-payment/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Called on returning from checkout with Paystack's ?reference= (our tx_ref). */
+        post: operations["car_rentals_verify_payment_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -982,6 +1016,40 @@ export interface paths {
         put?: never;
         /** @description The signed-in guest's boat charters, and requesting new ones. */
         post: operations["charters_cancel_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/charters/{reference}/pay/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Start a Paystack checkout for a booking awaiting payment; send the guest to checkout_url. */
+        post: operations["charters_pay_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/charters/{reference}/verify-payment/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Called on returning from checkout with Paystack's ?reference= (our tx_ref). */
+        post: operations["charters_verify_payment_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2387,7 +2455,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Start a Flutterwave checkout for an order awaiting payment; send the buyer to checkout_url. */
+        /** @description Start a Paystack checkout for an order awaiting payment; send the buyer to checkout_url. */
         post: operations["ticket_orders_pay_create"];
         delete?: never;
         options?: never;
@@ -2404,7 +2472,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Called on returning from checkout with Flutterwave's ?tx_ref=&transaction_id=. */
+        /** @description Called on returning from checkout with Paystack's ?reference= (our tx_ref). */
         post: operations["ticket_orders_verify_payment_create"];
         delete?: never;
         options?: never;
@@ -2765,6 +2833,8 @@ export interface components {
             /** @description The site's time zone, e.g. +01:00: charter times are in it. */
             utc_offset: string;
             taken: components["schemas"]["TakenTime"][];
+            /** @description Guests pay to book; the payment confirms it. */
+            pay_online: boolean;
         };
         /** @description A boat on a listing. */
         BoatCard: {
@@ -3102,6 +3172,8 @@ export interface components {
             window_end: string;
             /** @description Busy from pickup_date up to (not including) return_date. */
             taken: components["schemas"]["TakenRange"][];
+            /** @description Guests pay to book; the payment confirms it. */
+            pay_online: boolean;
         };
         /** @description A car on a listing. */
         CarCard: {
@@ -3303,13 +3375,18 @@ export interface components {
             readonly currency: string;
             /**
              * Format: date-time
-             * @description An unanswered request frees the boat then.
+             * @description An unanswered request (or an unpaid one) frees the boat then.
              */
             readonly hold_expires_at: string | null;
             readonly boarding_address: string;
             readonly host_name: string;
             readonly host_phone: string;
             readonly host_email: string;
+            /** @description Booked with online payment on: paying confirms it. */
+            readonly payment_required: boolean;
+            /** @description Pay to confirm, before hold_expires_at. */
+            readonly awaiting_payment: boolean;
+            readonly is_paid: boolean;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -3356,9 +3433,11 @@ export interface components {
             readonly currency: string;
             /**
              * Format: date-time
-             * @description An unanswered request frees the boat then.
+             * @description An unanswered request (or an unpaid one) frees the boat then.
              */
             readonly hold_expires_at: string | null;
+            /** @description Paid online through Shortlet Stay. */
+            readonly is_paid: boolean;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -3373,7 +3452,7 @@ export interface components {
         };
         /** @description Optional body of POST /bookings/<ref>/pay/. The website sends nothing; the mobile app sends its return URL. */
         CheckoutRequestRequest: {
-            /** @description Where Flutterwave sends the guest after checkout, e.g. shortletstay://trips/SS-1234. Defaults to the website's trip page. */
+            /** @description Where Paystack sends the guest after checkout, e.g. shortletstay://trips/SS-1234. Defaults to the website's trip page. */
             return_url?: string;
         };
         Contact: {
@@ -4972,8 +5051,8 @@ export interface components {
          *     * `checkout_failed` - Checkout failed to start
          *     * `guest_returned` - Guest returned from checkout
          *     * `webhook` - Webhook received
-         *     * `verified` - Checked with Flutterwave
-         *     * `verify_error` - Couldn't reach Flutterwave
+         *     * `verified` - Checked with Paystack
+         *     * `verify_error` - Couldn't reach Paystack
          *     * `pending` - Still processing
          *     * `mismatch` - Didn't match the booking
          *     * `failed` - Payment failed
@@ -4985,8 +5064,8 @@ export interface components {
          */
         PaymentEventKindEnum: "checkout_started" | "checkout_failed" | "guest_returned" | "webhook" | "verified" | "verify_error" | "pending" | "mismatch" | "failed" | "confirmed" | "needs_refund" | "already_settled" | "refunded";
         PaymentResultRequest: {
+            /** @description Our payment reference: Paystack's ?reference= on the return URL. */
             tx_ref: string;
-            transaction_id?: string;
         };
         /**
          * @description * `initiated` - Initiated
@@ -5171,13 +5250,18 @@ export interface components {
             readonly currency: string;
             /**
              * Format: date-time
-             * @description An unanswered request frees the car then.
+             * @description An unanswered request (or an unpaid one) frees the car then.
              */
             readonly hold_expires_at: string | null;
             readonly pickup_address: string;
             readonly host_name: string;
             readonly host_phone: string;
             readonly host_email: string;
+            /** @description Booked with online payment on: paying confirms it. */
+            readonly payment_required: boolean;
+            /** @description Pay to confirm, before hold_expires_at. */
+            readonly awaiting_payment: boolean;
+            readonly is_paid: boolean;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -5227,9 +5311,11 @@ export interface components {
             readonly currency: string;
             /**
              * Format: date-time
-             * @description An unanswered request frees the car then.
+             * @description An unanswered request (or an unpaid one) frees the car then.
              */
             readonly hold_expires_at: string | null;
+            /** @description Paid online through Shortlet Stay. */
+            readonly is_paid: boolean;
             /** Format: date-time */
             readonly created_at: string;
         };
@@ -5470,13 +5556,19 @@ export interface components {
             readonly currency: string;
             /**
              * Format: date-time
-             * @description An unanswered request frees the boat then.
+             * @description An unanswered request (or an unpaid one) frees the boat then.
              */
             readonly hold_expires_at: string | null;
+            /** @description Paid online through Shortlet Stay. */
+            readonly is_paid: boolean;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: email */
             readonly host_email: string | null;
+            /** @description Booked with online payment on: paying confirms it. */
+            payment_required: boolean;
+            /** @description Paid online, but it can't stand: refund it from Paystack. */
+            readonly needs_refund: boolean;
         };
         StaffOverview: {
             users: components["schemas"]["UserCounts"];
@@ -5524,13 +5616,19 @@ export interface components {
             readonly currency: string;
             /**
              * Format: date-time
-             * @description An unanswered request frees the car then.
+             * @description An unanswered request (or an unpaid one) frees the car then.
              */
             readonly hold_expires_at: string | null;
+            /** @description Paid online through Shortlet Stay. */
+            readonly is_paid: boolean;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: email */
             readonly host_email: string | null;
+            /** @description Booked with online payment on: paying confirms it. */
+            payment_required: boolean;
+            /** @description Paid online, but it can't stand: refund it from Paystack. */
+            readonly needs_refund: boolean;
         };
         StaffTicketOrder: {
             readonly reference: string;
@@ -5906,7 +6004,7 @@ export interface components {
         TokenVerifyRequest: {
             token: string;
         };
-        /** @description A payment as the hotel (or platform admin) sees it: who paid, Flutterwave's ids and the timeline. */
+        /** @description A payment as the hotel (or platform admin) sees it: who paid, Paystack's ids and the timeline. */
         Transaction: {
             readonly id: number;
             /** @description Our reference, sent to the provider. */
@@ -7770,6 +7868,60 @@ export interface operations {
             };
         };
     };
+    car_rentals_pay_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CheckoutRequestRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CheckoutRequestRequest"];
+                "multipart/form-data": components["schemas"]["CheckoutRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Checkout"];
+                };
+            };
+        };
+    };
+    car_rentals_verify_payment_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentResultRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PaymentResultRequest"];
+                "multipart/form-data": components["schemas"]["PaymentResultRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Rental"];
+                };
+            };
+        };
+    };
     cars_list: {
         parameters: {
             query?: {
@@ -7952,6 +8104,60 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Charter"];
+                };
+            };
+        };
+    };
+    charters_pay_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CheckoutRequestRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CheckoutRequestRequest"];
+                "multipart/form-data": components["schemas"]["CheckoutRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Checkout"];
+                };
+            };
+        };
+    };
+    charters_verify_payment_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentResultRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PaymentResultRequest"];
+                "multipart/form-data": components["schemas"]["PaymentResultRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {
