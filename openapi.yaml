@@ -5642,6 +5642,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/SupportSummary'
           description: ''
+  /api/support/admin/conversations/team/:
+    get:
+      operationId: support_admin_conversations_team_list
+      description: 'Who chats can be handed to: active staff on the support team.'
+      tags:
+      - support
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMember'
+          description: ''
   /api/support/admin/topics/:
     get:
       operationId: support_admin_topics_list
@@ -6743,23 +6760,9 @@ components:
         check_out_time:
           type: string
           format: time
-        hourly_enabled:
-          type: boolean
-        hourly_rate:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-        min_hours:
-          type: integer
-        max_hours:
-          type: integer
         pay_online:
           type: boolean
           description: Guests pay to book; the payment confirms the booking.
-        utc_offset:
-          type: string
-          description: 'Hotel time zone offset, e.g. "+01:00": hourly start times
-            are in hotel time.'
         window_start:
           type: string
           format: date
@@ -6773,11 +6776,6 @@ components:
           items:
             $ref: '#/components/schemas/DateRange'
           description: Taken nights, merged. Check-out on a range's start is fine.
-        taken:
-          type: array
-          items:
-            $ref: '#/components/schemas/TimeRange'
-          description: 'Times already held in the window, merged: for picking hours.'
         stay:
           allOf:
           - $ref: '#/components/schemas/StayCheck'
@@ -6785,17 +6783,11 @@ components:
       required:
       - check_in_time
       - check_out_time
-      - hourly_enabled
-      - hourly_rate
-      - max_hours
       - max_nights
-      - min_hours
       - min_nights
       - pay_online
       - stay
-      - taken
       - unavailable
-      - utc_offset
       - window_end
       - window_start
     BlankEnum:
@@ -7295,7 +7287,9 @@ components:
           - $ref: '#/components/schemas/SourceEnum'
           readOnly: true
         stay_type:
-          $ref: '#/components/schemas/StayType7a5Enum'
+          allOf:
+          - $ref: '#/components/schemas/StayTypeEnum'
+          readOnly: true
         check_in:
           type: string
           format: date
@@ -7306,7 +7300,7 @@ components:
         starts_at:
           type: string
           format: date-time
-          description: 'Hourly stays only: start, on the hour, hotel time.'
+          readOnly: true
         ends_at:
           type: string
           format: date-time
@@ -7316,9 +7310,8 @@ components:
           readOnly: true
         hours:
           type: integer
-          maximum: 23
-          minimum: 1
-          description: Hourly stays only.
+          readOnly: true
+          description: Older hourly stays only.
         guests:
           type: integer
           maximum: 9223372036854775807
@@ -7351,6 +7344,15 @@ components:
         is_paid:
           type: boolean
           readOnly: true
+        cancellation_policy:
+          allOf:
+          - $ref: '#/components/schemas/CancellationPolicyEnum'
+          readOnly: true
+        refund_percent_now:
+          type: integer
+          description: What the guest would get back if they cancelled now, under
+            the policy they booked with.
+          readOnly: true
         total_price:
           type: string
           format: decimal
@@ -7374,6 +7376,7 @@ components:
           readOnly: true
       required:
       - awaiting_payment
+      - cancellation_policy
       - check_in
       - check_out
       - created_at
@@ -7393,6 +7396,7 @@ components:
       - property_name
       - property_slug
       - reference
+      - refund_percent_now
       - source
       - starts_at
       - status
@@ -7432,8 +7436,6 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/StatusEnum'
-        stay_type:
-          $ref: '#/components/schemas/StayType7a5Enum'
         check_in:
           type: string
           format: date
@@ -7441,15 +7443,6 @@ components:
           type: string
           format: date
           description: Departure day; that night is not included.
-        starts_at:
-          type: string
-          format: date-time
-          description: 'Hourly stays only: start, on the hour, hotel time.'
-        hours:
-          type: integer
-          maximum: 23
-          minimum: 1
-          description: Hourly stays only.
         guests:
           type: integer
           maximum: 9223372036854775807
@@ -7512,7 +7505,7 @@ components:
           minimum: 0
           format: int64
         stay_type:
-          $ref: '#/components/schemas/StayType7a5Enum'
+          $ref: '#/components/schemas/StayTypeEnum'
         check_in:
           type: string
           format: date
@@ -7608,7 +7601,7 @@ components:
           minimum: 0
           format: int64
         stay_type:
-          $ref: '#/components/schemas/StayType7a5Enum'
+          $ref: '#/components/schemas/StayTypeEnum'
         check_in:
           type: string
           format: date
@@ -7664,6 +7657,70 @@ components:
       - name
       - property_name
       - slug
+    Cancellation:
+      type: object
+      properties:
+        policy:
+          $ref: '#/components/schemas/CancellationPolicyEnum'
+        label:
+          type: string
+        summary:
+          type: string
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/CancellationRow'
+        refund_percent_now:
+          type: integer
+          nullable: true
+          description: 'On a booking: what cancelling now gets back.'
+      required:
+      - label
+      - policy
+      - refund_percent_now
+      - rows
+      - summary
+    CancellationPolicyEnum:
+      enum:
+      - flexible
+      - moderate
+      - firm
+      - strict
+      type: string
+      description: |-
+        * `flexible` - Flexible
+        * `moderate` - Moderate
+        * `firm` - Firm
+        * `strict` - Strict
+    CancellationRow:
+      type: object
+      properties:
+        heading:
+          type: string
+          description: '"Within", "Before" or "After".'
+        when:
+          type: string
+          description: '"24 hours of booking", "7 days before check-in", or a date
+            like "30 Nov 14:00".'
+        title:
+          type: string
+          description: '"Full refund", "Partial refund" or "No refund".'
+        detail:
+          type: string
+        refund_percent:
+          type: integer
+        until:
+          type: string
+          format: date-time
+          nullable: true
+          description: 'On a booking: when this row ends.'
+      required:
+      - detail
+      - heading
+      - refund_percent
+      - title
+      - until
+      - when
     CarAvailability:
       type: object
       properties:
@@ -10025,6 +10082,9 @@ components:
       required:
       - results
       - unread
+    NullEnum:
+      enum:
+      - null
     Order:
       type: object
       description: An order as its buyer sees it.
@@ -11219,8 +11279,6 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/StatusEnum'
-        stay_type:
-          $ref: '#/components/schemas/StayType7a5Enum'
         check_in:
           type: string
           format: date
@@ -11228,15 +11286,6 @@ components:
           type: string
           format: date
           description: Departure day; that night is not included.
-        starts_at:
-          type: string
-          format: date-time
-          description: 'Hourly stays only: start, on the hour, hotel time.'
-        hours:
-          type: integer
-          maximum: 23
-          minimum: 1
-          description: Hourly stays only.
         guests:
           type: integer
           maximum: 9223372036854775807
@@ -11482,6 +11531,11 @@ components:
           title: Superuser status
           description: Designates that this user has all permissions without explicitly
             assigning them.
+        staff_areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffAreaEnum'
+          description: 'Staff (not super admins) only: the admin areas they may use.'
     PatchedTicketTypeManageRequest:
       type: object
       properties:
@@ -11574,19 +11628,11 @@ components:
           minimum: 0
           format: int64
           nullable: true
-        hourly_rate:
+        base_price:
           type: string
           format: decimal
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          description: Price per hour.
-        hourly_enabled:
-          type: boolean
-          description: Guests may book this room by the hour.
-        min_hours:
-          type: integer
-          maximum: 23
-          minimum: 1
-          description: Shortest hourly stay.
+          description: Price per night for the room.
         min_nights:
           type: integer
           maximum: 9223372036854775807
@@ -11607,6 +11653,50 @@ components:
           type: array
           items:
             type: string
+        pets_allowed:
+          type: boolean
+        smoking_allowed:
+          type: boolean
+          description: Including vaping and e-cigarettes.
+        parties_allowed:
+          type: boolean
+          description: Parties or events.
+        commercial_photography_allowed:
+          type: boolean
+          description: Including commercial filming.
+        quiet_hours_start:
+          type: string
+          format: time
+          nullable: true
+          description: 'Empty: no quiet hours.'
+        quiet_hours_end:
+          type: string
+          format: time
+          nullable: true
+        additional_rules:
+          type: string
+          description: Anything else guests must follow, one rule per line.
+        has_exterior_cameras:
+          type: boolean
+          description: Security cameras outside the property.
+        cameras_note:
+          type: string
+          description: Where they are and what they cover.
+          maxLength: 300
+        has_carbon_monoxide_alarm:
+          type: boolean
+        has_smoke_alarm:
+          type: boolean
+        cancellation_policy:
+          allOf:
+          - $ref: '#/components/schemas/CancellationPolicyEnum'
+          description: |-
+            See properties/rules.py.
+
+            * `flexible` - Flexible
+            * `moderate` - Moderate
+            * `firm` - Firm
+            * `strict` - Strict
         is_published:
           type: boolean
         is_featured:
@@ -12396,7 +12486,7 @@ components:
           readOnly: true
         stay_type:
           allOf:
-          - $ref: '#/components/schemas/StayType7a5Enum'
+          - $ref: '#/components/schemas/StayTypeEnum'
           readOnly: true
         check_in:
           type: string
@@ -12443,6 +12533,7 @@ components:
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
           readOnly: true
           nullable: true
+          description: Old hourly stays only.
         discount_amount:
           type: string
           format: decimal
@@ -12478,6 +12569,16 @@ components:
           - $ref: '#/components/schemas/MyReview'
           nullable: true
           readOnly: true
+        cancellation:
+          allOf:
+          - $ref: '#/components/schemas/Cancellation'
+          readOnly: true
+          description: The policy when they booked, with this stay's dates.
+        house_rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rule'
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -12485,6 +12586,7 @@ components:
       required:
       - awaiting_payment
       - can_review
+      - cancellation
       - check_in
       - check_out
       - created_at
@@ -12494,6 +12596,7 @@ components:
       - hold_expires_at
       - hourly_rate
       - hours
+      - house_rules
       - is_paid
       - nightly_rate
       - nights
@@ -12507,42 +12610,24 @@ components:
       - unit
     ReservationCreateRequest:
       type: object
-      description: Night stays send check_in and check_out; hourly stays send starts_at
-        (hotel time) and hours.
+      description: Rooms are booked by the night, priced per night.
       properties:
         unit:
           type: string
-        stay_type:
-          allOf:
-          - $ref: '#/components/schemas/ReservationCreateStayTypeEnum'
-          default: night
         check_in:
           type: string
           format: date
         check_out:
           type: string
           format: date
-        starts_at:
-          type: string
-          format: date-time
-        hours:
-          type: integer
-          maximum: 23
-          minimum: 1
         guests:
           type: integer
           minimum: 1
       required:
+      - check_in
+      - check_out
       - guests
       - unit
-    ReservationCreateStayTypeEnum:
-      enum:
-      - night
-      - hourly
-      type: string
-      description: |-
-        * `night` - night
-        * `hourly` - hourly
     ReservationUnit:
       type: object
       properties:
@@ -12639,6 +12724,22 @@ components:
         * `owner` - owner
         * `organiser` - organiser
         * `admin` - admin
+    Rule:
+      type: object
+      properties:
+        icon:
+          type: string
+          description: check-in, check-out, guests, pets, no-pets, smoking, no-smoking,
+            quiet, parties, no-parties, photography, no-photography, rule, camera,
+            co-alarm or smoke-alarm.
+        title:
+          type: string
+        detail:
+          type: string
+      required:
+      - detail
+      - icon
+      - title
     SenderEnum:
       enum:
       - user
@@ -12657,6 +12758,24 @@ components:
       description: |-
         * `website` - Website
         * `staff` - Staff (offline)
+    StaffAreaEnum:
+      enum:
+      - users
+      - stays
+      - cars
+      - cruises
+      - events
+      - payments
+      - support
+      type: string
+      description: |-
+        * `users` - Guests, hosts & organisers
+        * `stays` - Hotels, rooms, bookings & reviews
+        * `cars` - Cars & rentals
+        * `cruises` - Boats & cruises
+        * `events` - Events & tickets
+        * `payments` - Payments & refunds
+        * `support` - Support inbox & help bot
     StaffBoat:
       type: object
       description: A boat with its host and how busy it is. Edit it through /dashboard/boats/.
@@ -13015,6 +13134,14 @@ components:
       - starts_at
       - status
       - total_price
+    StaffLevelEnum:
+      enum:
+      - super_admin
+      - staff
+      type: string
+      description: |-
+        * `super_admin` - super_admin
+        * `staff` - staff
     StaffOverview:
       type: object
       properties:
@@ -13349,6 +13476,17 @@ components:
           title: Superuser status
           description: Designates that this user has all permissions without explicitly
             assigning them.
+        staff_level:
+          readOnly: true
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/StaffLevelEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        staff_areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffAreaEnum'
+          description: 'Staff (not super admins) only: the admin areas they may use.'
         has_password:
           type: boolean
           readOnly: true
@@ -13406,6 +13544,8 @@ components:
       - name
       - phone
       - role
+      - staff_areas
+      - staff_level
     StaffUserCreate:
       type: object
       description: |-
@@ -13457,6 +13597,17 @@ components:
           title: Superuser status
           description: Designates that this user has all permissions without explicitly
             assigning them.
+        staff_level:
+          readOnly: true
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/StaffLevelEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        staff_areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffAreaEnum'
+          description: 'Staff (not super admins) only: the admin areas they may use.'
         has_password:
           type: boolean
           readOnly: true
@@ -13514,6 +13665,8 @@ components:
       - name
       - phone
       - role
+      - staff_areas
+      - staff_level
     StaffUserCreateRequest:
       type: object
       description: |-
@@ -13558,6 +13711,11 @@ components:
           title: Superuser status
           description: Designates that this user has all permissions without explicitly
             assigning them.
+        staff_areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffAreaEnum'
+          description: 'Staff (not super admins) only: the admin areas they may use.'
         password:
           type: string
           writeOnly: true
@@ -13613,6 +13771,17 @@ components:
           title: Superuser status
           description: Designates that this user has all permissions without explicitly
             assigning them.
+        staff_level:
+          readOnly: true
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/StaffLevelEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        staff_areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffAreaEnum'
+          description: 'Staff (not super admins) only: the admin areas they may use.'
         has_password:
           type: boolean
           readOnly: true
@@ -13705,6 +13874,8 @@ components:
       - recent_bookings
       - review_count
       - role
+      - staff_areas
+      - staff_level
       - support_chat_count
       - ticket_order_count
     StartConversationRequest:
@@ -13766,7 +13937,7 @@ components:
       - check_out
       - errors
       - nights
-    StayType7a5Enum:
+    StayTypeEnum:
       enum:
       - night
       - hourly
@@ -13832,6 +14003,21 @@ components:
       required:
       - ends_at
       - starts_at
+    TeamMember:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+      required:
+      - email
+      - id
+      - name
     Ticket:
       type: object
       properties:
@@ -13987,18 +14173,6 @@ components:
       required:
       - name
       - quantity
-    TimeRange:
-      type: object
-      properties:
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-      required:
-      - end
-      - start
     TokenBlacklistRequest:
       type: object
       properties:
@@ -14207,20 +14381,7 @@ components:
           type: string
           format: decimal
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          description: 'Nightly rate: hourly rate × 24.'
-        hourly_rate:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          description: Price per hour.
-        hourly_enabled:
-          type: boolean
-          description: Guests may book this room by the hour.
-        min_hours:
-          type: integer
-          maximum: 23
-          minimum: 1
-          description: Shortest hourly stay.
+          description: Price per night for the room.
         is_featured:
           type: boolean
           description: Show on the home page.
@@ -14287,12 +14448,27 @@ components:
             $ref: '#/components/schemas/Discount'
           readOnly: true
           description: Current and upcoming discounts, for pricing a stay.
+        house_rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rule'
+          readOnly: true
+        safety:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rule'
+          readOnly: true
+        cancellation:
+          allOf:
+          - $ref: '#/components/schemas/Cancellation'
+          readOnly: true
       required:
       - amenities
       - base_price
       - bathrooms
       - bedrooms
       - beds
+      - cancellation
       - check_in_time
       - check_out_time
       - cover_image
@@ -14300,19 +14476,18 @@ components:
       - discount
       - discounted_price
       - discounts
-      - hourly_enabled
-      - hourly_rate
+      - house_rules
       - id
       - images
       - is_featured
       - max_guests
       - max_nights
-      - min_hours
       - min_nights
       - name
       - property
       - property_description
       - rating
+      - safety
       - size_sqm
       - slug
       - summary
@@ -14414,20 +14589,7 @@ components:
           type: string
           format: decimal
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          description: 'Nightly rate: hourly rate × 24.'
-        hourly_rate:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          description: Price per hour.
-        hourly_enabled:
-          type: boolean
-          description: Guests may book this room by the hour.
-        min_hours:
-          type: integer
-          maximum: 23
-          minimum: 1
-          description: Shortest hourly stay.
+          description: Price per night for the room.
         is_featured:
           type: boolean
           description: Show on the home page.
@@ -14459,12 +14621,9 @@ components:
       - cover_image
       - discount
       - discounted_price
-      - hourly_enabled
-      - hourly_rate
       - id
       - is_featured
       - max_guests
-      - min_hours
       - name
       - property
       - rating
@@ -14518,25 +14677,11 @@ components:
           minimum: 0
           format: int64
           nullable: true
-        hourly_rate:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          description: Price per hour.
         base_price:
           type: string
           format: decimal
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          readOnly: true
-          description: 'Nightly rate: hourly rate × 24.'
-        hourly_enabled:
-          type: boolean
-          description: Guests may book this room by the hour.
-        min_hours:
-          type: integer
-          maximum: 23
-          minimum: 1
-          description: Shortest hourly stay.
+          description: Price per night for the room.
         min_nights:
           type: integer
           maximum: 9223372036854775807
@@ -14557,6 +14702,50 @@ components:
           type: array
           items:
             type: string
+        pets_allowed:
+          type: boolean
+        smoking_allowed:
+          type: boolean
+          description: Including vaping and e-cigarettes.
+        parties_allowed:
+          type: boolean
+          description: Parties or events.
+        commercial_photography_allowed:
+          type: boolean
+          description: Including commercial filming.
+        quiet_hours_start:
+          type: string
+          format: time
+          nullable: true
+          description: 'Empty: no quiet hours.'
+        quiet_hours_end:
+          type: string
+          format: time
+          nullable: true
+        additional_rules:
+          type: string
+          description: Anything else guests must follow, one rule per line.
+        has_exterior_cameras:
+          type: boolean
+          description: Security cameras outside the property.
+        cameras_note:
+          type: string
+          description: Where they are and what they cover.
+          maxLength: 300
+        has_carbon_monoxide_alarm:
+          type: boolean
+        has_smoke_alarm:
+          type: boolean
+        cancellation_policy:
+          allOf:
+          - $ref: '#/components/schemas/CancellationPolicyEnum'
+          description: |-
+            See properties/rules.py.
+
+            * `flexible` - Flexible
+            * `moderate` - Moderate
+            * `firm` - Firm
+            * `strict` - Strict
         is_published:
           type: boolean
         is_featured:
@@ -14581,30 +14770,39 @@ components:
           format: date-time
           readOnly: true
       required:
+      - additional_rules
       - amenities
       - base_price
       - bathrooms
       - bedrooms
       - beds
+      - cameras_note
+      - cancellation_policy
       - check_in_time
       - check_out_time
+      - commercial_photography_allowed
       - created_at
       - description
       - discounts
-      - hourly_enabled
-      - hourly_rate
+      - has_carbon_monoxide_alarm
+      - has_exterior_cameras
+      - has_smoke_alarm
       - id
       - images
       - is_featured
       - is_published
       - max_guests
       - max_nights
-      - min_hours
       - min_nights
       - name
+      - parties_allowed
+      - pets_allowed
       - property
+      - quiet_hours_end
+      - quiet_hours_start
       - size_sqm
       - slug
+      - smoking_allowed
       - summary
       - updated_at
     UnitManageRequest:
@@ -14649,19 +14847,11 @@ components:
           minimum: 0
           format: int64
           nullable: true
-        hourly_rate:
+        base_price:
           type: string
           format: decimal
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
-          description: Price per hour.
-        hourly_enabled:
-          type: boolean
-          description: Guests may book this room by the hour.
-        min_hours:
-          type: integer
-          maximum: 23
-          minimum: 1
-          description: Shortest hourly stay.
+          description: Price per night for the room.
         min_nights:
           type: integer
           maximum: 9223372036854775807
@@ -14682,13 +14872,57 @@ components:
           type: array
           items:
             type: string
+        pets_allowed:
+          type: boolean
+        smoking_allowed:
+          type: boolean
+          description: Including vaping and e-cigarettes.
+        parties_allowed:
+          type: boolean
+          description: Parties or events.
+        commercial_photography_allowed:
+          type: boolean
+          description: Including commercial filming.
+        quiet_hours_start:
+          type: string
+          format: time
+          nullable: true
+          description: 'Empty: no quiet hours.'
+        quiet_hours_end:
+          type: string
+          format: time
+          nullable: true
+        additional_rules:
+          type: string
+          description: Anything else guests must follow, one rule per line.
+        has_exterior_cameras:
+          type: boolean
+          description: Security cameras outside the property.
+        cameras_note:
+          type: string
+          description: Where they are and what they cover.
+          maxLength: 300
+        has_carbon_monoxide_alarm:
+          type: boolean
+        has_smoke_alarm:
+          type: boolean
+        cancellation_policy:
+          allOf:
+          - $ref: '#/components/schemas/CancellationPolicyEnum'
+          description: |-
+            See properties/rules.py.
+
+            * `flexible` - Flexible
+            * `moderate` - Moderate
+            * `firm` - Firm
+            * `strict` - Strict
         is_published:
           type: boolean
         is_featured:
           type: boolean
           description: Show on the home page.
       required:
-      - hourly_rate
+      - base_price
       - name
       - property
     User:
@@ -14728,6 +14962,23 @@ components:
           readOnly: true
           title: Staff status
           description: Designates whether the user can log into this admin site.
+        staff_level:
+          readOnly: true
+          nullable: true
+          description: |-
+            Staff only: super_admin can do everything.
+
+            * `super_admin` - super_admin
+            * `staff` - staff
+          oneOf:
+          - $ref: '#/components/schemas/StaffLevelEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaffAreaEnum'
+          readOnly: true
+          description: Admin areas this account may use.
         date_joined:
           type: string
           format: date-time
@@ -14740,6 +14991,7 @@ components:
           readOnly: true
       required:
       - account_type
+      - areas
       - date_joined
       - email
       - first_name
@@ -14751,6 +15003,7 @@ components:
       - last_name
       - phone
       - role
+      - staff_level
     UserBooking:
       type: object
       properties:

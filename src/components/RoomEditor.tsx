@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ImagePlus, Loader2, Percent, Trash2 } from "lucide-react";
-import { ApiError, adminApi, day, money, type Room } from "@/lib/api";
+import { ApiError, adminApi, day, type Room } from "@/lib/api";
+import { CANCELLATION_POLICIES, roomRules } from "@/lib/room-rules";
 import { Button, Check, Drawer, ErrorText, Field, inputClass } from "./ui";
 
 /** Add or edit a room. Photos and discounts appear once the room exists. */
@@ -23,9 +24,7 @@ export default function RoomEditor({ hotel, room: initial, onClose }: { hotel: s
     bathrooms: initial?.bathrooms ?? 1,
     max_guests: initial?.max_guests ?? 2,
     size_sqm: initial?.size_sqm ?? null,
-    hourly_rate: initial?.hourly_rate ?? "",
-    hourly_enabled: initial?.hourly_enabled ?? true,
-    min_hours: initial?.min_hours ?? 2,
+    base_price: initial?.base_price ?? "",
     min_nights: initial?.min_nights ?? 1,
     max_nights: initial?.max_nights ?? 90,
     check_in_time: initial?.check_in_time?.slice(0, 5) ?? "14:00",
@@ -33,6 +32,7 @@ export default function RoomEditor({ hotel, room: initial, onClose }: { hotel: s
     amenities: initial?.amenities ?? [],
     is_published: initial?.is_published ?? false,
     is_featured: initial?.is_featured ?? false,
+    ...roomRules(initial),
   });
   const set = <K extends keyof typeof form>(k: K) => (v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
   const refresh = () => {
@@ -57,7 +57,7 @@ export default function RoomEditor({ hotel, room: initial, onClose }: { hotel: s
     },
   });
   const fields = save.error instanceof ApiError ? save.error.fields : {};
-  const num = (k: "bedrooms" | "beds" | "bathrooms" | "max_guests" | "min_hours" | "min_nights" | "max_nights", min = 0) => (
+  const num = (k: "bedrooms" | "beds" | "bathrooms" | "max_guests" | "min_nights" | "max_nights", min = 0) => (
     <input type="number" min={min} value={form[k]} onChange={(e) => set(k)(Number(e.target.value))} className={inputClass} />
   );
 
@@ -95,8 +95,8 @@ export default function RoomEditor({ hotel, room: initial, onClose }: { hotel: s
         <Field label="Sleeps" error={fields.max_guests}>{num("max_guests", 1)}</Field>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Price per hour" error={fields.hourly_rate} hint={form.hourly_rate ? `${money(Number(form.hourly_rate) * 24)} a night (hourly × 24)` : "The nightly price is the hourly rate × 24."}>
-          <input type="number" min={1} step="0.01" value={form.hourly_rate} onChange={(e) => set("hourly_rate")(e.target.value)} className={inputClass} />
+        <Field label="Price per night" error={fields.base_price} hint="What guests pay for the room each night.">
+          <input type="number" min={1} step="0.01" value={form.base_price} onChange={(e) => set("base_price")(e.target.value)} className={inputClass} />
         </Field>
         <Field label="Size (m²)" error={fields.size_sqm}>
           <input type="number" min={0} value={form.size_sqm ?? ""} onChange={(e) => set("size_sqm")(e.target.value ? Number(e.target.value) : null)} className={inputClass} />
@@ -109,14 +109,6 @@ export default function RoomEditor({ hotel, room: initial, onClose }: { hotel: s
         <Field label="Check-out" error={fields.check_out_time}>
           <input type="time" value={form.check_out_time} onChange={(e) => set("check_out_time")(e.target.value)} className={inputClass} />
         </Field>
-      </div>
-      <div className="flex flex-wrap items-end gap-4">
-        <Check label="Bookable by the hour" checked={form.hourly_enabled} onChange={set("hourly_enabled")} />
-        {form.hourly_enabled && (
-          <Field label="Shortest hourly stay" error={fields.min_hours}>
-            <input type="number" min={1} max={23} value={form.min_hours} onChange={(e) => set("min_hours")(Number(e.target.value))} className={`${inputClass} w-24`} />
-          </Field>
-        )}
       </div>
       <Field label="Amenities" error={fields.amenities}>
         <div className="flex flex-wrap gap-2">
@@ -134,6 +126,55 @@ export default function RoomEditor({ hotel, room: initial, onClose }: { hotel: s
             );
           })}
         </div>
+      </Field>
+      <section className="space-y-3">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-900">House rules</h3>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Check label="Pets allowed" checked={form.pets_allowed} onChange={set("pets_allowed")} />
+          <Check label="Smoking allowed (incl. vaping)" checked={form.smoking_allowed} onChange={set("smoking_allowed")} />
+          <Check label="Parties or events allowed" checked={form.parties_allowed} onChange={set("parties_allowed")} />
+          <Check label="Commercial photography allowed" checked={form.commercial_photography_allowed} onChange={set("commercial_photography_allowed")} />
+          <Check
+            label="Quiet hours"
+            checked={form.quiet_hours_start !== null}
+            onChange={(on) => setForm((f) => ({ ...f, quiet_hours_start: on ? "22:00" : null, quiet_hours_end: on ? "07:00" : null }))}
+          />
+        </div>
+        {form.quiet_hours_start !== null && (
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Quiet from" error={fields.quiet_hours_start}>
+              <input type="time" value={form.quiet_hours_start ?? ""} onChange={(e) => set("quiet_hours_start")(e.target.value)} className={inputClass} />
+            </Field>
+            <Field label="Quiet until" error={fields.quiet_hours_end}>
+              <input type="time" value={form.quiet_hours_end ?? ""} onChange={(e) => set("quiet_hours_end")(e.target.value)} className={inputClass} />
+            </Field>
+          </div>
+        )}
+        <Field label="Other rules" error={fields.additional_rules} hint="One rule per line.">
+          <textarea value={form.additional_rules} rows={3} onChange={(e) => set("additional_rules")(e.target.value)} className={inputClass} />
+        </Field>
+      </section>
+      <section className="space-y-3">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-900">Safety &amp; property</h3>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Check label="Exterior security cameras" checked={form.has_exterior_cameras} onChange={set("has_exterior_cameras")} />
+          <Check label="Carbon monoxide alarm" checked={form.has_carbon_monoxide_alarm} onChange={set("has_carbon_monoxide_alarm")} />
+          <Check label="Smoke alarm" checked={form.has_smoke_alarm} onChange={set("has_smoke_alarm")} />
+        </div>
+        {form.has_exterior_cameras && (
+          <Field label="About the cameras" error={fields.cameras_note} hint="Where they are and what they cover.">
+            <input value={form.cameras_note} maxLength={300} onChange={(e) => set("cameras_note")(e.target.value)} className={inputClass} />
+          </Field>
+        )}
+      </section>
+      <Field label="Cancellation policy" error={fields.cancellation_policy}>
+        <select value={form.cancellation_policy} onChange={(e) => set("cancellation_policy")(e.target.value as typeof form.cancellation_policy)} className={inputClass}>
+          {CANCELLATION_POLICIES.map((p) => (
+            <option key={p.value} value={p.value}>
+              {p.label}: {p.summary}
+            </option>
+          ))}
+        </select>
       </Field>
       <div className="space-y-2 rounded-2xl bg-cream/60 p-4">
         <Check label="Published: guests can see and book it" checked={form.is_published} onChange={set("is_published")} />

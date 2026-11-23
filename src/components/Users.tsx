@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { ApiError, adminApi, day, HOST_TYPES, type HostType, type Role, type StaffUser } from "@/lib/api";
-import { Badge, Button, Card, Check, Drawer, Empty, ErrorText, Field, inputClass, Loading, Page, Pager, RoleBadge, SearchBox, Select, Table, Td, Toolbar } from "./ui";
+import { ApiError, adminApi, areaLabel, authApi, day, HOST_TYPES, isSuperAdmin, type HostType, type Role, type StaffUser } from "@/lib/api";
+import StaffAccess from "./StaffAccess";
+import { Badge, Button, Card, Drawer, Empty, ErrorText, Field, inputClass, Loading, Page, Pager, RoleBadge, SearchBox, Select, Table, Td, Toolbar } from "./ui";
 
 const PAGE_SIZE = 25;
 
@@ -19,7 +20,11 @@ const COPY: Record<Role | "all", { title: string; subtitle: string; add: string 
     add: "Add host",
   },
   organiser: { title: "Organisers", subtitle: "Accounts that sell tickets to events.", add: "Add organiser" },
-  admin: { title: "Support team", subtitle: "Shortlet Stay staff who can use this admin. Super admins can add and remove team members.", add: "Add team member" },
+  admin: {
+    title: "Support team",
+    subtitle: "Shortlet Stay staff. Super admins can do everything and manage the team; other staff only work in the areas they're given.",
+    add: "Add team member",
+  },
 };
 
 export default function Users({ role }: { role?: Role }) {
@@ -96,7 +101,15 @@ function listingsOf(u: StaffUser) {
 function UserRow({ u, role }: { u: StaffUser; role?: Role }) {
   const router = useRouter();
   const metric =
-    role === "owner" ? listingsOf(u) : role === "organiser" ? u.event_count : role === "admin" ? (u.is_superuser ? "Super admin" : "Support") : u.booking_count;
+    role === "owner"
+      ? listingsOf(u)
+      : role === "organiser"
+        ? u.event_count
+        : role === "admin"
+          ? u.is_superuser
+            ? "Everything"
+            : u.staff_areas.map(areaLabel).join(", ") || "Overview only"
+          : u.booking_count;
   return (
     <tr className="cursor-pointer hover:bg-mist" onClick={() => router.push(`/users/${u.id}`)}>
       <Td>
@@ -129,8 +142,10 @@ function NewUser({ role, onClose }: { role?: Role; onClose: () => void }) {
     host_type: (role === "owner" ? "hotel" : "") as HostType | "",
     is_staff: role === "admin",
     is_superuser: false,
+    staff_areas: [] as StaffUser["staff_areas"],
     password: "",
   });
+  const me = useQuery({ queryKey: ["me"], queryFn: authApi.me });
   const set = <K extends keyof typeof form>(k: K) => (v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
   const save = useMutation({
     mutationFn: () => adminApi.createUser(form),
@@ -184,11 +199,9 @@ function NewUser({ role, onClose }: { role?: Role; onClose: () => void }) {
           </Field>
         )}
       </div>
-      <div className="space-y-2 rounded-2xl bg-cream/60 p-4">
-        <Check label="Shortlet Stay staff (can use this admin)" checked={form.is_staff} onChange={(v) => setForm((f) => ({ ...f, is_staff: v, is_superuser: v && f.is_superuser }))} />
-        <Check label="Super admin (can manage the support team)" checked={form.is_superuser} disabled={!form.is_staff} onChange={set("is_superuser")} />
-        <p className="text-xs text-muted">Only super admins can add staff.</p>
-      </div>
+      {isSuperAdmin(me.data) || form.is_staff ? (
+        <StaffAccess value={form} onChange={(access) => setForm((f) => ({ ...f, ...access }))} error={fields.staff_areas ?? fields.is_staff} />
+      ) : null}
       <Field label="Password" error={fields.password} hint="Leave empty to email them a link to choose their own (recommended).">
         <input type="password" autoComplete="new-password" value={form.password} onChange={(e) => set("password")(e.target.value)} className={inputClass} />
       </Field>

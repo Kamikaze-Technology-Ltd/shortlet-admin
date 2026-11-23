@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { adminApi, dateTime, money, moneyList, type Overview as Data } from "@/lib/api";
+import { adminApi, authApi, canOpen, dateTime, money, moneyList, type Overview as Data } from "@/lib/api";
 import { Card, ErrorText, Loading, Page, RoleBadge, Stat, StatusBadge, Table, Td } from "./ui";
 
 /** The whole platform at a glance. */
@@ -115,6 +115,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 /** What needs someone's attention today. */
 function Attention({ d }: { d: Data }) {
+  // The Shell has already loaded who's signed in.
+  const me = useQuery({ queryKey: ["me"], queryFn: authApi.me });
   const items = [
     d.support.needs_reply && { href: "/support", text: `${d.support.needs_reply} support chat${d.support.needs_reply === 1 ? "" : "s"} waiting for a reply` },
     d.money.needs_refund && { href: "/payments", text: `${d.money.needs_refund} payment${d.money.needs_refund === 1 ? "" : "s"} to refund` },
@@ -122,7 +124,7 @@ function Attention({ d }: { d: Data }) {
     d.cruises.charters_pending && { href: "/charters", text: `${d.cruises.charters_pending} boat cruise request${d.cruises.charters_pending === 1 ? "" : "s"} waiting for the host` },
     d.cars.rentals_pending && { href: "/rentals", text: `${d.cars.rentals_pending} car rental request${d.cars.rentals_pending === 1 ? "" : "s"} waiting for the host` },
     d.hotels.without_owner && { href: "/hotels", text: `${d.hotels.without_owner} hotel${d.hotels.without_owner === 1 ? "" : "s"} managed by Shortlet Stay (no owner)` },
-  ].filter(Boolean) as { href: string; text: string }[];
+  ].filter((i): i is { href: string; text: string } => !!i && canOpen(me.data, i.href));
   if (!items.length) return null;
   return (
     <div className="flex flex-wrap gap-2">

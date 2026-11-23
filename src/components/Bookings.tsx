@@ -171,6 +171,13 @@ function BookingDrawer({ booking: b, onChange, onClose }: { booking: Booking; on
           ["Guests", b.guests],
           ["Total", <>{money(b.total_price)}{Number(b.discount_amount) > 0 && <span className="text-muted"> (incl. {money(b.discount_amount)} discount)</span>}</>],
           ["Payment", b.is_paid ? <Badge tone="green">Paid</Badge> : b.awaiting_payment ? <Badge tone="amber">Awaiting payment</Badge> : "Not paid online"],
+          [
+            "Cancellation",
+            <>
+              <span className="capitalize">{b.cancellation_policy}</span>
+              {active && <span className="text-muted"> · cancelling now refunds {b.refund_percent_now}%</span>}
+            </>,
+          ],
           ["Source", b.source === "website" ? "Website / app" : "Added by hotel staff"],
           ["Hold expires", b.hold_expires_at ? dateTime(b.hold_expires_at) : "—"],
           ["Booked", dateTime(b.created_at)],

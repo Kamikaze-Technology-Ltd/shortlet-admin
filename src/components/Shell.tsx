@@ -27,7 +27,7 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
-import { adminApi, authApi, supportApi } from "@/lib/api";
+import { adminApi, areaLabel, authApi, canOpen, isSuperAdmin, supportApi } from "@/lib/api";
 
 type Badge = "support" | "refunds";
 const NAV: { section?: string; items: { href: string; label: string; icon: typeof Inbox; badge?: Badge }[] }[] = [
@@ -84,7 +84,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const hasSession = useSyncExternalStore(noSubscribe, authApi.signedIn, () => null);
   const me = useQuery({ queryKey: ["me"], queryFn: authApi.me, enabled: hasSession === true, retry: false });
   const allowed = me.data?.role === "admin";
-  const summary = useQuery({ queryKey: ["summary"], queryFn: supportApi.summary, enabled: allowed, refetchInterval: 15_000 });
+  const summary = useQuery({
+    queryKey: ["summary"],
+    queryFn: supportApi.summary,
+    enabled: allowed && !!me.data?.areas.includes("support"),
+    refetchInterval: 15_000,
+  });
   const overview = useQuery({ queryKey: ["overview"], queryFn: adminApi.overview, enabled: allowed, refetchInterval: 60_000 });
 
   useEffect(() => {
@@ -103,6 +108,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   }
 
   const counts: Record<Badge, number> = { support: summary.data?.needs_reply ?? 0, refunds: overview.data?.money.needs_refund ?? 0 };
+  const nav = NAV.map((g) => ({ ...g, items: g.items.filter((i) => canOpen(me.data, i.href)) })).filter((g) => g.items.length);
+  const level = isSuperAdmin(me.data) ? "Super admin" : me.data?.areas.length ? me.data.areas.map(areaLabel).join(", ") : "No areas yet";
 
   return (
     <div className="flex h-screen flex-col lg:flex-row">
@@ -110,7 +117,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         <Image src="/logo-light.png" alt="Shortlet Stay" width={847} height={155} className="mr-2 h-6 w-auto lg:mb-1 lg:mr-0 lg:h-7" priority />
         <p className="hidden text-xs uppercase tracking-[0.15em] text-white/50 lg:mb-4 lg:block">Admin</p>
         <nav className="flex flex-1 gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
-          {NAV.map((group, i) => (
+          {nav.map((group, i) => (
             <div key={i} className="flex gap-1 lg:mb-3 lg:flex-col">
               {group.section && <p className="hidden px-3 pb-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-white/40 lg:block">{group.section}</p>}
               {group.items.map(({ href, label, icon: Icon, badge }) => {
@@ -133,8 +140,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             </div>
           ))}
         </nav>
-        <div className="hidden truncate px-3 text-xs text-white/50 lg:block">
-          {me.data?.email}
+        <div className="hidden px-3 text-xs text-white/50 lg:block">
+          <p className="truncate">{me.data?.email}</p>
+          <p className="mt-0.5 truncate text-white/35" title={level}>
+            {level}
+          </p>
         </div>
         <button
           onClick={() => {
@@ -146,7 +156,20 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           <LogOut className="size-4" /> <span className="hidden lg:inline">Sign out</span>
         </button>
       </aside>
-      <main className="min-h-0 flex-1 overflow-hidden">{children}</main>
+      <main className="min-h-0 flex-1 overflow-hidden">{canOpen(me.data, pathname) ? children : <NoAccess />}</main>
+    </div>
+  );
+}
+
+/** A page outside this staff member's areas. */
+function NoAccess() {
+  return (
+    <div className="grid h-full place-items-center p-8 text-center">
+      <div className="max-w-sm">
+        <ShieldCheck className="mx-auto size-8 text-brand-900/40" />
+        <h1 className="mt-3 font-display text-2xl text-brand-950">Not part of your role</h1>
+        <p className="mt-2 text-sm text-muted">Your account doesn&apos;t cover this part of the admin. A super admin can give you access from the support team page.</p>
+      </div>
     </div>
   );
 }

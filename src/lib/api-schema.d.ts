@@ -2271,6 +2271,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/support/admin/conversations/team/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Who chats can be handed to: active staff on the support team. */
+        get: operations["support_admin_conversations_team_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/support/admin/topics/": {
         parameters: {
             query?: never;
@@ -2766,15 +2783,8 @@ export interface components {
             check_in_time: string;
             /** Format: time */
             check_out_time: string;
-            hourly_enabled: boolean;
-            /** Format: decimal */
-            hourly_rate: string;
-            min_hours: number;
-            max_hours: number;
             /** @description Guests pay to book; the payment confirms the booking. */
             pay_online: boolean;
-            /** @description Hotel time zone offset, e.g. "+01:00": hourly start times are in hotel time. */
-            utc_offset: string;
             /**
              * Format: date
              * @description Earliest check-in (today).
@@ -2787,8 +2797,6 @@ export interface components {
             window_end: string;
             /** @description Taken nights, merged. Check-out on a range's start is fine. */
             unavailable: components["schemas"]["DateRange"][];
-            /** @description Times already held in the window, merged: for picking hours. */
-            taken: components["schemas"]["TimeRange"][];
             stay: components["schemas"]["StayCheck"] | null;
         };
         /** @enum {unknown} */
@@ -2998,7 +3006,7 @@ export interface components {
             readonly property_slug: string;
             status: components["schemas"]["StatusEnum"];
             readonly source: components["schemas"]["SourceEnum"];
-            stay_type: components["schemas"]["StayType7a5Enum"];
+            readonly stay_type: components["schemas"]["StayTypeEnum"];
             /** Format: date */
             check_in: string;
             /**
@@ -3006,16 +3014,13 @@ export interface components {
              * @description Departure day; that night is not included.
              */
             check_out: string;
-            /**
-             * Format: date-time
-             * @description Hourly stays only: start, on the hour, hotel time.
-             */
-            starts_at: string;
+            /** Format: date-time */
+            readonly starts_at: string;
             /** Format: date-time */
             readonly ends_at: string;
             readonly nights: number;
-            /** @description Hourly stays only. */
-            hours: number;
+            /** @description Older hourly stays only. */
+            readonly hours: number;
             /** Format: int64 */
             guests: number;
             guest: number | null;
@@ -3029,6 +3034,9 @@ export interface components {
             hold_expires_at: string | null;
             readonly awaiting_payment: boolean;
             readonly is_paid: boolean;
+            readonly cancellation_policy: components["schemas"]["CancellationPolicyEnum"];
+            /** @description What the guest would get back if they cancelled now, under the policy they booked with. */
+            readonly refund_percent_now: number;
             /** Format: decimal */
             total_price: string | null;
             /**
@@ -3055,7 +3063,6 @@ export interface components {
         BookingRequest: {
             unit: string;
             status?: components["schemas"]["StatusEnum"];
-            stay_type?: components["schemas"]["StayType7a5Enum"];
             /** Format: date */
             check_in?: string;
             /**
@@ -3063,13 +3070,6 @@ export interface components {
              * @description Departure day; that night is not included.
              */
             check_out?: string;
-            /**
-             * Format: date-time
-             * @description Hourly stays only: start, on the hour, hotel time.
-             */
-            starts_at?: string;
-            /** @description Hourly stays only. */
-            hours?: number;
             /** Format: int64 */
             guests?: number;
             guest?: number | null;
@@ -3094,7 +3094,7 @@ export interface components {
             guest_phone: string;
             /** Format: int64 */
             guests: number;
-            stay_type: components["schemas"]["StayType7a5Enum"];
+            stay_type: components["schemas"]["StayTypeEnum"];
             /** Format: date */
             check_in: string;
             /**
@@ -3138,7 +3138,7 @@ export interface components {
             guest_name: string;
             /** Format: int64 */
             guests: number;
-            stay_type: components["schemas"]["StayType7a5Enum"];
+            stay_type: components["schemas"]["StayTypeEnum"];
             /** Format: date */
             check_in: string;
             /**
@@ -3160,6 +3160,37 @@ export interface components {
             is_published: boolean;
             bookings: components["schemas"]["CalendarBooking"][];
             blocked: components["schemas"]["CalendarBlock"][];
+        };
+        Cancellation: {
+            policy: components["schemas"]["CancellationPolicyEnum"];
+            label: string;
+            summary: string;
+            rows: components["schemas"]["CancellationRow"][];
+            /** @description On a booking: what cancelling now gets back. */
+            refund_percent_now: number | null;
+        };
+        /**
+         * @description * `flexible` - Flexible
+         *     * `moderate` - Moderate
+         *     * `firm` - Firm
+         *     * `strict` - Strict
+         * @enum {string}
+         */
+        CancellationPolicyEnum: "flexible" | "moderate" | "firm" | "strict";
+        CancellationRow: {
+            /** @description "Within", "Before" or "After". */
+            heading: string;
+            /** @description "24 hours of booking", "7 days before check-in", or a date like "30 Nov 14:00". */
+            when: string;
+            /** @description "Full refund", "Partial refund" or "No refund". */
+            title: string;
+            detail: string;
+            refund_percent: number;
+            /**
+             * Format: date-time
+             * @description On a booking: when this row ends.
+             */
+            until: string | null;
         };
         CarAvailability: {
             /** Format: decimal */
@@ -4149,6 +4180,8 @@ export interface components {
             unread: number;
             results: components["schemas"]["Notification"][];
         };
+        /** @enum {unknown} */
+        NullEnum: null;
         /** @description An order as its buyer sees it. */
         Order: {
             readonly reference: string;
@@ -4800,7 +4833,6 @@ export interface components {
         PatchedBookingRequest: {
             unit?: string;
             status?: components["schemas"]["StatusEnum"];
-            stay_type?: components["schemas"]["StayType7a5Enum"];
             /** Format: date */
             check_in?: string;
             /**
@@ -4808,13 +4840,6 @@ export interface components {
              * @description Departure day; that night is not included.
              */
             check_out?: string;
-            /**
-             * Format: date-time
-             * @description Hourly stays only: start, on the hour, hotel time.
-             */
-            starts_at?: string;
-            /** @description Hourly stays only. */
-            hours?: number;
             /** Format: int64 */
             guests?: number;
             guest?: number | null;
@@ -4941,6 +4966,8 @@ export interface components {
              * @description Designates that this user has all permissions without explicitly assigning them.
              */
             is_superuser?: boolean;
+            /** @description Staff (not super admins) only: the admin areas they may use. */
+            staff_areas?: components["schemas"]["StaffAreaEnum"][];
         };
         PatchedTicketTypeManageRequest: {
             name?: string;
@@ -4991,13 +5018,9 @@ export interface components {
             size_sqm?: number | null;
             /**
              * Format: decimal
-             * @description Price per hour.
+             * @description Price per night for the room.
              */
-            hourly_rate?: string;
-            /** @description Guests may book this room by the hour. */
-            hourly_enabled?: boolean;
-            /** @description Shortest hourly stay. */
-            min_hours?: number;
+            base_price?: string;
             /** Format: int64 */
             min_nights?: number;
             /** Format: int64 */
@@ -5007,6 +5030,37 @@ export interface components {
             /** Format: time */
             check_out_time?: string;
             amenities?: string[];
+            pets_allowed?: boolean;
+            /** @description Including vaping and e-cigarettes. */
+            smoking_allowed?: boolean;
+            /** @description Parties or events. */
+            parties_allowed?: boolean;
+            /** @description Including commercial filming. */
+            commercial_photography_allowed?: boolean;
+            /**
+             * Format: time
+             * @description Empty: no quiet hours.
+             */
+            quiet_hours_start?: string | null;
+            /** Format: time */
+            quiet_hours_end?: string | null;
+            /** @description Anything else guests must follow, one rule per line. */
+            additional_rules?: string;
+            /** @description Security cameras outside the property. */
+            has_exterior_cameras?: boolean;
+            /** @description Where they are and what they cover. */
+            cameras_note?: string;
+            has_carbon_monoxide_alarm?: boolean;
+            has_smoke_alarm?: boolean;
+            /**
+             * @description See properties/rules.py.
+             *
+             *     * `flexible` - Flexible
+             *     * `moderate` - Moderate
+             *     * `firm` - Firm
+             *     * `strict` - Strict
+             */
+            cancellation_policy?: components["schemas"]["CancellationPolicyEnum"];
             is_published?: boolean;
             /** @description Show on the home page. */
             is_featured?: boolean;
@@ -5331,7 +5385,7 @@ export interface components {
         Reservation: {
             readonly reference: string;
             readonly unit: components["schemas"]["ReservationUnit"];
-            readonly stay_type: components["schemas"]["StayType7a5Enum"];
+            readonly stay_type: components["schemas"]["StayTypeEnum"];
             /** Format: date */
             readonly check_in: string;
             /**
@@ -5350,7 +5404,10 @@ export interface components {
             readonly status_label: string;
             /** Format: decimal */
             readonly nightly_rate: string | null;
-            /** Format: decimal */
+            /**
+             * Format: decimal
+             * @description Old hourly stays only.
+             */
             readonly hourly_rate: string | null;
             /**
              * Format: decimal
@@ -5370,29 +5427,21 @@ export interface components {
             /** @description A confirmed stay that's over: the guest may rate it (or change their rating). */
             readonly can_review: boolean;
             readonly review: components["schemas"]["MyReview"] | null;
+            /** @description The policy when they booked, with this stay's dates. */
+            readonly cancellation: components["schemas"]["Cancellation"];
+            readonly house_rules: components["schemas"]["Rule"][];
             /** Format: date-time */
             readonly created_at: string;
         };
-        /** @description Night stays send check_in and check_out; hourly stays send starts_at (hotel time) and hours. */
+        /** @description Rooms are booked by the night, priced per night. */
         ReservationCreateRequest: {
             unit: string;
-            /** @default night */
-            stay_type: components["schemas"]["ReservationCreateStayTypeEnum"];
             /** Format: date */
-            check_in?: string;
+            check_in: string;
             /** Format: date */
-            check_out?: string;
-            /** Format: date-time */
-            starts_at?: string;
-            hours?: number;
+            check_out: string;
             guests: number;
         };
-        /**
-         * @description * `night` - night
-         *     * `hourly` - hourly
-         * @enum {string}
-         */
-        ReservationCreateStayTypeEnum: "night" | "hourly";
         ReservationUnit: {
             slug: string;
             name: string;
@@ -5431,6 +5480,12 @@ export interface components {
          * @enum {string}
          */
         RoleEnum: "guest" | "owner" | "organiser" | "admin";
+        Rule: {
+            /** @description check-in, check-out, guests, pets, no-pets, smoking, no-smoking, quiet, parties, no-parties, photography, no-photography, rule, camera, co-alarm or smoke-alarm. */
+            icon: string;
+            title: string;
+            detail: string;
+        };
         /**
          * @description * `user` - Visitor
          *     * `agent` - Support team
@@ -5444,6 +5499,17 @@ export interface components {
          * @enum {string}
          */
         SourceEnum: "website" | "staff";
+        /**
+         * @description * `users` - Guests, hosts & organisers
+         *     * `stays` - Hotels, rooms, bookings & reviews
+         *     * `cars` - Cars & rentals
+         *     * `cruises` - Boats & cruises
+         *     * `events` - Events & tickets
+         *     * `payments` - Payments & refunds
+         *     * `support` - Support inbox & help bot
+         * @enum {string}
+         */
+        StaffAreaEnum: "users" | "stays" | "cars" | "cruises" | "events" | "payments" | "support";
         /** @description A boat with its host and how busy it is. Edit it through /dashboard/boats/. */
         StaffBoat: {
             readonly slug: string;
@@ -5570,6 +5636,12 @@ export interface components {
             /** @description Paid online, but it can't stand: refund it from Paystack. */
             readonly needs_refund: boolean;
         };
+        /**
+         * @description * `super_admin` - super_admin
+         *     * `staff` - staff
+         * @enum {string}
+         */
+        StaffLevelEnum: "super_admin" | "staff";
         StaffOverview: {
             users: components["schemas"]["UserCounts"];
             hotels: components["schemas"]["HotelCounts"];
@@ -5698,6 +5770,9 @@ export interface components {
              * @description Designates that this user has all permissions without explicitly assigning them.
              */
             is_superuser: boolean;
+            readonly staff_level: (components["schemas"]["StaffLevelEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** @description Staff (not super admins) only: the admin areas they may use. */
+            staff_areas: components["schemas"]["StaffAreaEnum"][];
             readonly has_password: boolean;
             readonly google_linked: boolean;
             /** @default 0 */
@@ -5749,6 +5824,9 @@ export interface components {
              * @description Designates that this user has all permissions without explicitly assigning them.
              */
             is_superuser: boolean;
+            readonly staff_level: (components["schemas"]["StaffLevelEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** @description Staff (not super admins) only: the admin areas they may use. */
+            staff_areas: components["schemas"]["StaffAreaEnum"][];
             readonly has_password: boolean;
             readonly google_linked: boolean;
             /** @default 0 */
@@ -5797,6 +5875,8 @@ export interface components {
              * @description Designates that this user has all permissions without explicitly assigning them.
              */
             is_superuser?: boolean;
+            /** @description Staff (not super admins) only: the admin areas they may use. */
+            staff_areas?: components["schemas"]["StaffAreaEnum"][];
             password?: string;
         };
         /** @description One account with what it owns and has done on Shortlet Stay. */
@@ -5829,6 +5909,9 @@ export interface components {
              * @description Designates that this user has all permissions without explicitly assigning them.
              */
             is_superuser: boolean;
+            readonly staff_level: (components["schemas"]["StaffLevelEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** @description Staff (not super admins) only: the admin areas they may use. */
+            staff_areas: components["schemas"]["StaffAreaEnum"][];
             readonly has_password: boolean;
             readonly google_linked: boolean;
             /** @default 0 */
@@ -5887,7 +5970,7 @@ export interface components {
          *     * `hourly` - Hours
          * @enum {string}
          */
-        StayType7a5Enum: "night" | "hourly";
+        StayTypeEnum: "night" | "hourly";
         SupportCounts: {
             open: number;
             needs_reply: number;
@@ -5915,6 +5998,12 @@ export interface components {
             starts_at: string;
             /** Format: date-time */
             ends_at: string;
+        };
+        TeamMember: {
+            id: number;
+            readonly name: string;
+            /** Format: email */
+            email: string;
         };
         Ticket: {
             readonly code: string;
@@ -5984,12 +6073,6 @@ export interface components {
             sales_end?: string | null;
             /** Format: int64 */
             position?: number;
-        };
-        TimeRange: {
-            /** Format: date-time */
-            start: string;
-            /** Format: date-time */
-            end: string;
         };
         TokenBlacklistRequest: {
             refresh: string;
@@ -6063,18 +6146,9 @@ export interface components {
             max_guests: number;
             /**
              * Format: decimal
-             * @description Nightly rate: hourly rate × 24.
+             * @description Price per night for the room.
              */
             base_price: string;
-            /**
-             * Format: decimal
-             * @description Price per hour.
-             */
-            hourly_rate: string;
-            /** @description Guests may book this room by the hour. */
-            hourly_enabled: boolean;
-            /** @description Shortest hourly stay. */
-            min_hours: number;
             /** @description Show on the home page. */
             is_featured: boolean;
             readonly cover_image: components["schemas"]["UnitImage"] | null;
@@ -6098,6 +6172,9 @@ export interface components {
             readonly images: components["schemas"]["UnitImage"][];
             /** @description Current and upcoming discounts, for pricing a stay. */
             readonly discounts: components["schemas"]["Discount"][];
+            readonly house_rules: components["schemas"]["Rule"][];
+            readonly safety: components["schemas"]["Rule"][];
+            readonly cancellation: components["schemas"]["Cancellation"];
         };
         UnitImage: {
             readonly id: number;
@@ -6139,18 +6216,9 @@ export interface components {
             max_guests: number;
             /**
              * Format: decimal
-             * @description Nightly rate: hourly rate × 24.
+             * @description Price per night for the room.
              */
             base_price: string;
-            /**
-             * Format: decimal
-             * @description Price per hour.
-             */
-            hourly_rate: string;
-            /** @description Guests may book this room by the hour. */
-            hourly_enabled: boolean;
-            /** @description Shortest hourly stay. */
-            min_hours: number;
             /** @description Show on the home page. */
             is_featured: boolean;
             readonly cover_image: components["schemas"]["UnitImage"] | null;
@@ -6180,18 +6248,9 @@ export interface components {
             size_sqm: number | null;
             /**
              * Format: decimal
-             * @description Price per hour.
+             * @description Price per night for the room.
              */
-            hourly_rate: string;
-            /**
-             * Format: decimal
-             * @description Nightly rate: hourly rate × 24.
-             */
-            readonly base_price: string;
-            /** @description Guests may book this room by the hour. */
-            hourly_enabled: boolean;
-            /** @description Shortest hourly stay. */
-            min_hours: number;
+            base_price: string;
             /** Format: int64 */
             min_nights: number;
             /** Format: int64 */
@@ -6201,6 +6260,37 @@ export interface components {
             /** Format: time */
             check_out_time: string;
             amenities: string[];
+            pets_allowed: boolean;
+            /** @description Including vaping and e-cigarettes. */
+            smoking_allowed: boolean;
+            /** @description Parties or events. */
+            parties_allowed: boolean;
+            /** @description Including commercial filming. */
+            commercial_photography_allowed: boolean;
+            /**
+             * Format: time
+             * @description Empty: no quiet hours.
+             */
+            quiet_hours_start: string | null;
+            /** Format: time */
+            quiet_hours_end: string | null;
+            /** @description Anything else guests must follow, one rule per line. */
+            additional_rules: string;
+            /** @description Security cameras outside the property. */
+            has_exterior_cameras: boolean;
+            /** @description Where they are and what they cover. */
+            cameras_note: string;
+            has_carbon_monoxide_alarm: boolean;
+            has_smoke_alarm: boolean;
+            /**
+             * @description See properties/rules.py.
+             *
+             *     * `flexible` - Flexible
+             *     * `moderate` - Moderate
+             *     * `firm` - Firm
+             *     * `strict` - Strict
+             */
+            cancellation_policy: components["schemas"]["CancellationPolicyEnum"];
             is_published: boolean;
             /** @description Show on the home page. */
             is_featured: boolean;
@@ -6230,13 +6320,9 @@ export interface components {
             size_sqm?: number | null;
             /**
              * Format: decimal
-             * @description Price per hour.
+             * @description Price per night for the room.
              */
-            hourly_rate: string;
-            /** @description Guests may book this room by the hour. */
-            hourly_enabled?: boolean;
-            /** @description Shortest hourly stay. */
-            min_hours?: number;
+            base_price: string;
             /** Format: int64 */
             min_nights?: number;
             /** Format: int64 */
@@ -6246,6 +6332,37 @@ export interface components {
             /** Format: time */
             check_out_time?: string;
             amenities?: string[];
+            pets_allowed?: boolean;
+            /** @description Including vaping and e-cigarettes. */
+            smoking_allowed?: boolean;
+            /** @description Parties or events. */
+            parties_allowed?: boolean;
+            /** @description Including commercial filming. */
+            commercial_photography_allowed?: boolean;
+            /**
+             * Format: time
+             * @description Empty: no quiet hours.
+             */
+            quiet_hours_start?: string | null;
+            /** Format: time */
+            quiet_hours_end?: string | null;
+            /** @description Anything else guests must follow, one rule per line. */
+            additional_rules?: string;
+            /** @description Security cameras outside the property. */
+            has_exterior_cameras?: boolean;
+            /** @description Where they are and what they cover. */
+            cameras_note?: string;
+            has_carbon_monoxide_alarm?: boolean;
+            has_smoke_alarm?: boolean;
+            /**
+             * @description See properties/rules.py.
+             *
+             *     * `flexible` - Flexible
+             *     * `moderate` - Moderate
+             *     * `firm` - Firm
+             *     * `strict` - Strict
+             */
+            cancellation_policy?: components["schemas"]["CancellationPolicyEnum"];
             is_published?: boolean;
             /** @description Show on the home page. */
             is_featured?: boolean;
@@ -6268,6 +6385,15 @@ export interface components {
              * @description Designates whether the user can log into this admin site.
              */
             readonly is_staff: boolean;
+            /**
+             * @description Staff only: super_admin can do everything.
+             *
+             *     * `super_admin` - super_admin
+             *     * `staff` - staff
+             */
+            readonly staff_level: (components["schemas"]["StaffLevelEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** @description Admin areas this account may use. */
+            readonly areas: components["schemas"]["StaffAreaEnum"][];
             /** Format: date-time */
             readonly date_joined: string;
             readonly has_password: boolean;
@@ -10840,6 +10966,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SupportSummary"];
+                };
+            };
+        };
+    };
+    support_admin_conversations_team_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamMember"][];
                 };
             };
         };
