@@ -1940,7 +1940,7 @@ paths:
   /api/bookings/{reference}/pay/:
     post:
       operationId: bookings_pay_create
-      description: Start a Flutterwave checkout for a booking awaiting payment; send
+      description: Start a Paystack checkout for a booking awaiting payment; send
         the guest to checkout_url.
       parameters:
       - in: path
@@ -2013,7 +2013,8 @@ paths:
   /api/bookings/{reference}/verify-payment/:
     post:
       operationId: bookings_verify_payment_create
-      description: Called on returning from checkout with Flutterwave's ?tx_ref=&transaction_id=.
+      description: Called on returning from checkout with Paystack's ?reference= (our
+        tx_ref).
       parameters:
       - in: path
         name: reference
@@ -2124,6 +2125,73 @@ paths:
         required: true
       tags:
       - car-rentals
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+          description: ''
+  /api/car-rentals/{reference}/pay/:
+    post:
+      operationId: car_rentals_pay_create
+      description: Start a Paystack checkout for a booking awaiting payment; send
+        the guest to checkout_url.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - car-rentals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequestRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkout'
+          description: ''
+  /api/car-rentals/{reference}/verify-payment/:
+    post:
+      operationId: car_rentals_verify_payment_create
+      description: Called on returning from checkout with Paystack's ?reference= (our
+        tx_ref).
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - car-rentals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentResultRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentResultRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentResultRequest'
+        required: true
       security:
       - jwtAuth: []
       responses:
@@ -2377,6 +2445,73 @@ paths:
         required: true
       tags:
       - charters
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charter'
+          description: ''
+  /api/charters/{reference}/pay/:
+    post:
+      operationId: charters_pay_create
+      description: Start a Paystack checkout for a booking awaiting payment; send
+        the guest to checkout_url.
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - charters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequestRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkout'
+          description: ''
+  /api/charters/{reference}/verify-payment/:
+    post:
+      operationId: charters_verify_payment_create
+      description: Called on returning from checkout with Paystack's ?reference= (our
+        tx_ref).
+      parameters:
+      - in: path
+        name: reference
+        schema:
+          type: string
+        required: true
+      tags:
+      - charters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentResultRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentResultRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentResultRequest'
+        required: true
       security:
       - jwtAuth: []
       responses:
@@ -5890,8 +6025,8 @@ paths:
   /api/ticket-orders/{reference}/pay/:
     post:
       operationId: ticket_orders_pay_create
-      description: Start a Flutterwave checkout for an order awaiting payment; send
-        the buyer to checkout_url.
+      description: Start a Paystack checkout for an order awaiting payment; send the
+        buyer to checkout_url.
       parameters:
       - in: path
         name: reference
@@ -5923,7 +6058,8 @@ paths:
   /api/ticket-orders/{reference}/verify-payment/:
     post:
       operationId: ticket_orders_verify_payment_create
-      description: Called on returning from checkout with Flutterwave's ?tx_ref=&transaction_id=.
+      description: Called on returning from checkout with Paystack's ?reference= (our
+        tx_ref).
       parameters:
       - in: path
         name: reference
@@ -6743,11 +6879,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TakenTime'
+        pay_online:
+          type: boolean
+          description: Guests pay to book; the payment confirms it.
       required:
       - capacity
       - hourly_rate
       - max_hours
       - min_hours
+      - pay_online
       - taken
       - utc_offset
       - window_end
@@ -7546,10 +7686,14 @@ components:
           items:
             $ref: '#/components/schemas/TakenRange'
           description: Busy from pickup_date up to (not including) return_date.
+        pay_online:
+          type: boolean
+          description: Guests pay to book; the payment confirms it.
       required:
       - daily_rate
       - driver_option
       - min_days
+      - pay_online
       - taken
       - window_end
       - window_start
@@ -8087,7 +8231,7 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          description: An unanswered request frees the boat then.
+          description: An unanswered request (or an unpaid one) frees the boat then.
         boarding_address:
           type: string
           readOnly: true
@@ -8100,11 +8244,23 @@ components:
         host_email:
           type: string
           readOnly: true
+        payment_required:
+          type: boolean
+          readOnly: true
+          description: 'Booked with online payment on: paying confirms it.'
+        awaiting_payment:
+          type: boolean
+          readOnly: true
+          description: Pay to confirm, before hold_expires_at.
+        is_paid:
+          type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
           readOnly: true
       required:
+      - awaiting_payment
       - boarding_address
       - boat
       - created_at
@@ -8116,8 +8272,10 @@ components:
       - host_phone
       - hourly_rate
       - hours
+      - is_paid
       - note
       - party_size
+      - payment_required
       - reference
       - starts_at
       - status
@@ -8219,7 +8377,11 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          description: An unanswered request frees the boat then.
+          description: An unanswered request (or an unpaid one) frees the boat then.
+        is_paid:
+          type: boolean
+          readOnly: true
+          description: Paid online through Shortlet Stay.
         created_at:
           type: string
           format: date-time
@@ -8236,6 +8398,7 @@ components:
       - hold_expires_at
       - hourly_rate
       - hours
+      - is_paid
       - note
       - party_size
       - reference
@@ -8271,7 +8434,7 @@ components:
       properties:
         return_url:
           type: string
-          description: Where Flutterwave sends the guest after checkout, e.g. shortletstay://trips/SS-1234.
+          description: Where Paystack sends the guest after checkout, e.g. shortletstay://trips/SS-1234.
             Defaults to the website's trip page.
           maxLength: 500
     Contact:
@@ -11573,8 +11736,8 @@ components:
         * `checkout_failed` - Checkout failed to start
         * `guest_returned` - Guest returned from checkout
         * `webhook` - Webhook received
-        * `verified` - Checked with Flutterwave
-        * `verify_error` - Couldn't reach Flutterwave
+        * `verified` - Checked with Paystack
+        * `verify_error` - Couldn't reach Paystack
         * `pending` - Still processing
         * `mismatch` - Didn't match the booking
         * `failed` - Payment failed
@@ -11588,12 +11751,8 @@ components:
         tx_ref:
           type: string
           minLength: 1
-        transaction_id:
-          oneOf:
-          - type: string
-            pattern: ^\d{1,20}$
-          - type: string
-            maxLength: 0
+          description: 'Our payment reference: Paystack''s ?reference= on the return
+            URL.'
       required:
       - tx_ref
     PaymentStatusEnum:
@@ -12038,7 +12197,7 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          description: An unanswered request frees the car then.
+          description: An unanswered request (or an unpaid one) frees the car then.
         pickup_address:
           type: string
           readOnly: true
@@ -12051,11 +12210,23 @@ components:
         host_email:
           type: string
           readOnly: true
+        payment_required:
+          type: boolean
+          readOnly: true
+          description: 'Booked with online payment on: paying confirms it.'
+        awaiting_payment:
+          type: boolean
+          readOnly: true
+          description: Pay to confirm, before hold_expires_at.
+        is_paid:
+          type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
           readOnly: true
       required:
+      - awaiting_payment
       - car
       - created_at
       - currency
@@ -12065,7 +12236,9 @@ components:
       - host_email
       - host_name
       - host_phone
+      - is_paid
       - note
+      - payment_required
       - pickup_address
       - pickup_date
       - reference
@@ -12169,7 +12342,11 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          description: An unanswered request frees the car then.
+          description: An unanswered request (or an unpaid one) frees the car then.
+        is_paid:
+          type: boolean
+          readOnly: true
+          description: Paid online through Shortlet Stay.
         created_at:
           type: string
           format: date-time
@@ -12182,6 +12359,7 @@ components:
       - daily_rate
       - days
       - hold_expires_at
+      - is_paid
       - note
       - pickup_date
       - reference
@@ -12794,7 +12972,11 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          description: An unanswered request frees the boat then.
+          description: An unanswered request (or an unpaid one) frees the boat then.
+        is_paid:
+          type: boolean
+          readOnly: true
+          description: Paid online through Shortlet Stay.
         created_at:
           type: string
           format: date-time
@@ -12804,6 +12986,13 @@ components:
           format: email
           readOnly: true
           nullable: true
+        payment_required:
+          type: boolean
+          description: 'Booked with online payment on: paying confirms it.'
+        needs_refund:
+          type: boolean
+          readOnly: true
+          description: 'Paid online, but it can''t stand: refund it from Paystack.'
       required:
       - boat_name
       - boat_slug
@@ -12817,8 +13006,11 @@ components:
       - host_email
       - hourly_rate
       - hours
+      - is_paid
+      - needs_refund
       - note
       - party_size
+      - payment_required
       - reference
       - starts_at
       - status
@@ -12935,7 +13127,11 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          description: An unanswered request frees the car then.
+          description: An unanswered request (or an unpaid one) frees the car then.
+        is_paid:
+          type: boolean
+          readOnly: true
+          description: Paid online through Shortlet Stay.
         created_at:
           type: string
           format: date-time
@@ -12945,6 +13141,13 @@ components:
           format: email
           readOnly: true
           nullable: true
+        payment_required:
+          type: boolean
+          description: 'Booked with online payment on: paying confirms it.'
+        needs_refund:
+          type: boolean
+          readOnly: true
+          description: 'Paid online, but it can''t stand: refund it from Paystack.'
       required:
       - car_slug
       - car_title
@@ -12954,7 +13157,10 @@ components:
       - days
       - hold_expires_at
       - host_email
+      - is_paid
+      - needs_refund
       - note
+      - payment_required
       - pickup_date
       - reference
       - renter_email
@@ -13833,7 +14039,7 @@ components:
     Transaction:
       type: object
       description: 'A payment as the hotel (or platform admin) sees it: who paid,
-        Flutterwave''s ids and the timeline.'
+        Paystack''s ids and the timeline.'
       properties:
         id:
           type: integer
